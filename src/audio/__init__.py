@@ -1,7 +1,12 @@
 """Audio package for EdutainmentForge."""
 
-from .tts import TTSService, TTSError, create_tts_service, create_sample_audio
-from .processor import AudioProcessor, AudioProcessingError
+from .tts import TTSService, TTSError, create_tts_service
+from .multivoice_tts import MultiVoiceTTSService, create_multivoice_tts_service
 
-__all__ = ['TTSService', 'TTSError', 'create_tts_service', 'create_sample_audio', 
-           'AudioProcessor', 'AudioProcessingError']
+__all__ = [
+    'TTSService', 
+    'TTSError', 
+    'create_tts_service',
+    'MultiVoiceTTSService',
+    'create_multivoice_tts_service'
+]

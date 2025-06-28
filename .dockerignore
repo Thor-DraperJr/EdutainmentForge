@@ -1,0 +1,64 @@
+# Docker ignore file for EdutainmentForge
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Output files (optional - include if you want to keep them out of container)
+output/*.wav
+output/*.txt
+
+# Environment files (security)
+.env
+.env.local
+.env.production
+
+# Deployment temporary files
+deploy_temp/
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Documentation
+README.md
+
+# Tests
+test_*.py

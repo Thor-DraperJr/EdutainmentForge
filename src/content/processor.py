@@ -6,6 +6,13 @@ Transforms technical content into engaging podcast scripts.
 
 import re
 from typing import Dict, List, Tuple
+import sys
+import os
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from utils.logger import get_logger
 
 
@@ -143,55 +150,74 @@ class ScriptProcessor:
         return sections
     
     def _generate_narrative_script(self, title: str, sections: List[str]) -> str:
-        """Generate an engaging narrative script from content sections."""
+        """Generate an engaging conversational script with two hosts."""
         script_parts = []
         
-        # Dynamic introduction based on content
-        intro_options = [
-            f"Welcome to another episode of our learning series! Today, we're diving deep into {title.lower()}.",
-            f"Hey there, learners! Ready to explore {title.lower()}? Let's make this both fun and educational.",
-            f"Welcome back! In today's session, we're going to unpack everything you need to know about {title.lower()}.",
-        ]
-        intro = intro_options[0] + " So grab your favorite beverage, get comfortable, and let's get started!"
+        # More natural introduction with better content preview
+        intro = self._generate_dynamic_introduction(title, sections)
         script_parts.append(intro)
         
-        # Process each section with natural transitions
-        transition_phrases = [
-            "Let's start with the basics.",
-            "Now, here's where it gets interesting.",
-            "Building on that idea,",
-            "Another key point to understand is",
-            "What's really fascinating is",
-            "Now you might be wondering,",
-            "Here's the thing though,",
-            "Let me break this down for you.",
-        ]
+        # Generate natural conversational exchanges
+        exchanges = self._generate_conversational_exchanges(sections)
+        script_parts.extend(exchanges)
         
-        for i, section in enumerate(sections):
-            # Add natural transition
-            if i < len(transition_phrases):
-                transition = transition_phrases[i]
-            else:
-                transition = "Moving forward,"
-            
-            # Convert section to conversational style
-            conversational_section = self._make_conversational(section)
-            
-            # Combine transition with content
-            full_section = f"{transition} {conversational_section}"
-            script_parts.append(full_section)
-            
-            # Add natural pause between major sections
-            if i < len(sections) - 1 and len(sections) > 2:
-                script_parts.append("Let me pause here for a moment to let that sink in.")
-        
-        # Natural conclusion
-        conclusion = f"So there you have it - a complete overview of {title.lower()}. "
-        conclusion += "I hope this helped clarify things and gave you some practical insights you can use. "
-        conclusion += "Thanks for joining me today, and I'll see you in the next episode!"
+        # More natural conclusion with content recap
+        conclusion = self._generate_dynamic_conclusion(title, sections)
         script_parts.append(conclusion)
         
-        return " ".join(script_parts)
+        return "\n".join(script_parts)
+    
+    def _generate_dynamic_introduction(self, title: str, sections: List[str]) -> str:
+        """Generate a dynamic introduction that previews the content."""
+        # Extract key topics from the first section for preview
+        preview_text = sections[0][:200] if sections else ""
+        key_concepts = self._extract_key_concepts(preview_text)
+        
+        intro_lines = []
+        
+        # Create engaging intro dialogue
+        intro_lines.append("Sarah: Welcome to EdutainmentForge! I'm Sarah, and I'm here with my fantastic co-host Mike.")
+        intro_lines.append("Mike: Hey there, everyone! Mike here, and wow, do we have an exciting topic for you today!")
+        
+        # Make the topic introduction more engaging based on content
+        if any(term in title.lower() for term in ['azure', 'cloud', 'microsoft']):
+            intro_lines.append(f"Sarah: So Mike, today we're diving into {title}, and I have to say, the cloud space is moving so fast these days!")
+            intro_lines.append("Mike: You're absolutely right, Sarah! This is such a hot topic right now. I think our listeners are going to love learning about this.")
+        elif any(term in title.lower() for term in ['ai', 'machine learning', 'artificial intelligence']):
+            intro_lines.append(f"Sarah: Mike, we're exploring {title} today, and honestly, AI is just everywhere now, isn't it?")
+            intro_lines.append("Mike: It really is, Sarah! And what's amazing is how accessible these technologies are becoming. Let's break this down for our listeners.")
+        else:
+            intro_lines.append(f"Sarah: Today we're talking about {title}, Mike, and I'm genuinely excited to learn more about this.")
+            intro_lines.append("Mike: Me too, Sarah! I've been reading up on this, and there are some really fascinating aspects we need to cover.")
+        
+        # Add a content preview if we have key concepts
+        if key_concepts:
+            intro_lines.append(f"Sarah: What I find really interesting is that we'll be covering things like {', '.join(key_concepts[:3])}.")
+            intro_lines.append("Mike: Exactly! And I think what's going to surprise people is how these concepts all connect together. Shall we jump in?")
+        else:
+            intro_lines.append("Sarah: Should we dive right in?")
+            intro_lines.append("Mike: Absolutely! Let's get started.")
+        
+        return "\n".join(intro_lines)
+    
+    def _extract_key_concepts(self, text: str) -> List[str]:
+        """Extract key concepts from text for previewing content."""
+        # Simple keyword extraction for preview
+        concepts = []
+        
+        # Look for technical terms and important concepts
+        patterns = [
+            r'\b[A-Z][a-z]+ [A-Z][a-z]+\b',  # Proper nouns
+            r'\b[A-Z]{2,}\b',  # Acronyms
+            r'\b(?:Azure|Microsoft|cloud|AI|machine learning|deployment|security|data)\b',  # Key terms
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            concepts.extend([match.lower() for match in matches if len(match) > 3])
+        
+        # Remove duplicates and return up to 5 concepts
+        return list(dict.fromkeys(concepts))[:5]
     
     def _make_conversational(self, text: str) -> str:
         """Transform formal text into conversational podcast style."""
@@ -255,11 +281,35 @@ class ScriptProcessor:
         sentence = re.sub(r'\bthat is to say\b', 'in other words', sentence, flags=re.IGNORECASE)
         sentence = re.sub(r'\bin other words,?\s*', 'basically, ', sentence, flags=re.IGNORECASE)
         
-        # Make abbreviations more natural
-        sentence = re.sub(r'\bAI\b', 'artificial intelligence', sentence)
+        # Make abbreviations more natural for speech
+        sentence = re.sub(r'\bAI\b', 'A-I', sentence)
         sentence = re.sub(r'\bAPI\b', 'A-P-I', sentence)
         sentence = re.sub(r'\bURL\b', 'U-R-L', sentence)
         sentence = re.sub(r'\bHTTP\b', 'H-T-T-P', sentence)
+        sentence = re.sub(r'\bHTTPS\b', 'H-T-T-P-S', sentence)
+        sentence = re.sub(r'\bLLMs\b', 'Large Language Models', sentence)  # More natural
+        sentence = re.sub(r'\bLLM\b', 'Large Language Model', sentence)
+        sentence = re.sub(r'\bSLMs\b', 'Small Language Models', sentence)  # More natural
+        sentence = re.sub(r'\bSLM\b', 'Small Language Model', sentence)
+        sentence = re.sub(r'\bMLOps\b', 'M-L-Ops', sentence)
+        sentence = re.sub(r'\bCI/CD\b', 'C-I-C-D', sentence)
+        sentence = re.sub(r'\bJSON\b', 'J-S-O-N', sentence)
+        sentence = re.sub(r'\bXML\b', 'X-M-L', sentence)
+        sentence = re.sub(r'\bSQL\b', 'S-Q-L', sentence)
+        sentence = re.sub(r'\bGUI\b', 'G-U-I', sentence)
+        sentence = re.sub(r'\bCLI\b', 'C-L-I', sentence)
+        sentence = re.sub(r'\bSDK\b', 'S-D-K', sentence)
+        sentence = re.sub(r'\bIDE\b', 'I-D-E', sentence)
+        sentence = re.sub(r'\bVM\b', 'Virtual Machine', sentence)
+        sentence = re.sub(r'\bVMs\b', 'Virtual Machines', sentence)
+        
+        # Azure specific terms
+        sentence = re.sub(r'\bAKS\b', 'Azure Kubernetes Service', sentence)
+        sentence = re.sub(r'\bACR\b', 'Azure Container Registry', sentence)
+        sentence = re.sub(r'\bACI\b', 'Azure Container Instances', sentence)
+        sentence = re.sub(r'\bARM\b', 'Azure Resource Manager', sentence)
+        sentence = re.sub(r'\bAAD\b', 'Azure Active Directory', sentence)
+        sentence = re.sub(r'\bMSI\b', 'Managed Service Identity', sentence)
         
         # Remove redundant academic language
         sentence = re.sub(r'\bIt is evident that\b', '', sentence, flags=re.IGNORECASE)
@@ -281,3 +331,117 @@ class ScriptProcessor:
             hours = int(minutes // 60)
             remaining_minutes = int(minutes % 60)
             return f"{hours}h {remaining_minutes}m"
+    
+    def _generate_conversational_exchanges(self, sections: List[str]) -> List[str]:
+        """Generate more natural conversational exchanges between hosts."""
+        exchanges = []
+        
+        # More varied and natural transitions
+        conversation_starters = [
+            ("Sarah", ["Mike, let's start with the fundamentals here.", 
+                      "So Mike, what's the first thing people should know about this?",
+                      "Mike, I'm curious about your take on this."]),
+            ("Mike", ["That's a great question, Sarah. Here's what I think...",
+                     "Sarah, you've hit on something really important there.",
+                     "Let me break this down, Sarah, because it's actually pretty fascinating."]),
+            ("Sarah", ["That makes sense! But I'm wondering about...",
+                      "Interesting! Mike, what about when...",
+                      "I see what you mean. Can you explain..."]),
+            ("Mike", ["Good point, Sarah! That's exactly where it gets interesting.",
+                     "Sarah, that's the perfect question to ask.",
+                     "You know what, Sarah? That's something a lot of people wonder about."]),
+            ("Sarah", ["This is really helpful, Mike. What else should our listeners know?",
+                      "OK, that's clear. What's the next piece of the puzzle?",
+                      "Got it! So what happens next?"]),
+            ("Mike", ["Great question! Let me add to that...",
+                     "Sarah, here's another angle to consider...",
+                     "Building on that idea, Sarah..."]),
+        ]
+        
+        # Generate more natural back-and-forth
+        for i, section in enumerate(sections):
+            if i < len(conversation_starters):
+                speaker, starters = conversation_starters[i]
+                starter = starters[i % len(starters)]
+            else:
+                speaker = "Sarah" if i % 2 == 0 else "Mike"
+                starter = "Let me continue with that thought..." if i % 2 == 0 else "Building on that..."
+            
+            # Process the section content
+            conversational_content = self._make_conversational(section)
+            
+            # Create the exchange
+            exchange = f"{speaker}: {starter} {conversational_content}"
+            exchanges.append(exchange)
+            
+            # Add natural responses between major sections
+            if i < len(sections) - 1 and len(section) > 300:
+                other_speaker = "Mike" if speaker == "Sarah" else "Sarah"
+                responses = [
+                    "That's really insightful!",
+                    "I hadn't thought about it that way.",
+                    "That's a great explanation!",
+                    "This is making a lot of sense now.",
+                    "Perfect! That really clarifies things.",
+                    "Wow, that's actually pretty cool!"
+                ]
+                response = f"{other_speaker}: {responses[i % len(responses)]}"
+                exchanges.append(response)
+        
+        return exchanges
+    
+    def _generate_dynamic_conclusion(self, title: str, sections: List[str]) -> str:
+        """Generate a dynamic conclusion that recaps key points."""
+        # Extract main themes for recap
+        key_themes = self._extract_main_themes(sections)
+        
+        conclusion_lines = []
+        
+        # Start the conclusion
+        conclusion_lines.append(f"Sarah: Wow, Mike, we've really covered a lot of ground with {title} today!")
+        
+        # Add a recap if we have themes
+        if key_themes:
+            conclusion_lines.append(f"Mike: We really have, Sarah! We talked about {', '.join(key_themes[:3])}, and I think that gives people a solid foundation.")
+            conclusion_lines.append("Sarah: I love how it all connects together. What would you say is the main takeaway for our listeners?")
+            conclusion_lines.append("Mike: I think the key is to start with the basics and build from there. These concepts really build on each other.")
+        else:
+            conclusion_lines.append("Mike: Absolutely! I think we've given our listeners some really practical insights they can use.")
+            conclusion_lines.append("Sarah: I agree! The examples we discussed should help people get started.")
+            conclusion_lines.append("Mike: And remember, the best way to learn is by doing, so don't be afraid to experiment!")
+        
+        # Closing
+        conclusion_lines.append("Sarah: Thanks so much for joining us today, everyone. We love sharing these learning journeys with you!")
+        conclusion_lines.append("Mike: Definitely! Keep that curiosity alive, and we'll see you in the next episode.")
+        conclusion_lines.append("Sarah: Until next time, keep learning and exploring!")
+        
+        return "\n".join(conclusion_lines)
+    
+    def _extract_main_themes(self, sections: List[str]) -> List[str]:
+        """Extract main themes from all sections for conclusion recap."""
+        themes = []
+        
+        # Combine all sections and look for recurring important terms
+        all_text = " ".join(sections).lower()
+        
+        # Look for key technical concepts that appear multiple times
+        theme_patterns = [
+            r'\b(?:security|authentication|authorization)\b',
+            r'\b(?:deployment|hosting|scaling)\b',
+            r'\b(?:data|database|storage)\b',
+            r'\b(?:api|service|endpoint)\b',
+            r'\b(?:cloud|azure|aws)\b',
+            r'\b(?:monitoring|logging|debugging)\b',
+            r'\b(?:configuration|setup|installation)\b',
+            r'\b(?:performance|optimization|efficiency)\b',
+        ]
+        
+        for pattern in theme_patterns:
+            if re.search(pattern, all_text):
+                # Extract the theme name
+                match = re.search(pattern, all_text)
+                if match:
+                    themes.append(match.group())
+        
+        # Remove duplicates and return up to 3 main themes
+        return list(dict.fromkeys(themes))[:3]

@@ -1,119 +1,125 @@
-# EdutainmentForge
+# EdutainmentForge 🎙️
 
-An application that converts Microsoft Learn content into engaging, edutainment-style podcasts.
+Transform Microsoft Learn content into engaging, conversational podcasts with AI-powered multi-voice narration.
 
-## Overview
+## 🚀 Features
 
-EdutainmentForge transforms dry educational content from Microsoft Learn into entertaining podcast episodes, making learning more engaging and accessible. The app fetches content from MS Learn, processes it into conversational scripts, and generates high-quality audio podcasts.
+- **Multi-Voice Podcasts**: Two-host dialogue format with distinct male and female voices (Sarah & Mike)
+- **Smart Content Processing**: Automatically cleans and converts technical documentation into natural conversation
+- **Batch Processing**: Handle multiple URLs or entire learning paths at once
+- **Web Interface**: Modern, responsive UI for easy podcast generation
+- **Local Storage**: All podcasts stored locally in WAV format
+- **CLI Support**: Command-line interface for automated workflows
 
-## Features
+## 🎯 What It Does
 
-- Fetch content from Microsoft Learn modules
-- Convert technical content into engaging podcast scripts
-- Generate high-quality audio using text-to-speech
-- Simple web interface for content selection and podcast generation
-- Support for multiple modules and playlist creation
+EdutainmentForge takes dry, technical Microsoft Learn documentation and transforms it into:
+- Natural, conversational dialogue between two podcast hosts
+- Proper pronunciation of technical terms and abbreviations
+- Engaging introductions and conclusions
+- High-quality audio with distinct voices for each speaker
 
-## Project Structure
+## 🛠️ Quick Start
 
-```
-EdutainmentForge/
-├── README.md                 # This file
-├── docs/                     # Additional documentation
-├── src/                      # Source code
-│   ├── content/             # MS Learn content fetching and processing
-│   ├── audio/               # Text-to-speech and audio processing
-│   ├── ui/                  # User interface components
-│   └── utils/               # Utility functions and helpers
-├── tests/                   # Automated tests
-├── assets/                  # Static assets (samples, media)
-├── scripts/                 # Development and deployment scripts
-└── .github/                 # GitHub-specific configuration
-```
+### Prerequisites
+- Python 3.8+
+- Azure Speech Service API key ([Get one free](https://azure.microsoft.com/en-us/services/cognitive-services/speech-services/))
+- ffmpeg (for audio processing)
 
-## Quick Start
+### Installation
 
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Set up Azure Speech Service (see Configuration section)
-4. Set up environment variables (see Configuration section)
-5. Run the application: `python3 podcast_cli.py [URL]`
-
-## Configuration
-
-### Azure Speech Service Setup
-
-EdutainmentForge uses Azure Cognitive Services Speech for high-quality text-to-speech. To set up:
-
-1. **Create an Azure Speech Service resource**:
+1. **Clone the repository**
    ```bash
-   az cognitiveservices account create \
-       --name "edutainmentforge-speech" \
-       --resource-group "your-resource-group" \
-       --kind "SpeechServices" \
-       --sku "S0" \
-       --location "eastus2"
+   git clone https://github.com/yourusername/edutainmentforge.git
+   cd edutainmentforge
    ```
 
-2. **Get your API key**:
+2. **Install dependencies**
    ```bash
-   az cognitiveservices account keys list \
-       --name "edutainmentforge-speech" \
-       --resource-group "your-resource-group"
+   pip install -r requirements.txt
    ```
 
-### Environment Variables
+3. **Configure Azure Speech Service**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your Azure Speech Service credentials
+   ```
 
-Create a `.env` file in the root directory with the following variables:
+4. **Run the application**
+   ```bash
+   python app.py
+   ```
 
-```bash
-# Azure Speech Services (required for TTS)
-TTS_SERVICE=azure
-TTS_API_KEY=your_api_key_here
-TTS_REGION=eastus2
-TTS_VOICE=en-US-AriaNeural
+Visit `http://localhost:5000` to start creating podcasts!
 
-# Application Settings
-DEBUG=true
-LOG_LEVEL=INFO
-OUTPUT_DIR=output
-TEMP_DIR=temp
-```
+### Docker Deployment
 
-### Usage Examples
+For containerized deployment:
 
 ```bash
-# Process a Microsoft Learn unit into a podcast
-python3 podcast_cli.py "https://learn.microsoft.com/training/modules/get-started-ai-fundamentals/1-introduction"
+# Build and run with Docker Compose
+./docker-helper.sh build
+./docker-helper.sh run
 
-# Use a specific voice
-python3 podcast_cli.py [URL] --voice "en-US-DavisNeural"
-
-# Custom output filename
-python3 podcast_cli.py [URL] --output "My_Custom_Podcast"
-
-# List available voices
-python3 podcast_cli.py --list-voices
+# Or manually
+docker-compose up -d
 ```
 
-## Development
+## 📖 Usage
 
-This project follows iterative development with continuous testing. See `docs/development-guide.md` for detailed development guidelines.
+### Web Interface
+1. Open `http://localhost:5000`
+2. Enter a Microsoft Learn URL
+3. Click "Generate Podcast"
+4. Download your multi-voice podcast!
 
-### Testing
+### Command Line
+```bash
+python podcast_cli.py --url "https://learn.microsoft.com/en-us/training/modules/intro-to-azure-ai/" --output "my_podcast"
+```
 
-Run tests with: `pytest tests/`
+### Batch Processing
+```bash
+python podcast_cli.py --batch urls.txt --output "learning_path_batch"
+```
 
-### Code Style
+## 🎨 Voice Configuration
 
-We follow PEP 8 for Python code. Use the provided linting configuration:
-- `flake8` for style checking
-- `black` for code formatting
+Customize the voices in your `.env` file:
+```env
+SARAH_VOICE=en-US-AriaNeural     # Female host
+MIKE_VOICE=en-US-DavisNeural     # Male host
+NARRATOR_VOICE=en-US-JennyNeural # Fallback voice
+```
 
-## Contributing
+## 📁 Project Structure
 
-See `CONTRIBUTING.md` for contribution guidelines and coding standards.
+```
+edutainmentforge/
+├── app.py                 # Flask web application
+├── podcast_cli.py         # Command-line interface
+├── src/
+│   ├── content/          # Content fetching and processing
+│   ├── audio/            # Multi-voice TTS services
+│   ├── batch/            # Batch processing
+│   └── utils/            # Utilities and configuration
+├── templates/            # HTML templates
+├── output/              # Generated podcasts
+└── requirements.txt     # Python dependencies
+```
 
-## License
+## 🔧 Configuration
 
-MIT License - see `LICENSE` file for details.
+Environment variables in `.env`:
+- `AZURE_SPEECH_KEY`: Your Azure Speech Service key
+- `AZURE_SPEECH_REGION`: Azure region (e.g., "eastus2")
+- `SARAH_VOICE`: Voice for female host
+- `MIKE_VOICE`: Voice for male host
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

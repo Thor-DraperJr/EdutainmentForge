@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  edutainment-forge:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - AZURE_SPEECH_KEY=${AZURE_SPEECH_KEY}
+      - AZURE_SPEECH_REGION=${AZURE_SPEECH_REGION}
+      - SARAH_VOICE=en-US-AriaNeural
+      - MIKE_VOICE=en-US-DavisNeural
+    volumes:
+      # Mount output directory to persist generated podcasts
+      - ./output:/app/output
+      # Mount environment file (optional)
+      - ./.env:/app/.env
+    restart: unless-stopped
+
+  # Optional: Add nginx for production reverse proxy
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - edutainment-forge

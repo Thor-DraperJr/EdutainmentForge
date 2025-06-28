@@ -31,6 +31,7 @@ def process_url_to_podcast(url, voice=None, output_name=None):
         from content.fetcher import MSLearnFetcher
         from content.processor import ScriptProcessor
         from audio.tts import create_tts_service
+        from audio.multivoice_tts import create_multivoice_tts_service
         from utils.config import load_config
         
         print(f"🔗 Processing URL: {url}")
@@ -80,9 +81,11 @@ def process_url_to_podcast(url, voice=None, output_name=None):
         script_path.write_text(script)
         print(f"📝 Script saved: {script_path}")
         
-        # Generate audio
+        # Generate audio with multi-voice support
+        print("🎵 Generating multi-voice audio with Sarah & Mike...")
+        multivoice_tts = create_multivoice_tts_service(config)
         audio_path = output_dir / f"{output_name}.wav"
-        success = tts_service.synthesize_text(script, audio_path)
+        success = multivoice_tts.synthesize_dialogue_script(script, audio_path)
         
         if success and audio_path.exists():
             file_size = audio_path.stat().st_size

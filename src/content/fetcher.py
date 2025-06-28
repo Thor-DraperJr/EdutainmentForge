@@ -10,6 +10,11 @@ import time
 from bs4 import BeautifulSoup
 from typing import Dict, List, Optional
 from urllib.parse import urljoin, urlparse
+import sys
+from pathlib import Path
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.logger import get_logger
 

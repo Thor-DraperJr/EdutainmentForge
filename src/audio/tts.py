@@ -6,15 +6,21 @@ Handles converting text scripts to speech audio using various TTS services.
 
 import os
 import io
+import sys
 from pathlib import Path
 from typing import Dict, Optional, BinaryIO
 from abc import ABC, abstractmethod
 
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 try:
     import azure.cognitiveservices.speech as speechsdk
     AZURE_AVAILABLE = True
-except ImportError:
+    print("✓ Azure Speech SDK loaded successfully")
+except ImportError as e:
     AZURE_AVAILABLE = False
+    print(f"⚠ Azure Speech SDK not available: {e}")
 
 try:
     import pyttsx3
