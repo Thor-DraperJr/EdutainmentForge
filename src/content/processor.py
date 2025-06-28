@@ -86,14 +86,25 @@ class ScriptProcessor:
         content = re.sub(r'\bcompleted\s+\d+\s+minutes?\b', '', content, flags=re.IGNORECASE)
         content = re.sub(r'\bestimated\s+time:?\s*\d+\s+minutes?\b', '', content, flags=re.IGNORECASE)
         
-        # Remove markdown headers (# ## ###)
-        content = re.sub(r'^#{1,6}\s+', '', content, flags=re.MULTILINE)
+        # Normalize whitespace first to help with pattern matching
+        content = re.sub(r'\n\s*\n', '\n\n', content)  # Multiple newlines to double
+        content = re.sub(r'[ \t]+', ' ', content)       # Multiple spaces to single
+        content = content.strip()
         
-        # Remove markdown formatting
-        content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)  # **bold**
-        content = re.sub(r'\*(.*?)\*', r'\1', content)      # *italic*
-        content = re.sub(r'`(.*?)`', r'\1', content)        # `code`
+        # Preserve and enhance headers for script structure with better hierarchy
+        content = re.sub(r'^\s*#\s*Learning Content:\s*(.+?)$', r'LEARNING_PATH: \1', content, flags=re.MULTILINE)
+        content = re.sub(r'^\s*##\s*LEARNING_UNIT\s*\d+:\s*(.+?)$', r'MODULE_UNIT: \1', content, flags=re.MULTILINE)
+        content = re.sub(r'^\s*#{1,2}\s+(.+?)$', r'SECTION_HEADER: \1', content, flags=re.MULTILINE)
+        content = re.sub(r'^\s*#{3,6}\s+(.+?)$', r'SUBSECTION: \1', content, flags=re.MULTILINE)
+        
+        # Preserve and transform emphasis formatting for script readability
+        content = re.sub(r'\*\*(.*?)\*\*', r'EMPHASIS: \1', content)  # **bold** -> EMPHASIS:
+        content = re.sub(r'\*(.*?)\*', r'HIGHLIGHT: \1', content)      # *italic* -> HIGHLIGHT:
+        content = re.sub(r'`(.*?)`', r'TECHNICAL_TERM: \1', content)        # `code` -> TECHNICAL_TERM:
         content = re.sub(r'```.*?```', '[code example]', content, flags=re.DOTALL)  # code blocks
+        
+        # Clean up study guide formatting to be more script-friendly
+        content = re.sub(r'\*\*([^:]+):\*\*\s*', r'STUDY_GUIDE_\1: ', content)  # **Learning Objectives:** -> STUDY_GUIDE_Learning Objectives:
         
         # Remove URLs and links
         content = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', content)  # [text](url)
@@ -113,9 +124,8 @@ class ScriptProcessor:
         content = re.sub(r'\bkey\s+points?(\s+to\s+understand)?(\s+about)?:?\s*', '', content, flags=re.IGNORECASE)
         content = re.sub(r'\bin\s+this\s+unit,?\s+(you\s+will\s+learn|we\s+will\s+cover|you\s+will):?', '', content, flags=re.IGNORECASE)
         
-        # Remove excessive whitespace and newlines
-        content = re.sub(r'\n\s*\n', '\n\n', content)  # Multiple newlines to double
-        content = re.sub(r'[ \t]+', ' ', content)       # Multiple spaces to single
+        # Remove remaining markdown headers that weren't caught
+        content = re.sub(r'^\s*#+\s*(.+?)$', r'SECTION_HEADER: \1', content, flags=re.MULTILINE)
         
         # Remove common technical artifacts
         content = re.sub(r'\s*\|\s*', ' ', content)     # Table separators
@@ -168,35 +178,27 @@ class ScriptProcessor:
         return "\n".join(script_parts)
     
     def _generate_dynamic_introduction(self, title: str, sections: List[str]) -> str:
-        """Generate a dynamic introduction that previews the content."""
+        """Generate a streamlined introduction that quickly jumps into content."""
         # Extract key topics from the first section for preview
         preview_text = sections[0][:200] if sections else ""
         key_concepts = self._extract_key_concepts(preview_text)
         
         intro_lines = []
         
-        # Create engaging intro dialogue
-        intro_lines.append("Sarah: Welcome to EdutainmentForge! I'm Sarah, and I'm here with my fantastic co-host Mike.")
-        intro_lines.append("Mike: Hey there, everyone! Mike here, and wow, do we have an exciting topic for you today!")
-        
-        # Make the topic introduction more engaging based on content
+        # Streamlined intro - directly into the topic
         if any(term in title.lower() for term in ['azure', 'cloud', 'microsoft']):
-            intro_lines.append(f"Sarah: So Mike, today we're diving into {title}, and I have to say, the cloud space is moving so fast these days!")
-            intro_lines.append("Mike: You're absolutely right, Sarah! This is such a hot topic right now. I think our listeners are going to love learning about this.")
+            intro_lines.append(f"Sarah: Today we're diving into {title}.")
+            intro_lines.append("Mike: Let's jump right in - this is going to be practical and useful.")
         elif any(term in title.lower() for term in ['ai', 'machine learning', 'artificial intelligence']):
-            intro_lines.append(f"Sarah: Mike, we're exploring {title} today, and honestly, AI is just everywhere now, isn't it?")
-            intro_lines.append("Mike: It really is, Sarah! And what's amazing is how accessible these technologies are becoming. Let's break this down for our listeners.")
+            intro_lines.append(f"Sarah: We're exploring {title} today.")
+            intro_lines.append("Mike: Perfect timing - AI is everywhere right now. Let's break this down.")
         else:
-            intro_lines.append(f"Sarah: Today we're talking about {title}, Mike, and I'm genuinely excited to learn more about this.")
-            intro_lines.append("Mike: Me too, Sarah! I've been reading up on this, and there are some really fascinating aspects we need to cover.")
+            intro_lines.append(f"Sarah: Today's topic is {title}.")
+            intro_lines.append("Mike: Great choice - let's get into the details.")
         
-        # Add a content preview if we have key concepts
+        # Quick content preview if we have key concepts
         if key_concepts:
-            intro_lines.append(f"Sarah: What I find really interesting is that we'll be covering things like {', '.join(key_concepts[:3])}.")
-            intro_lines.append("Mike: Exactly! And I think what's going to surprise people is how these concepts all connect together. Shall we jump in?")
-        else:
-            intro_lines.append("Sarah: Should we dive right in?")
-            intro_lines.append("Mike: Absolutely! Let's get started.")
+            intro_lines.append(f"Sarah: We'll cover {', '.join(key_concepts[:2])} and more.")
         
         return "\n".join(intro_lines)
     
@@ -234,6 +236,9 @@ class ScriptProcessor:
                 
             # Remove formal language and make conversational
             sentence = self._conversationalize_sentence(sentence)
+            
+            # Handle emphasis markers for natural speech
+            sentence = self._handle_emphasis_markers(sentence)
             
             # Add natural connectors occasionally
             if i > 0 and len(conversational_sentences) > 0:
@@ -318,6 +323,26 @@ class ScriptProcessor:
         
         return sentence.strip()
     
+    def _handle_emphasis_markers(self, sentence: str) -> str:
+        """Convert emphasis markers to natural speech patterns."""
+        # Handle learning hierarchy markers for structured flow
+        sentence = re.sub(r'LEARNING_PATH:\s*(.+)', r'Welcome to our learning journey on \1.', sentence)
+        sentence = re.sub(r'MODULE_UNIT:\s*(.+)', r'Now let\'s move to our next unit: \1.', sentence)
+        sentence = re.sub(r'SECTION_HEADER:\s*(.+)', r'So let\'s talk about \1.', sentence)
+        sentence = re.sub(r'SUBSECTION:\s*(.+)', r'Now, regarding \1,', sentence)
+        
+        # Handle study guide markers for teaching focus  
+        sentence = re.sub(r'STUDY_GUIDE_Learning Objectives:\s*(.+)', r'Here\'s what you should focus on learning: \1', sentence)
+        sentence = re.sub(r'STUDY_GUIDE_Key Points:\s*(.+)', r'The important things to remember are: \1', sentence)
+        sentence = re.sub(r'STUDY_GUIDE_Study Questions:\s*(.+)', r'To test your understanding, think about: \1', sentence)
+        
+        # Handle emphasis markers with natural speech patterns
+        sentence = re.sub(r'EMPHASIS:\s*(.+?)(?=\s|$|[,.!?])', r'and this is really important - \1', sentence)
+        sentence = re.sub(r'HIGHLIGHT:\s*(.+?)(?=\s|$|[,.!?])', r'particularly \1', sentence)
+        sentence = re.sub(r'TECHNICAL_TERM:\s*(.+?)(?=\s|$|[,.!?])', r'what we call "\1"', sentence)
+        
+        return sentence
+    
     def _estimate_duration(self, word_count: int) -> str:
         """Estimate podcast duration based on word count."""
         # Average speaking rate is about 150-160 words per minute for podcasts
@@ -391,29 +416,22 @@ class ScriptProcessor:
         return exchanges
     
     def _generate_dynamic_conclusion(self, title: str, sections: List[str]) -> str:
-        """Generate a dynamic conclusion that recaps key points."""
+        """Generate a streamlined conclusion with clear takeaways."""
         # Extract main themes for recap
         key_themes = self._extract_main_themes(sections)
         
         conclusion_lines = []
         
-        # Start the conclusion
-        conclusion_lines.append(f"Sarah: Wow, Mike, we've really covered a lot of ground with {title} today!")
-        
-        # Add a recap if we have themes
+        # Concise recap and takeaway
         if key_themes:
-            conclusion_lines.append(f"Mike: We really have, Sarah! We talked about {', '.join(key_themes[:3])}, and I think that gives people a solid foundation.")
-            conclusion_lines.append("Sarah: I love how it all connects together. What would you say is the main takeaway for our listeners?")
-            conclusion_lines.append("Mike: I think the key is to start with the basics and build from there. These concepts really build on each other.")
+            conclusion_lines.append(f"Sarah: So we covered {', '.join(key_themes[:2])} - the key is understanding how these work together.")
+            conclusion_lines.append("Mike: Exactly. Start with the basics and build from there.")
         else:
-            conclusion_lines.append("Mike: Absolutely! I think we've given our listeners some really practical insights they can use.")
-            conclusion_lines.append("Sarah: I agree! The examples we discussed should help people get started.")
-            conclusion_lines.append("Mike: And remember, the best way to learn is by doing, so don't be afraid to experiment!")
+            conclusion_lines.append("Sarah: The main takeaway? Start experimenting with these concepts.")
+            conclusion_lines.append("Mike: Right - practical experience is the best teacher.")
         
-        # Closing
-        conclusion_lines.append("Sarah: Thanks so much for joining us today, everyone. We love sharing these learning journeys with you!")
-        conclusion_lines.append("Mike: Definitely! Keep that curiosity alive, and we'll see you in the next episode.")
-        conclusion_lines.append("Sarah: Until next time, keep learning and exploring!")
+        # Clear transition signal
+        conclusion_lines.append("Sarah: That's a wrap for today. Thanks for learning with us!")
         
         return "\n".join(conclusion_lines)
     

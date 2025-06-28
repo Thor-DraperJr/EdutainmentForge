@@ -119,13 +119,15 @@ class MSLearnFetcher:
             
             logger.info(f"Found {len(unit_urls)} units in module")
             
-            # Extract content from all units
-            all_content = [f"# {title}\n\n{description}\n\n"]
+            # Extract content from all units with structured hierarchy
+            all_content = [f"# Learning Content: {title}\n\n{description}\n\n"]
             
             for i, unit_info in enumerate(unit_urls, 1):
                 unit_content = self._extract_unit_content(unit_info['url'])
                 if unit_content and len(unit_content) > 100:
-                    all_content.append(f"## Unit {i}: {unit_info['title']}\n\n{unit_content}\n\n")
+                    # Structure content with clear hierarchy markers
+                    structured_unit = f"## LEARNING_UNIT {i}: {unit_info['title']}\n\n{unit_content}\n\n"
+                    all_content.append(structured_unit)
                     logger.debug(f"Added unit {i}: {len(unit_content)} characters")
                 
                 # Be respectful to the server
@@ -469,6 +471,155 @@ class MSLearnFetcher:
             text = text.replace(phrase, '')
         
         return text.strip()
+    
+    def fetch_study_guide_content(self, module_url: str) -> Optional[Dict[str, str]]:
+        """
+        Fetch study guide content associated with a module.
+        
+        Args:
+            module_url: URL of the MS Learn module
+            
+        Returns:
+            Dictionary containing study guide content or None if not found
+        """
+        try:
+            # Look for study guide in common locations
+            study_guide_patterns = [
+                '/study-guide',
+                '/summary',
+                '/knowledge-check',
+                '/review'
+            ]
+            
+            for pattern in study_guide_patterns:
+                # Try to construct study guide URL
+                if module_url.endswith('/'):
+                    study_url = module_url.rstrip('/') + pattern
+                else:
+                    study_url = module_url + pattern
+                
+                study_content = self._extract_study_guide_from_url(study_url)
+                if study_content:
+                    return study_content
+                    
+            # Also try to extract study guide from main module page
+            response = self.session.get(module_url, timeout=30)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            study_content = self._extract_study_guide_from_soup(soup)
+            if study_content:
+                return study_content
+                
+            logger.info("No study guide found for module")
+            return None
+            
+        except Exception as e:
+            logger.warning(f"Failed to fetch study guide: {e}")
+            return None
+    
+    def _extract_study_guide_from_url(self, study_url: str) -> Optional[Dict[str, str]]:
+        """Extract study guide content from a specific URL."""
+        try:
+            response = self.session.get(study_url, timeout=30)
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.content, 'html.parser')
+                return self._extract_study_guide_from_soup(soup)
+        except:
+            pass
+        return None
+    
+    def _extract_study_guide_from_soup(self, soup: BeautifulSoup) -> Optional[Dict[str, str]]:
+        """Extract study guide elements from HTML soup."""
+        study_content = []
+        
+        # Look for learning objectives
+        objectives_selectors = [
+            '.learning-objectives',
+            '.objectives',
+            '[data-learning-objectives]',
+            'section[aria-label*="objective"]'
+        ]
+        
+        for selector in objectives_selectors:
+            element = soup.select_one(selector)
+            if element:
+                text = element.get_text().strip()
+                if text and len(text) > 20:
+                    study_content.append(f"**Learning Objectives:** {text}")
+                    break
+        
+        # Look for key points or summary
+        summary_selectors = [
+            '.key-points',
+            '.summary',
+            '.takeaways',
+            '[data-summary]',
+            'section[aria-label*="summary"]'
+        ]
+        
+        for selector in summary_selectors:
+            element = soup.select_one(selector)
+            if element:
+                text = element.get_text().strip()
+                if text and len(text) > 20:
+                    study_content.append(f"**Key Points:** {text}")
+                    break
+        
+        # Look for knowledge check questions
+        quiz_selectors = [
+            '.knowledge-check',
+            '.quiz',
+            '.questions',
+            '[data-quiz]'
+        ]
+        
+        for selector in quiz_selectors:
+            elements = soup.select(selector)
+            if elements:
+                quiz_text = []
+                for element in elements[:3]:  # Limit to 3 questions
+                    text = element.get_text().strip()
+                    if text and len(text) > 10:
+                        quiz_text.append(text)
+                if quiz_text:
+                    study_content.append(f"**Study Questions:** {' | '.join(quiz_text)}")
+                    break
+        
+        if study_content:
+            return {
+                'content': '\n\n'.join(study_content),
+                'type': 'study_guide'
+            }
+        
+        return None
+    
+    def fetch_module_with_study_guide(self, module_url: str) -> Dict[str, str]:
+        """
+        Fetch module content enhanced with study guide information.
+        
+        Args:
+            module_url: URL of the MS Learn module
+            
+        Returns:
+            Dictionary containing enhanced module content
+        """
+        # Get the main module content
+        module_content = self.fetch_module_content(module_url)
+        
+        # Try to get study guide content
+        study_guide = self.fetch_study_guide_content(module_url)
+        
+        if study_guide:
+            # Integrate study guide into the content
+            enhanced_content = f"{module_content['content']}\n\n## Study Guide\n\n{study_guide['content']}"
+            module_content['content'] = enhanced_content
+            module_content['has_study_guide'] = True
+            logger.info("Enhanced module content with study guide")
+        else:
+            module_content['has_study_guide'] = False
+        
+        return module_content
 
 
 def create_sample_content() -> Dict[str, str]:
