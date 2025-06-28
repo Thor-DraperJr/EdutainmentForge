@@ -1,0 +1,59 @@
+apiVersion: 2022-10-01
+location: eastus2
+type: Microsoft.App/containerApps
+properties:
+  managedEnvironmentId: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.App/managedEnvironments/{environment-name}
+  configuration:
+    ingress:
+      external: true
+      targetPort: 5000
+      transport: http
+      allowInsecure: false
+    secrets:
+      - name: azure-speech-key
+        value: "{azure-speech-service-key}"
+    registries:
+      - server: "{your-acr-name}.azurecr.io"
+        identity: "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity-name}"
+  template:
+    containers:
+      - name: edutainmentforge
+        image: "{your-acr-name}.azurecr.io/edutainmentforge:latest"
+        env:
+          - name: AZURE_SPEECH_KEY
+            secretRef: azure-speech-key
+          - name: AZURE_SPEECH_REGION
+            value: "eastus2"
+          - name: FLASK_ENV
+            value: "production"
+          - name: SARAH_VOICE
+            value: "en-US-AriaNeural"
+          - name: MIKE_VOICE
+            value: "en-US-DavisNeural"
+        resources:
+          cpu: 1.0
+          memory: 2.0Gi
+        probes:
+          - type: Liveness
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          - type: Readiness
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+    scale:
+      minReplicas: 1
+      maxReplicas: 10
+      rules:
+        - name: http-rule
+          http:
+            metadata:
+              concurrentRequests: "5"
+tags:
+  environment: production
+  application: edutainmentforge

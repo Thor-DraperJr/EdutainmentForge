@@ -1,0 +1,13 @@
+name: edutainmentforge
+metadata:
+  template: edutainmentforge-template
+services:
+  web:
+    project: .
+    language: python
+    host: containerapp
+hooks:
+  preprovision:
+    shell: sh
+    run: echo "Using existing resource group edutainmentforge-rg"
+    continueOnError: false

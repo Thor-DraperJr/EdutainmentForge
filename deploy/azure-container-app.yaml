@@ -1,0 +1,43 @@
+apiVersion: containerapp.azure.com/v1beta1
+kind: ContainerApp
+metadata:
+  name: edutainmentforge-app
+  location: eastus2
+  resourceGroup: edutainmentforge-rg
+spec:
+  environmentId: /subscriptions/{subscription-id}/resourceGroups/edutainmentforge-rg/providers/Microsoft.App/managedEnvironments/edutainmentforge-env
+  template:
+    containers:
+    - name: edutainmentforge
+      image: edutainmentforge.azurecr.io/edutainmentforge:latest
+      resources:
+        cpu: 1
+        memory: 2Gi
+      env:
+      - name: FLASK_ENV
+        value: production
+      - name: AZURE_SPEECH_KEY
+        secretRef: azure-speech-key
+      - name: AZURE_SPEECH_REGION
+        value: eastus2
+      - name: SARAH_VOICE
+        value: en-US-AriaNeural
+      - name: MIKE_VOICE
+        value: en-US-DavisNeural
+    scale:
+      minReplicas: 1
+      maxReplicas: 5
+      rules:
+      - name: http-scaling
+        http:
+          metadata:
+            concurrentRequests: 10
+  ingress:
+    external: true
+    targetPort: 5000
+    traffic:
+    - weight: 100
+      latestRevision: true
+  secrets:
+  - name: azure-speech-key
+    keyVaultUrl: https://edutainmentforge-kv.vault.azure.net/secrets/azure-speech-key
