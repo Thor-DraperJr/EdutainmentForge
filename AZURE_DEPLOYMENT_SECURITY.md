@@ -9,17 +9,23 @@
    - Secrets stored: `azure-speech-key`, `azure-speech-region`
    - Access: RBAC-enabled (no access policies)
 
-2. **Managed Identity**
+2. **Azure OpenAI Integration**
+   - Created: `edutainmentforge-openai` (Azure OpenAI resource)
+   - Model deployed: `gpt-4o-mini` for cost-effective AI enhancement
+   - API keys managed via environment variables in production
+   - Optional feature: graceful fallback when not configured
+
+3. **Managed Identity**
    - System-assigned managed identity enabled for Container App
    - Principal ID: `187688fa-9701-4e13-be70-85286ddc2b2c`
-   - No credentials stored in environment variables
+   - No credentials stored in environment variables for Azure services
 
-3. **RBAC Permissions**
+4. **RBAC Permissions**
    - Container App has "Key Vault Secrets User" role
    - Least privilege access to Key Vault secrets only
    - Admin has "Key Vault Secrets Officer" for management
 
-4. **Container Registry Security**
+5. **Container Registry Security**
    - Private Azure Container Registry: `edutainmentforge.azurecr.io`
    - Admin access enabled for deployment
    - Registry credentials secured in Container App secrets

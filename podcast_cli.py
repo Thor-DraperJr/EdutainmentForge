@@ -21,7 +21,87 @@ def load_env():
                         key, value = line.strip().split('=', 1)
                         os.environ[key] = value
 
-def process_url_to_podcast(url, voice=None, output_name=None):
+def process_content_to_podcast(content_text, title, voice=None, output_name=None, ai_enhance=False):
+    """Process direct content text into a podcast."""
+    try:
+        # Add src to path
+        src_path = Path(__file__).parent / "src"
+        sys.path.insert(0, str(src_path))
+        
+        from content.processor import ScriptProcessor
+        from audio.tts import create_tts_service
+        from audio.multivoice_tts import create_multivoice_tts_service
+        from utils.config import load_config
+        
+        print(f"📝 Processing content: {title}")
+        
+        # Load config
+        config = load_config()
+        
+        # Override voice if specified
+        if voice:
+            config['tts_voice'] = voice
+            print(f"🎤 Using voice: {voice}")
+        
+        # Create content structure
+        content = {
+            'title': title,
+            'content': content_text
+        }
+        
+        print(f"✅ Content prepared: {content['title']}")
+        print(f"📄 Content length: {len(content['content'])} characters")
+        
+        # Process into script
+        print("✍️  Converting to podcast script...")
+        if ai_enhance:
+            print("🤖 AI enhancement enabled - creating interactive dialogue...")
+        processor = ScriptProcessor(use_ai_enhancement=ai_enhance)
+        script_result = processor.process_content_to_script(content)
+        script = script_result.get('script', '')
+        
+        # Generate audio
+        print("🎵 Generating audio with Azure Speech Service...")
+        tts_service = create_tts_service(config)
+        
+        # Create output filename
+        if not output_name:
+            # Clean title for filename
+            clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            clean_title = clean_title.replace(' ', '_')[:50]  # Limit length
+            output_name = f"{clean_title}_podcast"
+        
+        output_dir = Path("output")
+        output_dir.mkdir(exist_ok=True)
+        
+        # Save script
+        script_path = output_dir / f"{output_name}_script.txt"
+        with open(script_path, 'w', encoding='utf-8') as f:
+            f.write(script)
+        print(f"📝 Script saved: {script_path}")
+        
+        # Generate audio
+        audio_path = output_dir / f"{output_name}.wav"
+        
+        # Use multivoice TTS for better quality
+        multivoice_tts = create_multivoice_tts_service(config)
+        if multivoice_tts:
+            multivoice_tts.generate_multivoice_audio(script, str(audio_path))
+        else:
+            # Fallback to single voice
+            tts_service.generate_audio(script, str(audio_path))
+        
+        print(f"🎵 Audio saved: {audio_path}")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error processing content: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def process_url_to_podcast(url, voice=None, output_name=None, ai_enhance=False):
     """Process a Microsoft Learn URL into a podcast."""
     try:
         # Add src to path
@@ -58,7 +138,9 @@ def process_url_to_podcast(url, voice=None, output_name=None):
         
         # Step 2: Process into script
         print("✍️  Converting to podcast script...")
-        processor = ScriptProcessor()
+        if ai_enhance:
+            print("🤖 AI enhancement enabled - creating interactive dialogue...")
+        processor = ScriptProcessor(use_ai_enhancement=ai_enhance)
         script_result = processor.process_content_to_script(content)
         script = script_result.get('script', '')
         
@@ -145,8 +227,11 @@ Examples:
     )
     
     parser.add_argument('url', nargs='?', help='Microsoft Learn URL to process')
+    parser.add_argument('--content', help='Direct content text for processing (alternative to URL)')
+    parser.add_argument('--title', help='Title for the content (required when using --content)')
     parser.add_argument('--voice', help='Azure voice to use (e.g., en-US-AriaNeural)')
     parser.add_argument('--output', help='Output filename prefix')
+    parser.add_argument('--ai-enhance', action='store_true', help='Enable AI-enhanced dialogue generation')
     parser.add_argument('--list-voices', action='store_true', help='List available voices')
     
     args = parser.parse_args()
@@ -168,18 +253,28 @@ Examples:
         list_available_voices()
         return True
     
-    if not args.url:
-        parser.print_help()
-        print("\n💡 Tip: Use --list-voices to see available Azure voices")
-        return False
-    
-    # Validate URL
-    if 'learn.microsoft.com' not in args.url:
-        print("❌ URL must be from learn.microsoft.com")
-        return False
-    
-    # Process the URL
-    success = process_url_to_podcast(args.url, args.voice, args.output)
+    # Check for content vs URL
+    if args.content:
+        if not args.title:
+            print("❌ --title is required when using --content")
+            return False
+        
+        # Process direct content
+        success = process_content_to_podcast(args.content, args.title, args.voice, args.output, args.ai_enhance)
+    else:
+        if not args.url:
+            parser.print_help()
+            print("\n💡 Tip: Use --list-voices to see available Azure voices")
+            print("💡 Use --content with --title to process text directly")
+            return False
+
+        # Validate URL
+        if 'learn.microsoft.com' not in args.url:
+            print("❌ URL must be from learn.microsoft.com")
+            return False
+
+        # Process the URL
+        success = process_url_to_podcast(args.url, args.voice, args.output, args.ai_enhance)
     
     print("\n" + "=" * 60)
     if success:

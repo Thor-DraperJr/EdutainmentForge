@@ -37,9 +37,14 @@ def load_config() -> Dict[str, Any]:
         
         # Text-to-Speech configuration
         "tts_service": os.getenv("TTS_SERVICE", "azure"),
-        "tts_api_key": os.getenv("TTS_API_KEY"),
-        "tts_region": os.getenv("TTS_REGION", "eastus"),
+        "tts_api_key": os.getenv("TTS_API_KEY") or os.getenv("AZURE_SPEECH_KEY"),
+        "tts_region": os.getenv("TTS_REGION") or os.getenv("AZURE_SPEECH_REGION", "eastus"),
         "tts_voice": os.getenv("TTS_VOICE", "en-US-AriaNeural"),
+        
+        # Multi-voice configuration for podcast hosts
+        "sarah_voice": os.getenv("SARAH_VOICE", "en-US-AriaNeural"),
+        "mike_voice": os.getenv("MIKE_VOICE", "en-US-DavisNeural"),
+        "narrator_voice": os.getenv("NARRATOR_VOICE", "en-US-JennyNeural"),
         
         # Audio configuration
         "audio_format": os.getenv("AUDIO_FORMAT", "mp3"),
@@ -50,6 +55,12 @@ def load_config() -> Dict[str, Any]:
         "debug": os.getenv("DEBUG", "false").lower() == "true",
         "log_level": os.getenv("LOG_LEVEL", "INFO"),
         "temp_directory": Path(os.getenv("TEMP_DIR", "temp")),
+        
+        # Azure OpenAI configuration for script enhancement
+        "azure_openai_endpoint": os.getenv("AZURE_OPENAI_ENDPOINT"),
+        "azure_openai_api_key": os.getenv("AZURE_OPENAI_API_KEY"),
+        "azure_openai_api_version": os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01"),
+        "azure_openai_deployment": os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini"),
     }
     
     # Validate required configuration

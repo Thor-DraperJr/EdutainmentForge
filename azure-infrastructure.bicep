@@ -11,6 +11,19 @@ param azureSpeechKey string
 @description('The Azure Speech Service region')
 param azureSpeechRegion string = location
 
+@description('The Azure OpenAI API key (optional)')
+@secure()
+param azureOpenAiKey string = ''
+
+@description('The Azure OpenAI endpoint (optional)')
+param azureOpenAiEndpoint string = ''
+
+@description('The Azure OpenAI API version')
+param azureOpenAiApiVersion string = '2024-02-15-preview'
+
+@description('The Azure OpenAI deployment name')
+param azureOpenAiDeploymentName string = 'gpt-4o-mini'
+
 @description('Container image reference')
 param containerImage string
 
@@ -122,6 +135,10 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
           name: 'storage-connection-string'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
         }
+        {
+          name: 'azure-openai-key'
+          value: azureOpenAiKey
+        }
       ]
       registries: [
         {
@@ -143,6 +160,22 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
             {
               name: 'AZURE_SPEECH_REGION'
               value: azureSpeechRegion
+            }
+            {
+              name: 'AZURE_OPENAI_ENDPOINT'
+              value: azureOpenAiEndpoint
+            }
+            {
+              name: 'AZURE_OPENAI_API_KEY'
+              secretRef: 'azure-openai-key'
+            }
+            {
+              name: 'AZURE_OPENAI_API_VERSION'
+              value: azureOpenAiApiVersion
+            }
+            {
+              name: 'AZURE_OPENAI_DEPLOYMENT_NAME'
+              value: azureOpenAiDeploymentName
             }
             {
               name: 'FLASK_ENV'

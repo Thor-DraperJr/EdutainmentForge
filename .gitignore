@@ -120,6 +120,11 @@ logs/
 *.mp4
 *.flv
 
+# Environment variables and secrets - NEVER COMMIT
+.env
+.env.local
+.env.production
+
 # Azure specific - don't commit sensitive files
 .azure/secrets/
 .azure/config

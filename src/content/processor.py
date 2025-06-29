@@ -15,6 +15,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.logger import get_logger
 
+try:
+    from content.ai_enhancer import AIScriptEnhancer, ScriptEnhancementError
+    AI_ENHANCEMENT_AVAILABLE = True
+except ImportError:
+    logger.warning("AI enhancement not available - openai package not installed")
+    AI_ENHANCEMENT_AVAILABLE = False
+
 
 logger = get_logger(__name__)
 
@@ -22,8 +29,19 @@ logger = get_logger(__name__)
 class ScriptProcessor:
     """Processes content and generates podcast scripts."""
     
-    def __init__(self):
+    def __init__(self, use_ai_enhancement: bool = True):
         """Initialize the script processor."""
+        self.use_ai_enhancement = use_ai_enhancement and AI_ENHANCEMENT_AVAILABLE
+        self.ai_enhancer = None
+        
+        if self.use_ai_enhancement:
+            try:
+                self.ai_enhancer = AIScriptEnhancer()
+                logger.info("AI script enhancement enabled")
+            except Exception as e:
+                logger.warning(f"AI enhancement disabled: {e}")
+                self.use_ai_enhancement = False
+        
         self.intro_phrases = [
             "Welcome to today's learning session!",
             "Let's dive into an exciting topic!",
@@ -364,7 +382,20 @@ class ScriptProcessor:
         conclusion = self._generate_dynamic_conclusion(title, sections)
         script_parts.append(conclusion)
         
-        return "\n".join(script_parts)
+        # Combine all parts into initial script
+        initial_script = "\n".join(script_parts)
+        
+        # Enhance with AI if available
+        if self.use_ai_enhancement and self.ai_enhancer:
+            try:
+                logger.info("Enhancing script with AI for better dialogue balance")
+                enhanced_script = self.ai_enhancer.enhance_script(initial_script, title)
+                return enhanced_script
+            except Exception as e:
+                logger.warning(f"AI enhancement failed, using original script: {e}")
+                return initial_script
+        
+        return initial_script
     
     def _generate_dynamic_introduction(self, title: str, sections: List[str]) -> str:
         """Generate a concise introduction that gets to the content quickly."""

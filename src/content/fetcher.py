@@ -290,6 +290,28 @@ class MSLearnFetcher:
         # Remove excessive whitespace
         text = re.sub(r'\s+', ' ', text).strip()
         
+        # Clean HTML entities and special characters
+        import html
+        text = html.unescape(text)  # Convert &amp; &lt; &gt; etc.
+        
+        # Remove markdown formatting and symbols that don't work well in TTS
+        text = re.sub(r'\*+', '', text)  # Remove asterisks (markdown bold/italic)
+        text = re.sub(r'#+\s*', '', text)  # Remove markdown headers
+        text = re.sub(r'`+', '', text)  # Remove code formatting
+        text = re.sub(r'_{2,}', '', text)  # Remove underscores
+        text = re.sub(r'-{2,}', '-', text)  # Convert multiple dashes to single
+        text = re.sub(r'[|\[\]{}]', '', text)  # Remove brackets and pipes
+        
+        # Replace common symbols with pronounceable text
+        text = text.replace('&', ' and ')
+        text = text.replace('@', ' at ')
+        text = text.replace('#', ' hash ')
+        text = text.replace('%', ' percent ')
+        text = text.replace('>', ' greater than ')
+        text = text.replace('<', ' less than ')
+        text = text.replace('=', ' equals ')
+        text = text.replace('+', ' plus ')
+        
         # Remove common navigation and UI text
         unwanted_phrases = [
             'Skip to main content', 'Table of contents', 'In this article',

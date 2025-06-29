@@ -33,7 +33,7 @@ class MultiVoiceTTSService:
         if not self.api_key:
             raise TTSError("TTS API key is required")
         
-        # Define voice mappings for each speaker
+        # Define voice mappings for each speaker - use config values or defaults
         self.speaker_voices = {
             'Sarah': config.get('sarah_voice', 'en-US-AriaNeural'),  # Female voice
             'Mike': config.get('mike_voice', 'en-US-DavisNeural'),   # Male voice
@@ -44,6 +44,8 @@ class MultiVoiceTTSService:
         self._tts_cache = {}
         
         logger.info(f"Initialized multi-voice TTS with voices: {self.speaker_voices}")
+        logger.info(f"Using API key ending in: ...{self.api_key[-4:] if self.api_key else 'None'}")
+        logger.info(f"Using region: {self.region}")
     
     def synthesize_dialogue_script(self, script: str, output_path: Path) -> bool:
         """

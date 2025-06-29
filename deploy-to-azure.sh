@@ -44,6 +44,19 @@ if [ -z "$AZURE_SPEECH_KEY" ]; then
     exit 1
 fi
 
+# Prompt for Azure OpenAI key (optional)
+echo -e "${YELLOW}🤖 Please enter your Azure OpenAI API key (optional, press Enter to skip):${NC}"
+read -s AZURE_OPENAI_KEY
+echo
+
+if [ -n "$AZURE_OPENAI_KEY" ]; then
+    echo -e "${GREEN}✅ Azure OpenAI integration will be enabled${NC}"
+    OPENAI_ENABLED=true
+else
+    echo -e "${YELLOW}⚠️  Azure OpenAI integration will be disabled${NC}"
+    OPENAI_ENABLED=false
+fi
+
 echo -e "${GREEN}📦 Step 1: Creating resource group${NC}"
 az group create \
     --name $RESOURCE_GROUP \
@@ -56,14 +69,29 @@ DEPLOYMENT_NAME="edutainmentforge-$(date +%Y%m%d-%H%M%S)"
 # Get the container registry name that will be created
 ACR_NAME="${NAME_PREFIX}acr$(echo $SUBSCRIPTION_ID$RESOURCE_GROUP | sha256sum | cut -c1-10)"
 
+# Prepare deployment parameters
+DEPLOYMENT_PARAMS=(
+    --resource-group $RESOURCE_GROUP
+    --template-file azure-infrastructure.bicep
+    --parameters
+        namePrefix=$NAME_PREFIX
+        azureSpeechKey="$AZURE_SPEECH_KEY"
+        azureSpeechRegion=$LOCATION
+        containerImage="$ACR_NAME.azurecr.io/edutainmentforge:$CONTAINER_IMAGE_TAG"
+)
+
+# Add Azure OpenAI parameters if provided
+if [ "$OPENAI_ENABLED" = true ]; then
+    DEPLOYMENT_PARAMS+=(
+        azureOpenAiKey="$AZURE_OPENAI_KEY"
+        azureOpenAiEndpoint="https://edutainmentforge-openai.openai.azure.com/"
+        azureOpenAiApiVersion="2024-02-15-preview"
+        azureOpenAiDeploymentName="gpt-4o-mini"
+    )
+fi
+
 DEPLOYMENT_OUTPUT=$(az deployment group create \
-    --resource-group $RESOURCE_GROUP \
-    --template-file azure-infrastructure.bicep \
-    --parameters \
-        namePrefix=$NAME_PREFIX \
-        azureSpeechKey="$AZURE_SPEECH_KEY" \
-        azureSpeechRegion=$LOCATION \
-        containerImage="$ACR_NAME.azurecr.io/edutainmentforge:$CONTAINER_IMAGE_TAG" \
+    "${DEPLOYMENT_PARAMS[@]}" \
     --name $DEPLOYMENT_NAME \
     --output json)
 
