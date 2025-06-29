@@ -178,11 +178,6 @@ class ScriptProcessor:
         
         return "\n".join(intro_lines)
     
-    def _extract_key_concepts(self, text: str) -> List[str]:
-        """Extract key concepts from text for previewing content."""
-        # Simplified - no longer used in the short intro
-        return []
-    
     def _make_conversational(self, text: str) -> str:
         """Transform formal text into conversational podcast style."""
         # Split into sentences for better processing

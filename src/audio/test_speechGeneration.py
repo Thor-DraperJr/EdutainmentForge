@@ -2,15 +2,8 @@ import pytest
 from unittest.mock import patch, MagicMock
 from pydub import AudioSegment
 
-import sys
-import types
-import builtins
-
 # Import the module under test
 import audio.speechGeneration as sg
-
-class DummyAudio(AudioSegment):
-    pass
 
 @pytest.fixture
 def dummy_audio():
