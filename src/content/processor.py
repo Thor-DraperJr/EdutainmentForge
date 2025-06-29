@@ -89,6 +89,9 @@ class ScriptProcessor:
         # Remove markdown headers (# ## ###)
         content = re.sub(r'^#{1,6}\s+', '', content, flags=re.MULTILINE)
         
+        # Detect and preserve table structures before other processing
+        content = self._preserve_table_structures(content)
+        
         # Remove markdown formatting
         content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)  # **bold**
         content = re.sub(r'\*(.*?)\*', r'\1', content)      # *italic*
@@ -117,14 +120,210 @@ class ScriptProcessor:
         content = re.sub(r'\n\s*\n', '\n\n', content)  # Multiple newlines to double
         content = re.sub(r'[ \t]+', ' ', content)       # Multiple spaces to single
         
-        # Remove common technical artifacts
-        content = re.sub(r'\s*\|\s*', ' ', content)     # Table separators
+        # Remove common technical artifacts (but preserve table markers)
         content = re.sub(r'[{}[\]()<>]', '', content)   # Brackets and braces
         
         # Remove standalone colons that don't make sense in speech
         content = re.sub(r'\s*:\s*$', '.', content, flags=re.MULTILINE)
         
         return content.strip()
+
+    def _preserve_table_structures(self, content: str) -> str:
+        """Detect and convert tables into conversational explanations."""
+        # First, look for specific Microsoft Learn table patterns
+        content = self._handle_microsoft_learn_tables(content)
+        
+        # Then look for generic table patterns
+        lines = content.split('\n')
+        table_sections = []
+        current_table = []
+        in_table = False
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            
+            # Detect table start - line with multiple pipes or consistent separators
+            if self._is_table_header_or_separator(line):
+                if not in_table:
+                    in_table = True
+                    current_table = []
+                continue
+            
+            # If we're in a table and find a data row
+            elif in_table and self._is_table_row(line):
+                current_table.append(line)
+            
+            # End of table - empty line or non-table content
+            elif in_table:
+                if current_table:
+                    table_explanation = self._convert_table_to_explanation(current_table)
+                    table_sections.append((i - len(current_table), table_explanation))
+                in_table = False
+                current_table = []
+        
+        # Handle table at end of content
+        if in_table and current_table:
+            table_explanation = self._convert_table_to_explanation(current_table)
+            table_sections.append((len(lines) - len(current_table), table_explanation))
+        
+        # Replace tables in reverse order to maintain line numbers
+        for start_line, explanation in reversed(table_sections):
+            # Find the original table bounds
+            table_start = start_line
+            table_end = start_line
+            
+            # Find where the table actually ends
+            for j in range(start_line, len(lines)):
+                if self._is_table_row(lines[j].strip()) or self._is_table_header_or_separator(lines[j].strip()):
+                    table_end = j + 1
+                else:
+                    break
+            
+            # Replace the table lines with the explanation
+            lines[table_start:table_end] = [explanation]
+        
+        return '\n'.join(lines)
+
+    def _handle_microsoft_learn_tables(self, content: str) -> str:
+        """Handle Microsoft Learn specific table patterns."""
+        # Pattern 1: Role table with Global Administrator, User Administrator, etc.
+        # More flexible pattern that looks for role descriptions
+        roles_pattern = r'(Global Administrator[^\.]*?Manage access to all administrative features[^\.]*?User Administrator[^\.]*?Billing Administrator[^\.]*?)'
+        
+        def replace_roles_table(match):
+            table_text = match.group(1)
+            
+            # Create engaging role explanations
+            role_explanations = []
+            
+            role_explanations.append("Let me break down these essential Microsoft Entra roles that you'll encounter most often:")
+            
+            role_explanations.append("First up is the Global Administrator role - and wow, this one is powerful! The Global Administrator has manage access to all administrative features in Microsoft Entra ID and any services that connect to it. Here's something interesting: whoever signs up for the Microsoft Entra tenant automatically becomes the first Global Administrator. They can assign administrator roles to other people and even reset passwords for any user, including other administrators.")
+            
+            role_explanations.append("Next, we have the User Administrator role, which is really practical for everyday operations. This role is perfect for managing day-to-day user needs - you can create and manage all aspects of users and groups, handle support tickets, monitor service health, and change passwords for regular users, helpdesk administrators, and other user administrators.")
+            
+            role_explanations.append("Finally, there's the Billing Administrator role, which focuses on the financial side of things. This role lets you make purchases, manage subscriptions, handle support tickets, and monitor service health - basically everything related to costs and billing.")
+            
+            return " ".join(role_explanations)
+        
+        content = re.sub(roles_pattern, replace_roles_table, content, flags=re.DOTALL | re.IGNORECASE)
+        
+        # Alternative pattern for roles - look for key phrases
+        alt_roles_pattern = r'(following table describes a few of the more important microsoft entra roles.*?(?:Global Administrator|User Administrator|Billing Administrator).*?(?:In the Azure portal|Differences between))'
+        
+        def replace_alt_roles_table(match):
+            role_explanations = []
+            role_explanations.append("Here are the key Microsoft Entra roles you need to understand:")
+            
+            role_explanations.append("The Global Administrator role is the most powerful - it can manage access to all administrative features in Microsoft Entra ID and connected services. The person who creates the tenant becomes the first Global Administrator, and they can assign roles to others and reset any user's password.")
+            
+            role_explanations.append("The User Administrator role handles day-to-day user management - creating and managing users and groups, handling support tickets, monitoring service health, and changing passwords for most users.")
+            
+            role_explanations.append("The Billing Administrator role focuses on financial operations - making purchases, managing subscriptions, handling billing-related support tickets, and monitoring service health.")
+            
+            return " ".join(role_explanations)
+        
+        content = re.sub(alt_roles_pattern, replace_alt_roles_table, content, flags=re.DOTALL | re.IGNORECASE)
+        
+        # Pattern 2: Azure vs Entra roles comparison table
+        comparison_pattern = r'(Azure roles.*?Microsoft Entra roles.*?Manage access to Azure resources.*?Manage access to Microsoft Entra resources.*?)(?=Do Azure roles|$)'
+        
+        def replace_comparison_table(match):
+            return "Let me break down the key differences between Azure roles and Microsoft Entra roles: Azure roles manage access to Azure resources like virtual machines and storage accounts, while Microsoft Entra roles manage access to Microsoft Entra resources like users and groups. Both support custom roles, but they have different scopes - Azure roles can be applied at multiple levels like management groups, subscriptions, and resource groups, while Microsoft Entra roles are typically at the tenant level. You can access Azure role information through the Azure portal, CLI, PowerShell, and REST APIs, while Microsoft Entra role information is available through the Azure admin portal, Microsoft 365 admin center, and Microsoft Graph."
+        
+        content = re.sub(comparison_pattern, replace_comparison_table, content, flags=re.DOTALL | re.IGNORECASE)
+        
+        return content
+
+    def _is_table_header_or_separator(self, line: str) -> bool:
+        """Check if a line looks like a table header or separator."""
+        if not line:
+            return False
+        
+        # Common table separator patterns
+        separator_patterns = [
+            r'^[\s\-\|:]+$',  # Lines with dashes, pipes, colons
+            r'^\|[\s\-\|:]+\|$',  # Markdown table separators
+        ]
+        
+        for pattern in separator_patterns:
+            if re.match(pattern, line):
+                return True
+        
+        # Header pattern - line with multiple words separated by pipes or tabs
+        if '|' in line or '\t' in line:
+            parts = re.split(r'[\|\t]', line)
+            if len(parts) >= 2 and sum(1 for p in parts if p.strip()) >= 2:
+                return True
+        
+        return False
+
+    def _is_table_row(self, line: str) -> bool:
+        """Check if a line looks like a table data row."""
+        if not line:
+            return False
+        
+        # Look for patterns that suggest tabular data
+        if '|' in line or '\t' in line:
+            parts = re.split(r'[\|\t]', line)
+            # Must have at least 2 columns with content
+            content_parts = [p.strip() for p in parts if p.strip()]
+            return len(content_parts) >= 2
+        
+        return False
+
+    def _convert_table_to_explanation(self, table_rows: List[str]) -> str:
+        """Convert table rows into conversational explanation."""
+        if not table_rows:
+            return ""
+        
+        # Parse the table structure
+        parsed_rows = []
+        for row in table_rows:
+            if '|' in row:
+                columns = [col.strip() for col in row.split('|') if col.strip()]
+            elif '\t' in row:
+                columns = [col.strip() for col in row.split('\t') if col.strip()]
+            else:
+                continue
+            
+            if columns:
+                parsed_rows.append(columns)
+        
+        if not parsed_rows:
+            return ""
+        
+        # Generate conversational explanation
+        explanations = []
+        
+        # Try to identify if this looks like a roles/permissions table
+        first_row = parsed_rows[0]
+        looks_like_roles = any(keyword in str(first_row).lower() for keyword in 
+                             ['role', 'permission', 'access', 'admin', 'user', 'manage'])
+        
+        if looks_like_roles:
+            explanations.append("Let me break down these important roles for you:")
+            
+            for i, row in enumerate(parsed_rows):
+                if len(row) >= 2:
+                    role_name = row[0]
+                    description = row[1] if len(row) > 1 else ""
+                    additional_info = " ".join(row[2:]) if len(row) > 2 else ""
+                    
+                    if role_name and description:
+                        explanation = f"The {role_name} role is really important - {description}"
+                        if additional_info:
+                            explanation += f" {additional_info}"
+                        explanations.append(explanation)
+        else:
+            # Generic table explanation
+            explanations.append("Here are the key details from this comparison:")
+            
+            for row in parsed_rows:
+                if len(row) >= 2:
+                    explanations.append(f"For {row[0]}: {' '.join(row[1:])}")
+        
+        return " ".join(explanations)
     
     def _break_into_sections(self, content: str) -> List[str]:
         """Break content into logical sections for narrative flow."""
@@ -317,14 +516,31 @@ class ScriptProcessor:
                      "Building on that idea, Sarah..."]),
         ]
         
+        # Special conversation starters for structured content like tables/lists
+        table_starters = [
+            ("Sarah", ["Mike, I think this is where it gets really practical. Let's break down these different options."]),
+            ("Mike", ["Absolutely, Sarah! These distinctions are super important to understand."]),
+            ("Sarah", ["This is exactly the kind of detail that helps people make the right decisions!"]),
+            ("Mike", ["You're right, Sarah. Let me walk through each of these because they all serve different purposes."]),
+        ]
+        
         # Generate more natural back-and-forth
         for i, section in enumerate(sections):
-            if i < len(conversation_starters):
+            # Detect if this section has structured content (tables, roles, etc.)
+            has_structured_content = self._has_structured_content(section)
+            
+            if has_structured_content and i < len(table_starters):
+                speaker, starters = table_starters[i]
+                starter = starters[0]
+            elif i < len(conversation_starters):
                 speaker, starters = conversation_starters[i]
                 starter = starters[i % len(starters)]
             else:
                 speaker = "Sarah" if i % 2 == 0 else "Mike"
-                starter = "Let me continue with that thought..." if i % 2 == 0 else "Building on that..."
+                if has_structured_content:
+                    starter = "Now this is where it gets interesting..." if i % 2 == 0 else "Let me break this down for you..."
+                else:
+                    starter = "Let me continue with that thought..." if i % 2 == 0 else "Building on that..."
             
             # Process the section content
             conversational_content = self._make_conversational(section)
@@ -333,21 +549,51 @@ class ScriptProcessor:
             exchange = f"{speaker}: {starter} {conversational_content}"
             exchanges.append(exchange)
             
-            # Add natural responses between major sections
+            # Add natural responses between major sections, especially for structured content
             if i < len(sections) - 1 and len(section) > 300:
                 other_speaker = "Mike" if speaker == "Sarah" else "Sarah"
-                responses = [
-                    "That's really insightful!",
-                    "I hadn't thought about it that way.",
-                    "That's a great explanation!",
-                    "This is making a lot of sense now.",
-                    "Perfect! That really clarifies things.",
-                    "Wow, that's actually pretty cool!"
-                ]
+                
+                if has_structured_content:
+                    responses = [
+                        "Wow, that breakdown really helps clarify the differences!",
+                        "That's such a useful way to think about it!",
+                        "Perfect! Those distinctions are so important.",
+                        "I love how you explained each role - that makes it so much clearer!",
+                        "Those examples really bring it to life!",
+                        "That's exactly what people need to know!"
+                    ]
+                else:
+                    responses = [
+                        "That's really insightful!",
+                        "I hadn't thought about it that way.",
+                        "That's a great explanation!",
+                        "This is making a lot of sense now.",
+                        "Perfect! That really clarifies things.",
+                        "Wow, that's actually pretty cool!"
+                    ]
                 response = f"{other_speaker}: {responses[i % len(responses)]}"
                 exchanges.append(response)
         
         return exchanges
+
+    def _has_structured_content(self, section: str) -> bool:
+        """Check if a section contains structured content like tables or role descriptions."""
+        indicators = [
+            "role is really important",  # Our table conversion marker
+            "let me break down these",   # Our table conversion marker
+            "here are the key details",  # Our table conversion marker
+            ": ",  # Multiple colons suggest definitions/descriptions
+            "permissions",
+            "administrator",
+            "manage",
+            "access to"
+        ]
+        
+        section_lower = section.lower()
+        # Check for multiple indicators of structured content
+        indicator_count = sum(1 for indicator in indicators if indicator in section_lower)
+        
+        return indicator_count >= 2 or "role is really important" in section_lower
     
     def _generate_dynamic_conclusion(self, title: str, sections: List[str]) -> str:
         """Generate a dynamic conclusion that recaps key points."""
