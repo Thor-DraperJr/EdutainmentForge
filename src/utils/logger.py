@@ -75,3 +75,7 @@ def get_logger(name: str = None) -> logging.Logger:
         name = frame.f_globals.get('__name__', 'unknown')
     
     return logging.getLogger(f"edutainment_forge.{name}")
+
+
+# Create default logger instance for module imports
+logger = setup_logger()

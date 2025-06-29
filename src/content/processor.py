@@ -168,56 +168,20 @@ class ScriptProcessor:
         return "\n".join(script_parts)
     
     def _generate_dynamic_introduction(self, title: str, sections: List[str]) -> str:
-        """Generate a dynamic introduction that previews the content."""
-        # Extract key topics from the first section for preview
-        preview_text = sections[0][:200] if sections else ""
-        key_concepts = self._extract_key_concepts(preview_text)
-        
+        """Generate a concise introduction that gets to the content quickly."""
         intro_lines = []
         
-        # Create engaging intro dialogue
-        intro_lines.append("Sarah: Welcome to EdutainmentForge! I'm Sarah, and I'm here with my fantastic co-host Mike.")
-        intro_lines.append("Mike: Hey there, everyone! Mike here, and wow, do we have an exciting topic for you today!")
-        
-        # Make the topic introduction more engaging based on content
-        if any(term in title.lower() for term in ['azure', 'cloud', 'microsoft']):
-            intro_lines.append(f"Sarah: So Mike, today we're diving into {title}, and I have to say, the cloud space is moving so fast these days!")
-            intro_lines.append("Mike: You're absolutely right, Sarah! This is such a hot topic right now. I think our listeners are going to love learning about this.")
-        elif any(term in title.lower() for term in ['ai', 'machine learning', 'artificial intelligence']):
-            intro_lines.append(f"Sarah: Mike, we're exploring {title} today, and honestly, AI is just everywhere now, isn't it?")
-            intro_lines.append("Mike: It really is, Sarah! And what's amazing is how accessible these technologies are becoming. Let's break this down for our listeners.")
-        else:
-            intro_lines.append(f"Sarah: Today we're talking about {title}, Mike, and I'm genuinely excited to learn more about this.")
-            intro_lines.append("Mike: Me too, Sarah! I've been reading up on this, and there are some really fascinating aspects we need to cover.")
-        
-        # Add a content preview if we have key concepts
-        if key_concepts:
-            intro_lines.append(f"Sarah: What I find really interesting is that we'll be covering things like {', '.join(key_concepts[:3])}.")
-            intro_lines.append("Mike: Exactly! And I think what's going to surprise people is how these concepts all connect together. Shall we jump in?")
-        else:
-            intro_lines.append("Sarah: Should we dive right in?")
-            intro_lines.append("Mike: Absolutely! Let's get started.")
+        # Much shorter, punchy intro
+        intro_lines.append("Sarah: Welcome to EdutainmentForge! I'm Sarah.")
+        intro_lines.append("Mike: And I'm Mike. Today we're covering {}.".format(title))
+        intro_lines.append("Sarah: Let's dive right in!")
         
         return "\n".join(intro_lines)
     
     def _extract_key_concepts(self, text: str) -> List[str]:
         """Extract key concepts from text for previewing content."""
-        # Simple keyword extraction for preview
-        concepts = []
-        
-        # Look for technical terms and important concepts
-        patterns = [
-            r'\b[A-Z][a-z]+ [A-Z][a-z]+\b',  # Proper nouns
-            r'\b[A-Z]{2,}\b',  # Acronyms
-            r'\b(?:Azure|Microsoft|cloud|AI|machine learning|deployment|security|data)\b',  # Key terms
-        ]
-        
-        for pattern in patterns:
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            concepts.extend([match.lower() for match in matches if len(match) > 3])
-        
-        # Remove duplicates and return up to 5 concepts
-        return list(dict.fromkeys(concepts))[:5]
+        # Simplified - no longer used in the short intro
+        return []
     
     def _make_conversational(self, text: str) -> str:
         """Transform formal text into conversational podcast style."""
