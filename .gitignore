@@ -120,6 +120,13 @@ logs/
 *.mp4
 *.flv
 
+# Debug and test files
+debug_*.py
+test_*.py
+*_test.py
+simple_test*.py
+final_integration_test.py
+
 # Environment variables and secrets - NEVER COMMIT
 .env
 .env.local

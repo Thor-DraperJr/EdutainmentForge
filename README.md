@@ -275,19 +275,25 @@ edutainmentforge/
 │   │   ├── processor.py  # Content transformation to dialogue
 │   │   └── ai_enhancer.py # Azure OpenAI script enhancement
 │   ├── audio/            # Multi-voice TTS services
-│   │   ├── speechGeneration.py  # Core TTS with caching
+│   │   ├── tts.py        # Core TTS service with Azure integration
 │   │   ├── multivoice_tts.py   # Multi-voice coordination
-│   │   ├── ssmlFormatter.py    # SSML formatting
-│   │   └── test_speechGeneration.py  # Test suite
+│   │   └── ssmlFormatter.py    # SSML formatting
 │   ├── batch/            # Batch processing utilities
+│   │   └── processor.py  # Batch URL processing
 │   └── utils/            # Core utilities
 │       ├── cache.py      # Audio caching system
-│       ├── logger.py     # Logging configuration
-│       └── config.py     # Environment configuration
+│       ├── config.py     # Environment & Key Vault configuration
+│       ├── keyvault.py   # Azure Key Vault integration
+│       └── logger.py     # Logging configuration
 ├── templates/            # HTML templates for web interface
 ├── output/              # Generated podcasts and scripts
 ├── cache/               # Cached audio segments
+├── logs/                # Application logs
+├── temp/                # Temporary processing files
 ├── azure-*.yaml         # Azure deployment configurations
+├── deploy-to-azure.sh   # Azure deployment script
+├── docker-compose.yml   # Local Docker development
+├── Dockerfile          # Container configuration
 └── requirements.txt     # Python dependencies
 ```
 
