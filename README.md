@@ -86,11 +86,22 @@ EdutainmentForge takes dry, technical Microsoft Learn documentation and transfor
    ```
 
 3. **Configure Azure Services**
+   
+   **For Local Development:**
    ```bash
    cp .env.example .env
    # Edit .env and add your Azure Speech Service credentials
    # Optionally add Azure OpenAI credentials for AI-enhanced dialogue
    ```
+   
+   **For Production (Azure Key Vault):**
+   All secrets are automatically retrieved from Azure Key Vault:
+   - `azure-speech-key` → Azure Speech Services API key
+   - `azure-speech-region` → Azure Speech Services region
+   - `azure-openai-endpoint` → Azure OpenAI endpoint
+   - `azure-openai-api-key` → Azure OpenAI API key
+   - `azure-openai-api-version` → Azure OpenAI API version
+   - `azure-openai-deployment-name` → Azure OpenAI deployment name
 
 4. **Run the application**
    ```bash
@@ -114,17 +125,26 @@ docker-compose up -d
 
 ### Azure Deployment
 
-Deploy to Azure Container Apps for production:
+Deploy to Azure Container Apps with integrated Key Vault secret management:
 
 ```bash
 # Build and push to Azure Container Registry
 ./deploy-to-azure.sh
 
-# Deploy using Azure Container Apps
-az containerapp update --name edutainmentforge-app \
-  --resource-group edutainmentforge-rg \
-  --image edutainmentforge.azurecr.io/edutainmentforge:latest
+# The container app automatically uses:
+# - Azure Key Vault for secret management
+# - Managed Identity for authentication
+# - RBAC permissions for secure access
 ```
+
+**Production Features:**
+- ✅ **Azure Key Vault Integration** - All secrets managed securely
+- ✅ **Managed Identity Authentication** - No stored credentials
+- ✅ **RBAC Security** - Least privilege access
+- ✅ **Environment Variable Fallback** - Robust configuration
+- ✅ **Container Security** - Vulnerability scanning enabled
+
+**Live Production URL:** `https://edutainmentforge-app.happymeadow-088e7533.eastus.azurecontainerapps.io/`
 
 ## 📖 Usage
 
@@ -195,25 +215,53 @@ EdutainmentForge supports Azure OpenAI integration to create more interactive an
 - **Technical Simplification**: Makes complex topics more accessible
 - **Engagement Optimization**: Adds appropriate questions and responses between hosts
 
-## 🔒 Security Best Practices
+## 🔒 Security & Key Vault Integration
 
-### Environment Configuration
-- **Never commit** `.env` files or API keys to version control
-- Use **Azure Key Vault** for production secret management
-- Implement **least privilege** access for Azure resources
-- Enable **Azure Managed Identity** when deployed to Azure
+### Production Secret Management
+EdutainmentForge integrates with **Azure Key Vault** for secure secret management in production environments.
 
-### Production Security
-```bash
-# Use Azure CLI to securely retrieve secrets
-AZURE_SPEECH_KEY=$(az keyvault secret show --vault-name "your-keyvault" --name "speech-api-key" --query "value" -o tsv)
-AZURE_OPENAI_API_KEY=$(az keyvault secret show --vault-name "your-keyvault" --name "openai-api-key" --query "value" -o tsv)
+#### Key Vault Configuration
+The application automatically retrieves secrets from Azure Key Vault when deployed to Azure:
+
+```env
+# Key Vault URL
+AZURE_KEY_VAULT_URL=https://edutainmentforge-kv.vault.azure.net/
 ```
 
-### Container Security
-- Secrets are passed as environment variables in production
-- No hardcoded credentials in Docker images
-- Regular security updates and vulnerability scanning
+#### Stored Secrets
+The following secrets are managed in Azure Key Vault:
+- `azure-speech-key` - Azure Speech Services API key
+- `azure-speech-region` - Azure Speech Services region
+- `azure-openai-endpoint` - Azure OpenAI service endpoint
+- `azure-openai-api-key` - Azure OpenAI API key
+- `azure-openai-api-version` - Azure OpenAI API version
+- `azure-openai-deployment-name` - Azure OpenAI deployment name
+
+#### Fallback Mechanism
+The application uses a robust fallback system:
+1. **Primary**: Azure Key Vault (production)
+2. **Fallback**: Environment variables (development/local)
+
+```python
+# Automatic Key Vault integration with environment fallback
+from utils.config import load_config
+
+config = load_config()  # Automatically loads from Key Vault or env vars
+```
+
+### Azure Managed Identity
+Production deployment uses Azure Managed Identity for secure Key Vault access:
+- **No stored credentials** in container images
+- **System-assigned managed identity** for Key Vault access
+- **RBAC permissions** with "Key Vault Secrets User" role
+
+### Security Best Practices
+- **Never commit** `.env` files or API keys to version control
+- **Azure Key Vault** for all production secrets
+- **Managed Identity** authentication (no stored credentials)
+- **Least privilege** RBAC permissions
+- **Environment variable fallback** for local development
+- **Regular security updates** and vulnerability scanning
 
 ## 📁 Project Structure
 

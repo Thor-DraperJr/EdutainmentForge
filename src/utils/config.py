@@ -1,13 +1,42 @@
 """
 Configuration management for EdutainmentForge.
 
-Handles loading and validating configuration from environment variables.
+Handles loading and validating configuration from environment variables and Azure Key Vault.
 """
 
 import os
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from dotenv import load_dotenv
+
+
+class ConfigError(Exception):
+    """Raised when configuration is invalid or missing."""
+    pass
+
+
+def _get_secret_with_fallback(secret_name: str, env_var_name: str, default: str = None) -> Optional[str]:
+    """
+    Get a secret from Key Vault with environment variable fallback.
+    
+    Args:
+        secret_name: Name of secret in Key Vault (with hyphens)
+        env_var_name: Environment variable name (with underscores)
+        default: Default value if neither source has the value
+        
+    Returns:
+        Secret value or default
+    """
+    # Try Key Vault first if available
+    try:
+        from utils.keyvault import get_secret_with_fallback
+        return get_secret_with_fallback(secret_name, env_var_name) or default
+    except ImportError:
+        # Key Vault libraries not available, use environment variable only
+        return os.getenv(env_var_name, default)
+    except Exception as e:
+        # Key Vault error, fallback to environment variable
+        return os.getenv(env_var_name, default)
 
 
 class ConfigError(Exception):
@@ -17,7 +46,7 @@ class ConfigError(Exception):
 
 def load_config() -> Dict[str, Any]:
     """
-    Load configuration from environment variables.
+    Load configuration from environment variables and Azure Key Vault.
     
     Returns:
         Dictionary containing application configuration
@@ -35,10 +64,12 @@ def load_config() -> Dict[str, Any]:
         "ms_learn_api_key": os.getenv("MS_LEARN_API_KEY"),
         "ms_learn_base_url": os.getenv("MS_LEARN_BASE_URL", "https://docs.microsoft.com"),
         
-        # Text-to-Speech configuration
+        # Text-to-Speech configuration with Key Vault fallback
         "tts_service": os.getenv("TTS_SERVICE", "azure"),
-        "tts_api_key": os.getenv("TTS_API_KEY") or os.getenv("AZURE_SPEECH_KEY"),
-        "tts_region": os.getenv("TTS_REGION") or os.getenv("AZURE_SPEECH_REGION", "eastus"),
+        "tts_api_key": _get_secret_with_fallback("azure-speech-key", "TTS_API_KEY") or 
+                      _get_secret_with_fallback("azure-speech-key", "AZURE_SPEECH_KEY"),
+        "tts_region": _get_secret_with_fallback("azure-speech-region", "TTS_REGION") or 
+                     _get_secret_with_fallback("azure-speech-region", "AZURE_SPEECH_REGION", "eastus"),
         "tts_voice": os.getenv("TTS_VOICE", "en-US-AriaNeural"),
         
         # Multi-voice configuration for podcast hosts
@@ -56,11 +87,14 @@ def load_config() -> Dict[str, Any]:
         "log_level": os.getenv("LOG_LEVEL", "INFO"),
         "temp_directory": Path(os.getenv("TEMP_DIR", "temp")),
         
-        # Azure OpenAI configuration for script enhancement
-        "azure_openai_endpoint": os.getenv("AZURE_OPENAI_ENDPOINT"),
-        "azure_openai_api_key": os.getenv("AZURE_OPENAI_API_KEY"),
-        "azure_openai_api_version": os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01"),
-        "azure_openai_deployment": os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini"),
+        # Azure OpenAI configuration for script enhancement with Key Vault fallback
+        "azure_openai_endpoint": _get_secret_with_fallback("azure-openai-endpoint", "AZURE_OPENAI_ENDPOINT"),
+        "azure_openai_api_key": _get_secret_with_fallback("azure-openai-api-key", "AZURE_OPENAI_API_KEY"),
+        "azure_openai_api_version": _get_secret_with_fallback("azure-openai-api-version", "AZURE_OPENAI_API_VERSION", "2024-02-01"),
+        "azure_openai_deployment": _get_secret_with_fallback("azure-openai-deployment-name", "AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini"),
+        
+        # Key Vault configuration
+        "azure_key_vault_url": os.getenv("AZURE_KEY_VAULT_URL", "https://edutainmentforge-kv.vault.azure.net/"),
     }
     
     # Validate required configuration
@@ -90,11 +124,24 @@ def get_sample_config() -> str:
 MS_LEARN_API_KEY=your_ms_learn_api_key_here
 MS_LEARN_BASE_URL=https://docs.microsoft.com
 
-# Text-to-Speech Service (required)
+# Text-to-Speech Service (required - can be stored in Azure Key Vault)
 TTS_SERVICE=azure
-TTS_API_KEY=your_azure_speech_key_here
-TTS_REGION=eastus
-TTS_VOICE=en-US-AriaNeural
+AZURE_SPEECH_KEY=your_azure_speech_key_here
+AZURE_SPEECH_REGION=eastus
+
+# Multi-voice configuration
+SARAH_VOICE=en-US-AriaNeural
+MIKE_VOICE=en-US-DavisNeural
+NARRATOR_VOICE=en-US-JennyNeural
+
+# Azure OpenAI (optional - can be stored in Azure Key Vault)
+AZURE_OPENAI_ENDPOINT=https://your-openai-resource.openai.azure.com/
+AZURE_OPENAI_API_KEY=your_azure_openai_api_key
+AZURE_OPENAI_API_VERSION=2024-02-15-preview
+AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+
+# Azure Key Vault (for production secret management)
+AZURE_KEY_VAULT_URL=https://your-keyvault.vault.azure.net/
 
 # Audio Settings
 AUDIO_FORMAT=mp3
