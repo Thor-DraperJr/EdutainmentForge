@@ -30,7 +30,6 @@ def process_content_to_podcast(content_text, title, voice=None, output_name=None
         
         from content.processor import ScriptProcessor
         from audio.tts import create_tts_service
-        from audio.multivoice_tts import create_multivoice_tts_service
         from utils.config import load_config
         
         print(f"📝 Processing content: {title}")
@@ -83,10 +82,16 @@ def process_content_to_podcast(content_text, title, voice=None, output_name=None
         # Generate audio
         audio_path = output_dir / f"{output_name}.wav"
         
-        # Use multivoice TTS for better quality
-        multivoice_tts = create_multivoice_tts_service(config)
+        from utils.premium_integration import get_premium_services
+        
+        # Get premium services (AI enhancer and TTS)
+        ai_enhancer, multivoice_tts = get_premium_services()
+        
+        # Use multivoice TTS for better quality (premium or standard)
         if multivoice_tts:
-            multivoice_tts.generate_multivoice_audio(script, str(audio_path))
+            success = multivoice_tts.synthesize_dialogue_script(script, audio_path)
+            if not success:
+                raise Exception("Multi-voice TTS generation failed")
         else:
             # Fallback to single voice
             tts_service.generate_audio(script, str(audio_path))
@@ -111,7 +116,7 @@ def process_url_to_podcast(url, voice=None, output_name=None, ai_enhance=False):
         from content.fetcher import MSLearnFetcher
         from content.processor import ScriptProcessor
         from audio.tts import create_tts_service
-        from audio.multivoice_tts import create_multivoice_tts_service
+        from audio import create_best_multivoice_tts_service
         from utils.config import load_config
         
         print(f"🔗 Processing URL: {url}")
@@ -163,9 +168,9 @@ def process_url_to_podcast(url, voice=None, output_name=None, ai_enhance=False):
         script_path.write_text(script)
         print(f"📝 Script saved: {script_path}")
         
-        # Generate audio with multi-voice support
+        # Generate audio with multi-voice support (premium or standard)
         print("🎵 Generating multi-voice audio with Sarah & Mike...")
-        multivoice_tts = create_multivoice_tts_service(config)
+        multivoice_tts = create_best_multivoice_tts_service(config)
         audio_path = output_dir / f"{output_name}.wav"
         success = multivoice_tts.synthesize_dialogue_script(script, audio_path)
         
@@ -242,11 +247,22 @@ Examples:
     # Load environment
     load_env()
     
-    # Check if Azure Speech is configured
-    if not os.getenv('TTS_API_KEY'):
-        print("❌ Azure Speech Service not configured!")
-        print("💡 Set TTS_API_KEY in your .env file")
-        print("📖 See docs/azure-speech-setup.md for setup instructions")
+    # Add src to path for config loading
+    src_path = Path(__file__).parent / "src"
+    sys.path.insert(0, str(src_path))
+    
+    from utils.config import load_config
+    
+    # Check if Azure Speech is configured using the config system
+    try:
+        config = load_config()
+        if not config.get('tts_api_key'):
+            print("❌ Azure Speech Service not configured!")
+            print("💡 Set AZURE_SPEECH_KEY in your .env file")
+            print("📖 See DEPLOYMENT.md for setup instructions")
+            return False
+    except Exception as e:
+        print(f"❌ Configuration error: {e}")
         return False
     
     if args.list_voices:

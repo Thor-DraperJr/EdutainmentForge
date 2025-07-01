@@ -1,0 +1,34 @@
+# Include package metadata
+include LICENSE
+include README.md
+include CHANGELOG.md
+include DEPLOYMENT.md
+include requirements.txt
+include requirements-dev.txt
+
+# Include Azure configuration files
+include azure-infrastructure.bicep
+include azure-container-app.yaml
+include azure.yaml
+include deploy-to-azure.sh
+include docker-helper.sh
+
+# Include templates
+recursive-include templates *.html *.css *.js
+
+# Include Docker files
+include Dockerfile
+include docker-compose.yml
+include .dockerignore
+
+# Exclude development and build files
+exclude .env
+exclude .env.example
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * .pytest_cache
+recursive-exclude cache *
+recursive-exclude output *
+recursive-exclude temp *
+recursive-exclude logs *
+recursive-exclude .git *

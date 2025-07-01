@@ -2,7 +2,7 @@ apiVersion: 2022-10-01
 location: eastus2
 type: Microsoft.App/containerApps
 properties:
-  managedEnvironmentId: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.App/managedEnvironments/{environment-name}
+  managedEnvironmentId: /subscriptions/e440a65b-7418-4865-9821-88e411ffdd5b/resourceGroups/edutainmentforge-rg/providers/Microsoft.App/managedEnvironments/edutainmentforge-env
   configuration:
     ingress:
       external: true
@@ -11,35 +11,68 @@ properties:
       allowInsecure: false
     secrets:
       - name: azure-speech-key
-        value: "{azure-speech-service-key}"
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-speech-key"
+        identity: "system"
       - name: azure-openai-api-key
-        value: "{azure-openai-api-key}"
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-openai-api-key"
+        identity: "system"
+      - name: azure-openai-endpoint
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-openai-endpoint"
+        identity: "system"
+      - name: acr-password
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/acr-password"
+        identity: "system"
+      - name: sarah-voice
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/sarah-voice"
+        identity: "system"
+      - name: mike-voice
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/mike-voice"
+        identity: "system"
     registries:
-      - server: "{your-acr-name}.azurecr.io"
-        identity: "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identity-name}"
+      - server: "edutainmentforge.azurecr.io"
+        username: "edutainmentforge"
+        passwordSecretRef: "acr-password"
   template:
     containers:
       - name: edutainmentforge
-        image: "{your-acr-name}.azurecr.io/edutainmentforge:latest"
+        image: "edutainmentforge.azurecr.io/edutainmentforge:latest"
         env:
+          - name: PORT
+            value: "5000"
+          - name: TTS_PROVIDER
+            value: "azure"
           - name: AZURE_SPEECH_KEY
             secretRef: azure-speech-key
           - name: AZURE_SPEECH_REGION
             value: "eastus2"
           - name: AZURE_OPENAI_ENDPOINT
-            value: "https://edutainmentforge-openai.openai.azure.com/"
+            secretRef: azure-openai-endpoint
           - name: AZURE_OPENAI_API_KEY
             secretRef: azure-openai-api-key
           - name: AZURE_OPENAI_API_VERSION
             value: "2024-02-15-preview"
           - name: AZURE_OPENAI_DEPLOYMENT_NAME
             value: "gpt-4o-mini"
+          - name: AZURE_OPENAI_GPT4_DEPLOYMENT_NAME
+            value: "gpt-4o"
+          - name: USE_PREMIUM_AI
+            value: "true"
+          - name: USE_AI_ENHANCEMENT
+            value: "true"
+          - name: USE_PREMIUM_VOICES
+            value: "true"
+          - name: USE_VOICE_STYLES
+            value: "true"
+          - name: ENABLE_DYNAMIC_SSML
+            value: "true"
+          - name: LOG_LEVEL
+            value: "INFO"
           - name: FLASK_ENV
             value: "production"
           - name: SARAH_VOICE
-            value: "en-US-AriaNeural"
+            secretRef: sarah-voice
           - name: MIKE_VOICE
-            value: "en-US-DavisNeural"
+            secretRef: mike-voice
         resources:
           cpu: 1.0
           memory: 2.0Gi

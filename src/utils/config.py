@@ -29,7 +29,7 @@ def _get_secret_with_fallback(secret_name: str, env_var_name: str, default: str 
     """
     # Try Key Vault first if available
     try:
-        from utils.keyvault import get_secret_with_fallback
+        from .keyvault import get_secret_with_fallback
         return get_secret_with_fallback(secret_name, env_var_name) or default
     except ImportError:
         # Key Vault libraries not available, use environment variable only
@@ -72,10 +72,11 @@ def load_config() -> Dict[str, Any]:
                      _get_secret_with_fallback("azure-speech-region", "AZURE_SPEECH_REGION", "eastus"),
         "tts_voice": os.getenv("TTS_VOICE", "en-US-AriaNeural"),
         
-        # Multi-voice configuration for podcast hosts
-        "sarah_voice": os.getenv("SARAH_VOICE", "en-US-AriaNeural"),
-        "mike_voice": os.getenv("MIKE_VOICE", "en-US-DavisNeural"),
-        "narrator_voice": os.getenv("NARRATOR_VOICE", "en-US-JennyNeural"),
+        # Multi-voice configuration for podcast hosts (premium voices) with Key Vault fallback
+        "sarah_voice": _get_secret_with_fallback("sarah-voice", "SARAH_VOICE", "en-US-EmmaNeural"),
+        "mike_voice": _get_secret_with_fallback("mike-voice", "MIKE_VOICE", "en-US-DavisNeural"),
+        "narrator_voice": os.getenv("NARRATOR_VOICE", "en-US-EmmaNeural"),
+        "use_premium_voices": os.getenv("USE_PREMIUM_VOICES", "true").lower() == "true",
         
         # Audio configuration
         "audio_format": os.getenv("AUDIO_FORMAT", "mp3"),
@@ -129,10 +130,11 @@ TTS_SERVICE=azure
 AZURE_SPEECH_KEY=your_azure_speech_key_here
 AZURE_SPEECH_REGION=eastus
 
-# Multi-voice configuration
-SARAH_VOICE=en-US-AriaNeural
+# Multi-voice configuration (premium voices recommended)
+SARAH_VOICE=en-US-EmmaNeural
 MIKE_VOICE=en-US-DavisNeural
-NARRATOR_VOICE=en-US-JennyNeural
+NARRATOR_VOICE=en-US-EmmaNeural
+USE_PREMIUM_VOICES=true
 
 # Azure OpenAI (optional - can be stored in Azure Key Vault)
 AZURE_OPENAI_ENDPOINT=https://your-openai-resource.openai.azure.com/

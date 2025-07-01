@@ -33,12 +33,31 @@ class MultiVoiceTTSService:
         if not self.api_key:
             raise TTSError("TTS API key is required")
         
-        # Define voice mappings for each speaker - use config values or defaults
-        self.speaker_voices = {
-            'Sarah': config.get('sarah_voice', 'en-US-AriaNeural'),  # Female voice
-            'Mike': config.get('mike_voice', 'en-US-DavisNeural'),   # Male voice
-            'Narrator': config.get('narrator_voice', 'en-US-JennyNeural')  # Neutral voice
-        }
+        # Define voice mappings for each speaker - now with S0 tier premium features
+        use_premium_voices = config.get('use_premium_voices', os.getenv('USE_PREMIUM_VOICES', 'true').lower() == 'true')
+        
+        if use_premium_voices:
+            # Premium neural voices optimized for podcast content with natural speech patterns
+            self.speaker_voices = {
+                'Sarah': config.get('sarah_voice', 'en-US-EmmaNeural'),     # Premium female voice, natural and conversational
+                'Mike': config.get('mike_voice', 'en-US-DavisNeural'),     # Premium male voice, conversational 
+                'Narrator': config.get('narrator_voice', 'en-US-EmmaNeural') # Premium female voice, clear and professional
+            }
+            # Enable premium voice styles and emotional range
+            self.voice_styles = {
+                'Sarah': 'cheerful',         # Engaging, enthusiastic style for learning content
+                'Mike': 'friendly',          # Warm, approachable tone for explanations
+                'Narrator': 'newscast'       # Clear, professional delivery for important points
+            }
+            logger.info("🎤 Using premium S0 neural voices with enhanced styles")
+        else:
+            # Basic neural voices without premium styling
+            self.speaker_voices = {
+                'Sarah': config.get('sarah_voice', 'en-US-AriaNeural'),     # Basic female voice
+                'Mike': config.get('mike_voice', 'en-US-DavisNeural'),      # Basic male voice
+                'Narrator': config.get('narrator_voice', 'en-US-JennyNeural')  # Basic neutral voice
+            }
+            self.voice_styles = {}  # No premium styles on basic tier
         
         # Cache TTS service instances to avoid recreation
         self._tts_cache = {}
@@ -47,13 +66,14 @@ class MultiVoiceTTSService:
         logger.info(f"Using API key ending in: ...{self.api_key[-4:] if self.api_key else 'None'}")
         logger.info(f"Using region: {self.region}")
     
-    def synthesize_dialogue_script(self, script: str, output_path: Path) -> bool:
+    def synthesize_dialogue_script(self, script: str, output_path: Path, progress_callback=None) -> bool:
         """
         Convert a dialogue script to audio with multiple voices.
         
         Args:
             script: Script text with speaker labels (e.g., "Sarah: Hello everyone!")
             output_path: Path where final audio should be saved
+            progress_callback: Optional callback function to report progress (progress_percent, message)
             
         Returns:
             True if successful, False otherwise
@@ -65,12 +85,26 @@ class MultiVoiceTTSService:
             if not dialogue_segments:
                 logger.error("No dialogue segments found in script")
                 return False
-            
+
+            if progress_callback:
+                try:
+                    progress_callback(72, f"Generating {len(dialogue_segments)} audio segments...")
+                except Exception as e:
+                    logger.warning(f"Progress callback error: {e}")
+
             # Generate audio for each segment
             audio_segments = []
             temp_dir = Path(tempfile.mkdtemp())
             
             for i, (speaker, text) in enumerate(dialogue_segments):
+                # Update progress for each segment (with error handling)
+                try:
+                    if progress_callback:
+                        segment_progress = 72 + (20 * i / len(dialogue_segments))  # 72-92% for TTS generation
+                        progress_callback(int(segment_progress), f"Generating audio for {speaker} ({i+1}/{len(dialogue_segments)})...")
+                except Exception as e:
+                    logger.warning(f"Progress callback error: {e}")
+                
                 temp_file = temp_dir / f"segment_{i:03d}.wav"
                 
                 # Get voice for this speaker
@@ -78,10 +112,14 @@ class MultiVoiceTTSService:
                 
                 # Get or create TTS service for this voice (cached)
                 if voice not in self._tts_cache:
+                    # Get voice style for premium features
+                    voice_style = self.voice_styles.get(speaker) if hasattr(self, 'voice_styles') else None
+                    
                     self._tts_cache[voice] = AzureTTSService(
                         api_key=self.api_key,
                         region=self.region,
-                        voice=voice
+                        voice=voice,
+                        voice_style=voice_style
                     )
                 
                 tts_service = self._tts_cache[voice]
@@ -108,12 +146,30 @@ class MultiVoiceTTSService:
                     return False
             
             # Combine all audio segments
+            if progress_callback:
+                try:
+                    progress_callback(92, "Assembling audio segments...")
+                except Exception as e:
+                    logger.warning(f"Progress callback error: {e}")
+                
             if audio_segments:
                 combined_audio = sum(audio_segments)
+                
+                if progress_callback:
+                    try:
+                        progress_callback(96, "Finalizing audio file...")
+                    except Exception as e:
+                        logger.warning(f"Progress callback error: {e}")
                 
                 # Export the final audio
                 combined_audio.export(str(output_path), format="wav")
                 logger.info(f"Successfully created multi-voice podcast: {output_path}")
+                
+                if progress_callback:
+                    try:
+                        progress_callback(98, "Cleaning up temporary files...")
+                    except Exception as e:
+                        logger.warning(f"Progress callback error: {e}")
                 
                 # Cleanup temp files
                 for temp_file in temp_dir.glob("*.wav"):

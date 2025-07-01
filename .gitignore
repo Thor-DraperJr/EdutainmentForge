@@ -112,6 +112,7 @@ dmypy.json
 
 # EdutainmentForge specific
 output/
+cache/
 temp/
 logs/
 *.mp3
@@ -120,10 +121,8 @@ logs/
 *.mp4
 *.flv
 
-# Debug and test files
+# Debug and legacy test files (keep proper tests/)
 debug_*.py
-test_*.py
-*_test.py
 simple_test*.py
 final_integration_test.py
 
@@ -137,3 +136,40 @@ final_integration_test.py
 .azure/config
 azure-secrets.yaml
 *.azureauth
+
+# Development tools
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.tox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE specific
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# EdutainmentForge specific
+*.backup
+temp_*.txt
+fix_*.py
+test_*.py
+cache/*.mp3
+deprecated/
+output/archive/
+.env.backup

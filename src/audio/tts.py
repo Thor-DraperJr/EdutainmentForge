@@ -34,6 +34,49 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 
+class PremiumVoiceConfig:
+    """Configuration for premium neural voices with emotional styles."""
+    
+    VOICE_STYLES = {
+        "conversational": "Natural podcast conversation",
+        "excited": "For highlighting key concepts",  
+        "friendly": "Warm and approachable",
+        "empathetic": "For complex explanations",
+        "curious": "For asking questions"
+    }
+    
+    PREMIUM_VOICES = {
+        "sarah": {
+            "voice": "en-US-AriaNeural",
+            "styles": ["conversational", "excited", "friendly", "empathetic"]
+        },
+        "mike": {
+            "voice": "en-US-DavisNeural", 
+            "styles": ["conversational", "curious", "friendly"]
+        }
+    }
+    
+    @staticmethod
+    def get_voice_with_style(speaker: str, content_type: str = "normal") -> tuple:
+        """Get voice and style based on speaker and content type."""
+        speaker_config = PremiumVoiceConfig.PREMIUM_VOICES.get(speaker.lower(), 
+                                                               PremiumVoiceConfig.PREMIUM_VOICES["sarah"])
+        
+        # Select style based on content type
+        style_map = {
+            "question": "curious",
+            "exciting": "excited", 
+            "explanation": "empathetic",
+            "normal": "conversational"
+        }
+        
+        style = style_map.get(content_type, "conversational")
+        if style not in speaker_config["styles"]:
+            style = "conversational"
+            
+        return speaker_config["voice"], style
+
+
 class TTSError(Exception):
     """Raised when text-to-speech conversion fails."""
     pass
@@ -63,9 +106,9 @@ class TTSService(ABC):
 
 
 class AzureTTSService(TTSService):
-    """Azure Cognitive Services Text-to-Speech implementation."""
+    """Azure Cognitive Services Text-to-Speech implementation with premium voice styles."""
     
-    def __init__(self, api_key: str, region: str, voice: str = "en-US-AriaNeural"):
+    def __init__(self, api_key: str, region: str, voice: str = "en-US-AriaNeural", voice_style: str = None):
         """
         Initialize Azure TTS service.
         
@@ -73,6 +116,7 @@ class AzureTTSService(TTSService):
             api_key: Azure Speech Services API key
             region: Azure region (e.g., 'eastus')
             voice: Voice name to use for synthesis
+            voice_style: Premium voice style (conversation, friendly, newscast, etc.)
         """
         if not AZURE_AVAILABLE:
             raise TTSError("Azure Speech SDK not available. Install with: pip install azure-cognitiveservices-speech")
@@ -80,6 +124,7 @@ class AzureTTSService(TTSService):
         self.api_key = api_key
         self.region = region
         self.voice = voice
+        self.voice_style = voice_style
         
         # Initialize speech config
         self.speech_config = speechsdk.SpeechConfig(
@@ -89,9 +134,28 @@ class AzureTTSService(TTSService):
         self.speech_config.speech_synthesis_voice_name = voice
         
         logger.info(f"Initialized Azure TTS with voice: {voice}")
+        if voice_style:
+            logger.info(f"Using premium voice style: {voice_style}")
+    
+    def _create_ssml(self, text: str) -> str:
+        """Create SSML with voice style for premium features."""
+        if not self.voice_style:
+            # No style, use plain text
+            return text
+            
+        # Create SSML with voice style (premium S0 feature)
+        ssml = f"""<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" 
+                   xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">
+            <voice name="{self.voice}">
+                <mstts:express-as style="{self.voice_style}">
+                    {text}
+                </mstts:express-as>
+            </voice>
+        </speak>"""
+        return ssml.strip()
     
     def synthesize_text(self, text: str, output_path: Path) -> bool:
-        """Convert text to speech using Azure TTS."""
+        """Convert text to speech using Azure TTS with premium voice styles."""
         try:
             logger.info(f"Synthesizing text to {output_path}")
             
@@ -104,8 +168,14 @@ class AzureTTSService(TTSService):
                 audio_config=audio_config
             )
             
-            # Perform synthesis
-            result = synthesizer.speak_text_async(text).get()
+            # Use SSML if voice style is specified (premium feature)
+            if self.voice_style:
+                ssml = self._create_ssml(text)
+                logger.info(f"Using premium SSML with style: {self.voice_style}")
+                result = synthesizer.speak_ssml_async(ssml).get()
+            else:
+                # Use plain text synthesis
+                result = synthesizer.speak_text_async(text).get()
             
             if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
                 logger.info(f"Successfully synthesized audio: {output_path}")

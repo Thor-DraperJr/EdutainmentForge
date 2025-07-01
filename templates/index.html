@@ -164,6 +164,12 @@
             color: #c62828;
         }
         
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(33, 150, 243, 0.1); }
+            100% { box-shadow: 0 0 0 0 rgba(33, 150, 243, 0); }
+        }
+        
         .progress-bar {
             width: 100%;
             height: 8px;
@@ -337,6 +343,9 @@
             statusDiv.className = 'status processing';
             document.getElementById('audio-container').style.display = 'none';
             
+            // Reset retry counter for new task
+            window.statusRetries = 0;
+            
             try {
                 const response = await fetch('/api/process', {
                     method: 'POST',
@@ -350,7 +359,8 @@
                 
                 if (response.ok) {
                     currentTaskId = data.task_id;
-                    checkStatus();
+                    // Give the backend a moment to initialize before first status check
+                    setTimeout(checkStatus, 1000);
                 } else {
                     showError(data.error);
                 }
@@ -369,31 +379,52 @@
                 
                 if (response.ok) {
                     updateStatus(status);
+                    window.lastKnownStatus = status.status; // Track last known status
+                    window.statusRetries = 0; // Reset retry counter on success
                     
                     if (status.status === 'completed') {
                         showCompleted(status);
-                        clearInterval(statusInterval);
+                        clearTimeout(statusInterval);
                     } else if (status.status === 'error') {
                         showError(status.message);
-                        clearInterval(statusInterval);
+                        clearTimeout(statusInterval);
                     } else {
-                        // Continue checking
-                        statusInterval = setTimeout(checkStatus, 2000);
+                        // Continue checking - use faster polling during audio generation
+                        const pollInterval = status.status === 'generating_audio' ? 1000 : 2000;
+                        statusInterval = setTimeout(checkStatus, pollInterval);
                     }
                 } else {
-                    showError('Failed to get status');
-                    clearInterval(statusInterval);
+                    // If 404, the task might not be ready yet - retry more times during audio generation
+                    const maxRetries = window.lastKnownStatus === 'generating_audio' ? 10 : 5;
+                    if (response.status === 404 && (window.statusRetries || 0) < maxRetries) {
+                        window.statusRetries = (window.statusRetries || 0) + 1;
+                        console.log(`Task not found, retry ${window.statusRetries}/${maxRetries} (last status: ${window.lastKnownStatus || 'unknown'})`);
+                        statusInterval = setTimeout(checkStatus, 4000); // Wait longer for retry
+                    } else {
+                        showError(`Failed to get status (${response.status}): ${status.error || 'Unknown error'}`);
+                        clearTimeout(statusInterval);
+                    }
                 }
                 
             } catch (error) {
+                console.error('Status check error:', error);
                 showError('Network error: ' + error.message);
-                clearInterval(statusInterval);
+                clearTimeout(statusInterval);
             }
         }
 
         function updateStatus(status) {
             document.getElementById('status-message').textContent = status.message;
             document.getElementById('progress-fill').style.width = status.progress + '%';
+            
+            // Add visual indicator for TTS generation phase
+            const statusDiv = document.getElementById('status');
+            if (status.status === 'generating_audio' && status.progress >= 70) {
+                // Add pulsing animation during TTS to show it's actively working
+                statusDiv.style.animation = 'pulse 2s ease-in-out infinite';
+            } else {
+                statusDiv.style.animation = 'none';
+            }
         }
 
         function showCompleted(status) {
@@ -402,17 +433,34 @@
             const audioPlayer = document.getElementById('audio-player');
             
             statusDiv.className = 'status completed';
+            statusDiv.style.animation = 'none'; // Remove any pulse animation
             document.getElementById('status-message').textContent = 
                 `✅ ${status.title} - Podcast ready! (${Math.round(status.file_size / 1024 / 1024 * 10) / 10} MB)`;
             
-            // Set up audio player
-            audioPlayer.src = `/api/audio/${currentTaskId}`;
-            audioContainer.style.display = 'block';
+            // Set up audio player using the correct endpoint (same as library)
+            if (status.audio_filename) {
+                audioPlayer.src = `/api/podcast/${encodeURIComponent(status.audio_filename)}`;
+                audioContainer.style.display = 'block';
+                
+                // Add error handling for audio loading
+                audioPlayer.onerror = function() {
+                    console.error('Audio failed to load, trying alternative endpoint');
+                    // Fallback to task-based endpoint
+                    audioPlayer.src = `/api/audio/${currentTaskId}`;
+                };
+            } else {
+                // Fallback if filename not available
+                audioPlayer.src = `/api/audio/${currentTaskId}`;
+                audioContainer.style.display = 'block';
+            }
             
             // Re-enable form
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = false;
             submitBtn.textContent = '🎵 Generate Another Podcast';
+            
+            // Reset retry counter
+            window.statusRetries = 0;
         }
 
         function showError(message) {

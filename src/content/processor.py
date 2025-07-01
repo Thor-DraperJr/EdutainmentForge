@@ -14,14 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.logger import get_logger
-
-try:
-    from content.ai_enhancer import AIScriptEnhancer, ScriptEnhancementError
-    AI_ENHANCEMENT_AVAILABLE = True
-except ImportError:
-    logger.warning("AI enhancement not available - openai package not installed")
-    AI_ENHANCEMENT_AVAILABLE = False
-
+from utils.premium_integration import get_best_ai_enhancer, is_premium_available
 
 logger = get_logger(__name__)
 
@@ -31,13 +24,18 @@ class ScriptProcessor:
     
     def __init__(self, use_ai_enhancement: bool = True):
         """Initialize the script processor."""
-        self.use_ai_enhancement = use_ai_enhancement and AI_ENHANCEMENT_AVAILABLE
+        self.use_ai_enhancement = use_ai_enhancement
         self.ai_enhancer = None
         
         if self.use_ai_enhancement:
             try:
-                self.ai_enhancer = AIScriptEnhancer()
-                logger.info("AI script enhancement enabled")
+                self.ai_enhancer = get_best_ai_enhancer()
+                if self.ai_enhancer:
+                    enhancement_type = "Premium (GPT-4)" if is_premium_available('ai_enhancement') else "Standard (GPT-4o-mini)"
+                    logger.info(f"AI script enhancement enabled: {enhancement_type}")
+                else:
+                    logger.warning("AI enhancement disabled: No AI service available")
+                    self.use_ai_enhancement = False
             except Exception as e:
                 logger.warning(f"AI enhancement disabled: {e}")
                 self.use_ai_enhancement = False
@@ -94,7 +92,7 @@ class ScriptProcessor:
             'script': script,
             'word_count': word_count,
             'estimated_duration': estimated_duration,
-            'source_url': content['url']
+            'source_url': content.get('url', 'Direct Content')
         }
     
     def _clean_content(self, content: str) -> str:

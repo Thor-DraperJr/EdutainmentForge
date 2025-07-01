@@ -320,11 +320,29 @@ class MSLearnFetcher:
             'Previous unit', 'Continue', 'Need help?', 'See our troubleshooting guide',
             'Was this page helpful?', 'YesNo', 'Content language selector',
             'Your Privacy Choices', 'Previous Versions', 'Blog', 'Contribute',
-            'Privacy', 'Terms of Use', 'Trademarks', '© Microsoft'
+            'Privacy', 'Terms of Use', 'Trademarks', '© Microsoft',
+            # MS Learn progress indicators
+            '100 XP', 'XP', 'Mark as completed', 'Unit completed', 'Module completed',
+            'Progress:', 'You completed', 'minutes to complete', 'Experience Points',
+            'Check your knowledge', 'Knowledge check', 'Save', 'Share', 'Print',
+            'Download', 'Feedback', 'Submit feedback', 'Additional resources',
+            'Prerequisites', 'Learning objectives', 'Summary', 'Module assessment',
+            'Try it yourself', 'Exercise -', 'Exercise:', 'Lab -', 'Lab:', 'Sandbox',
+            'Sign in to save your progress', 'Sign in to track your progress'
         ]
         
         for phrase in unwanted_phrases:
             text = text.replace(phrase, '')
+        
+        # Remove patterns that match MS Learn progress text and UI elements
+        text = re.sub(r'\d+\s*(XP|minutes?)\s*(to complete|earned)?', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Unit \d+ of \d+', '', text)
+        text = re.sub(r'Module \d+ of \d+', '', text)
+        text = re.sub(r'(Completed|Mark as completed)', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Exercise \d+:', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Lab \d+:', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'\d+\s*min\s*module', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Progress:\s*\d+%', '', text, flags=re.IGNORECASE)
         
         # Remove URLs and email addresses
         text = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', '', text)
@@ -444,6 +462,26 @@ class MSLearnFetcher:
         for element in soup(['script', 'style', 'nav', 'footer', 'aside', 'header']):
             element.decompose()
         
+        # Remove MS Learn progress tracking and UI elements
+        ms_learn_ui_selectors = [
+            '.progress-indicator',
+            '.xp-indicator', 
+            '.completion-status',
+            '[class*="progress"]',
+            '[class*="completion"]',
+            '[class*="xp"]',
+            '.badge',
+            '.trophy',
+            '.achievement',
+            '.module-nav',
+            '.unit-nav',
+            '.breadcrumb'
+        ]
+        
+        for selector in ms_learn_ui_selectors:
+            for element in soup.select(selector):
+                element.decompose()
+        
         # Try to find main content area
         content_selectors = [
             '.content',
@@ -475,7 +513,7 @@ class MSLearnFetcher:
         text = re.sub(r'\s+', ' ', text)  # Multiple spaces to single space
         text = re.sub(r'\n\s*\n', '\n\n', text)  # Clean up line breaks
         
-        # Remove common navigation text
+        # Remove common navigation text and MS Learn progress indicators
         unwanted_phrases = [
             'Skip to main content',
             'Table of contents',
@@ -484,11 +522,60 @@ class MSLearnFetcher:
             'Related articles',
             'Microsoft Learn',
             'Training',
-            'Browse all'
+            'Browse all',
+            '100 XP',
+            'XP',
+            'Completed',
+            'Mark as completed',
+            'Unit completed',
+            'Module completed',
+            'Progress:',
+            'You completed',
+            'minutes to complete',
+            'Experience Points',
+            'Check your knowledge',
+            'Knowledge check',
+            'Continue',
+            'Previous',
+            'Save',
+            'Share',
+            'Print',
+            'Download',
+            'Feedback',
+            'Was this page helpful?',
+            'Yes',
+            'No',
+            'Submit feedback',
+            'Additional resources',
+            'Prerequisites',
+            'Learning objectives',
+            'Summary',
+            'View all page feedback',
+            'Module assessment',
+            'Try it yourself',
+            'Exercise -',
+            'Exercise:',
+            'Lab -',
+            'Lab:',
+            'Sandbox',
+            'Sign in to save your progress',
+            'Sign in to track your progress',
+            'This browser is no longer supported',
+            'Upgrade to Microsoft Edge'
         ]
         
         for phrase in unwanted_phrases:
             text = text.replace(phrase, '')
+        
+        # Remove patterns that match MS Learn progress text and UI elements
+        text = re.sub(r'\d+\s*(XP|minutes?)\s*(to complete|earned)?', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Unit \d+ of \d+', '', text)
+        text = re.sub(r'Module \d+ of \d+', '', text)
+        text = re.sub(r'(Completed|Mark as completed)', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Exercise \d+:', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Lab \d+:', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'\d+\s*min\s*module', '', text, flags=re.IGNORECASE)
+        text = re.sub(r'Progress:\s*\d+%', '', text, flags=re.IGNORECASE)
         
         return text.strip()
 

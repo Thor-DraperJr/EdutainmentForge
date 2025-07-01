@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from content.fetcher import MSLearnFetcher
 from content.processor import ScriptProcessor
-from audio.multivoice_tts import create_multivoice_tts_service
+from audio import create_best_multivoice_tts_service
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -37,10 +37,10 @@ class BatchProcessor:
         self.config = config
         self.progress_callback = progress_callback
         
-        # Initialize services
+        # Initialize services (premium or standard)
         self.fetcher = MSLearnFetcher()
         self.processor = ScriptProcessor()
-        self.tts_service = create_multivoice_tts_service(config)
+        self.tts_service = create_best_multivoice_tts_service(config)
         
         self.output_dir = Path("output")
         self.output_dir.mkdir(exist_ok=True)

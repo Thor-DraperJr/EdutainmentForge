@@ -20,14 +20,24 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from content.fetcher import MSLearnFetcher
 from content.processor import ScriptProcessor
 from audio.tts import create_tts_service
-from audio.multivoice_tts import create_multivoice_tts_service
+from audio import create_best_multivoice_tts_service
 from utils.config import load_config
+from utils.premium_integration import print_feature_status
 
 app = Flask(__name__)
 
-# Global storage for processing status and batch jobs
+# Global storage for processing status and batch jobs (with thread-safe access)
+import threading
 processing_status = {}
 batch_jobs = {}
+status_lock = threading.Lock()
+
+def debug_log_status():
+    """Debug function to log current status keys."""
+    with status_lock:
+        keys = list(processing_status.keys())
+        print(f"DEBUG: Current status keys: {keys}")
+        return keys
 
 def load_env():
     """Load environment variables from .env file."""
@@ -116,15 +126,18 @@ def process_url():
         # Generate unique ID for this processing task
         task_id = str(uuid.uuid4())
         
-        # Initialize status
-        processing_status[task_id] = {
-            'status': 'started',
-            'progress': 0,
-            'message': 'Starting processing...',
-            'url': url,
-            'voice': voice,
-            'created_at': datetime.now().isoformat()
-        }
+        # Initialize status with thread-safe access
+        with status_lock:
+            processing_status[task_id] = {
+                'status': 'started',
+                'progress': 0,
+                'message': 'Starting processing...',
+                'url': url,
+                'voice': voice,
+                'created_at': datetime.now().isoformat()
+            }
+            # Debug log
+            print(f"DEBUG: Created task {task_id}, total tasks: {len(processing_status)}")
         
         # Start processing in background thread
         thread = threading.Thread(target=process_url_background, args=(task_id, url, voice))
@@ -140,11 +153,14 @@ def process_url_background(task_id, url, voice):
     """Background processing of URL to podcast."""
     try:
         # Update status
-        processing_status[task_id].update({
-            'status': 'fetching',
-            'progress': 20,
-            'message': 'Fetching content from Microsoft Learn...'
-        })
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'fetching',
+                    'progress': 20,
+                    'message': 'Fetching content from Microsoft Learn...'
+                })
+                print(f"DEBUG: Updated task {task_id} to fetching stage")
         
         # Load config
         config = load_config()
@@ -156,18 +172,22 @@ def process_url_background(task_id, url, voice):
         content = fetcher.fetch_module_content(url)
         
         if not content or not content.get('title') or not content.get('content'):
-            processing_status[task_id].update({
-                'status': 'error',
-                'message': 'Failed to fetch content or content is empty'
-            })
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'error',
+                        'message': 'Failed to fetch content or content is empty'
+                    })
             return
         
         # Update status
-        processing_status[task_id].update({
-            'status': 'processing_script',
-            'progress': 50,
-            'message': 'Converting to podcast script...'
-        })
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'processing_script',
+                    'progress': 50,
+                    'message': 'Converting to podcast script...'
+                })
         
         # Process into script
         processor = ScriptProcessor()
@@ -175,14 +195,16 @@ def process_url_background(task_id, url, voice):
         script = script_result.get('script', '')
         
         # Update status
-        processing_status[task_id].update({
-            'status': 'generating_audio',
-            'progress': 70,
-            'message': 'Generating audio with Azure Speech Service...'
-        })
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'generating_audio',
+                    'progress': 70,
+                    'message': 'Generating audio with Azure Speech Service...'
+                })
         
-        # Generate audio with multi-voice support
-        multivoice_tts = create_multivoice_tts_service(config)
+        # Generate audio with multi-voice support (premium or standard)
+        multivoice_tts = create_best_multivoice_tts_service(config)
         
         # Create output filename
         clean_title = "".join(c for c in content['title'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
@@ -196,43 +218,76 @@ def process_url_background(task_id, url, voice):
         script_path = output_dir / f"{output_name}_script.txt"
         script_path.write_text(script)
         
-        # Generate audio with multiple voices
+        # Define progress callback to update status during TTS
+        def tts_progress_callback(progress, message):
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'progress': progress,
+                        'message': message
+                    })
+                    print(f"DEBUG: TTS Progress {task_id} - {progress}% - {message}")
+        
+        # Generate audio with multiple voices and progress tracking
         audio_path = output_dir / f"{output_name}.wav"
-        success = multivoice_tts.synthesize_dialogue_script(script, audio_path)
+        success = multivoice_tts.synthesize_dialogue_script(script, audio_path, progress_callback=tts_progress_callback)
         
         if success and audio_path.exists():
             file_size = audio_path.stat().st_size
             
             # Update status - completed
-            processing_status[task_id].update({
-                'status': 'completed',
-                'progress': 100,
-                'message': 'Podcast generated successfully!',
-                'audio_file': str(audio_path),
-                'script_file': str(script_path),
-                'title': content['title'],
-                'file_size': file_size,
-                'duration_estimate': len(script) / 12  # ~12 chars per second
-            })
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'completed',
+                        'progress': 100,
+                        'message': 'Podcast generated successfully!',
+                        'audio_file': str(audio_path),
+                        'audio_filename': audio_path.name,  # Add filename for direct access
+                        'script_file': str(script_path),
+                        'title': content['title'],
+                        'file_size': file_size,
+                        'duration_estimate': len(script) / 12  # ~12 chars per second
+                    })
+                    print(f"DEBUG: Task {task_id} completed successfully")
         else:
-            processing_status[task_id].update({
-                'status': 'error',
-                'message': 'Failed to generate audio file'
-            })
+            # Audio generation failed
+            error_details = f"success={success}, file_exists={audio_path.exists() if audio_path else False}"
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'error',
+                        'message': f'Failed to generate audio file. Details: {error_details}'
+                    })
+                    print(f"DEBUG: Task {task_id} failed audio generation - {error_details}")
+                    
+                    # Log more details for debugging
+                    if audio_path:
+                        print(f"DEBUG: Audio path: {audio_path}")
+                        print(f"DEBUG: Audio path exists: {audio_path.exists()}")
+                        print(f"DEBUG: Output directory: {output_dir}")
+                        print(f"DEBUG: Output directory exists: {output_dir.exists()}")
             
     except Exception as e:
-        processing_status[task_id].update({
-            'status': 'error',
-            'message': f'Processing error: {str(e)}'
-        })
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'error',
+                    'message': f'Processing error: {str(e)}'
+                })
+                print(f"DEBUG: Task {task_id} failed with exception: {e}")
 
 @app.route('/api/status/<task_id>')
 def get_status(task_id):
     """Get processing status for a task."""
-    if task_id not in processing_status:
-        return jsonify({'error': 'Task not found'}), 404
-    
-    return jsonify(processing_status[task_id])
+    with status_lock:
+        current_keys = list(processing_status.keys())
+        print(f"DEBUG: Status check for {task_id}, available: {current_keys}")
+        
+        if task_id not in processing_status:
+            return jsonify({'error': 'Task not found', 'available_tasks': current_keys}), 404
+        
+        return jsonify(processing_status[task_id])
 
 @app.route('/api/audio/<task_id>')
 def get_audio(task_id):
@@ -250,16 +305,23 @@ def get_audio(task_id):
     
     return send_file(audio_file, as_attachment=False, mimetype='audio/wav')
 
+@app.route('/api/debug/status')
+def debug_status():
+    """Debug endpoint to show all current task statuses."""
+    with status_lock:
+        debug_info = {
+            'total_tasks': len(processing_status),
+            'task_keys': list(processing_status.keys()),
+            'task_details': {k: v.get('status', 'unknown') for k, v in processing_status.items()}
+        }
+        return jsonify(debug_info)
+
 @app.route('/api/voices')
 def get_voices():
     """Get available Azure voices."""
     voices = {
-        "en-US-AriaNeural": "Aria - US English Female, Expressive (recommended for podcasts)",
-        "en-US-GuyNeural": "Guy - US English Male, Friendly",
-        "en-US-JennyNeural": "Jenny - US English Female, Assistant-like",
-        "en-US-DavisNeural": "Davis - US English Male, Conversational",
-        "en-GB-LibbyNeural": "Libby - UK English Female",
-        "en-GB-RyanNeural": "Ryan - UK English Male",
+        "en-US-EmmaNeural": "Emma - Premium Female, Natural & Conversational (recommended for Sarah)",
+        "en-US-DavisNeural": "Davis - US English Male, Conversational (recommended for Mike)",
     }
     return jsonify(voices)
 
@@ -394,4 +456,5 @@ if __name__ == '__main__':
     
     # Run the app
     debug_mode = os.environ.get('FLASK_ENV') != 'production'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    port = int(os.environ.get('PORT', 5000))  # Use PORT env var if set, default to 5000
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
