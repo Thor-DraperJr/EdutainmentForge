@@ -2,77 +2,106 @@
 
 Transform Microsoft Learn content into engaging, conversational podcasts with AI-powered multi-voice narration.
 
-## 📊 **Current Status: Production Ready with Premium AI Features**
+## 🎧 The Vision Behind EdutainmentForge
 
-✅ **Azure Speech Service**: Standard (S0) tier with premium neural voices and SSML styling  
+As an auditory learner, I created EdutainmentForge to solve a real problem in technical education. Traditional documentation—walls of text, complex diagrams, and dense code samples—creates barriers for many learners. This project demonstrates how modern AI systems can transform learning experiences when thoughtfully architected.
+
+EdutainmentForge represents the intersection of:
+- **Accessibility Engineering**: Making technical content available to diverse learning styles
+- **AI Systems Integration**: Orchestrating multiple AI services into a cohesive product
+- **Content Intelligence**: Applying AI to understand and transform complex information structures
+- **Voice Computing**: Leveraging neural TTS for natural, engaging audio experiences
+
+## 🔬 Technical Architecture Highlights
+
+The project showcases several advanced AI and cloud engineering techniques:
+
+1. **Multi-Service AI Orchestration**: Seamlessly coordinates Azure OpenAI for content processing with Azure Speech Services for voice synthesis, demonstrating expertise in complex AI system design.
+
+2. **Content Structure Analysis**: Implements intelligent parsing of technical documentation, recognizing headers, code blocks, and tables to transform them appropriately—turning data structures into natural dialogue.
+
+3. **Dialogue Generation System**: Employs GPT-4o to convert technical monologues into balanced, engaging conversations between two hosts, showing practical application of generative AI beyond simple prompting.
+
+4. **Neural Voice Engineering**: Uses premium TTS voices with custom SSML styling for natural-sounding conversations with appropriate emphasis, pacing, and technical pronunciation.
+
+5. **Enterprise-Grade Architecture**: Implements production-ready patterns including managed identity authentication, secure Key Vault integration, containerized deployment, and comprehensive caching strategies.
+
+## 📊 Current Status & Features
+
+✅ **Azure Speech Service**: Premium neural voices with SSML styling  
 ✅ **Azure OpenAI**: GPT-4o and GPT-4o-mini with smart model selection  
-✅ **Multi-Voice TTS**: Enhanced conversational styles (Sarah: conversation, Mike: friendly)  
-✅ **Premium Integration**: Simplified, maintainable architecture with deprecated modules removed  
-✅ **Repository**: Clean, organized codebase with proper backup management  
+✅ **Multi-Voice TTS**: Enhanced conversational styles with distinct hosts  
+✅ **Security**: Key Vault integration with managed identity  
+✅ **Enterprise-Ready**: Containerized with proper CI/CD pipelines  
 
 **Last Tested**: July 1, 2025 with Microsoft Learn Zero Trust content - ✅ **Working Perfectly**
 
-## 🚀 Features
+## 🚀 Quick Start
 
-- **Multi-Voice Podcasts**: Two-host dialogue format with distinct male and female voices (Sarah & Mike)
-- **AI-Enhanced Dialogue**: Azure OpenAI-powered script enhancement for more interactive, balanced conversations
--### Recent Improvements
+### Prerequisites
+- Python 3.8+
+- Azure Speech Service API key ([Get one free](https://azure.microsoft.com/en-us/services/cognitive-services/speech-services/))
+- Azure OpenAI Service (optional)
+- ffmpeg (for audio processing)
+
+### Basic Setup
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/edutainmentforge.git
+cd edutainmentforge
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment (.env file)
+cp .env.example .env
+# Edit .env with your Azure credentials
+
+# Run application
+python app.py
+```
+
+Visit `http://localhost:5000` to start creating podcasts!
+
+## 🎛️ Key Technologies
+
+- **Azure Speech**: Premium neural voices for natural-sounding speech
+- **Azure OpenAI**: Script enhancement with GPT-4o models
+- **Python 3.8+**: Core application language
+- **Flask**: Web interface
+- **Docker**: Containerized deployment
+- **Azure Container Apps**: Production hosting
+
+## 📚 Documentation
+
+For more detailed information, see the documentation files:
+
+- [Detailed Features](docs/FEATURES.md) - Comprehensive feature list
+- [Configuration Guide](docs/CONFIGURATION.md) - All configuration options
+- [Development Guide](docs/DEVELOPMENT.md) - Setup and contribution guidelines
+- [Azure Deployment](docs/AZURE_DEPLOYMENT.md) - Production deployment steps
+- [Architecture Overview](docs/ARCHITECTURE.md) - System design and components
+
+## 📋 Recent Changes
 
 ### v2.0.0 - Premium AI Enhancement & Modern Development
-- **Premium Service Integration** - GPT-4 support and neural voice capabilities for professional podcast quality
-- **Modern Python Package Structure** - pyproject.toml, proper testing framework, and development automation
-- **Azure AI Foundry Integration** - Built-in cost monitoring and usage analytics
-- **Enhanced Security** - Comprehensive Key Vault integration with managed identity
-- **Professional Development Tools** - Pre-commit hooks, automated testing, and quality assurance
+- **Premium Service Integration** - GPT-4 support with neural voice capabilities
+- **Modern Python Package Structure** - Improved development workflow
+- **Azure AI Foundry Integration** - Built-in cost monitoring
 
 ### v1.3.0 - AI-Enhanced Dialogue & Security
-- **Azure OpenAI Integration** - AI-powered script enhancement for more interactive, balanced conversations
-- **Enhanced Table Processing** - Intelligent table detection and conversational summarization
-- **Security Best Practices** - Environment-based secrets management with Azure Key Vault support
-- **Production Ready** - Secure containerized deployment with Azure Container Apps
-- **Improved Content Processing** - Better handling of complex Microsoft Learn content structures Content Processing**: Automatically cleans and converts technical documentation into natural conversation
-- **Enhanced Table Handling**: Intelligent table detection and conversational summarization
-- **Streamlined Intro**: Concise, listener-friendly podcast introductions (no more verbose descriptions!)
-- **Robust Error Handling**: Comprehensive error handling with caching and retry mechanisms
-- **Batch Processing**: Handle multiple URLs or entire learning paths at once
-- **Web Interface**: Modern, responsive UI for easy podcast generation
-- **Azure Cloud Ready**: Production deployment with Azure Container Apps
-- **Secure Configuration**: Environment-based secrets management with Azure best practices
-- **Local Storage**: All podcasts stored locally in WAV format with intelligent caching
-- **CLI Support**: Command-line interface for automated workflows
-- **Test Coverage**: Comprehensive test suite for reliability
+- **Azure OpenAI Integration** - AI-powered script enhancement
+- **Enhanced Table Processing** - Intelligent conversational summaries
+- **Security Best Practices** - Key Vault integration
 
-## 🎯 What It Does
+## 🤝 Contributing
 
-EdutainmentForge takes dry, technical Microsoft Learn documentation and transforms it into:
-- Natural, conversational dialogue between two podcast hosts
-- **AI-enhanced interactions** with balanced dialogue using Azure OpenAI
-- **Intelligent table processing** that converts complex data into conversational insights
-- **Short, engaging introductions** that get straight to the content
-- Proper pronunciation of technical terms and abbreviations
-- Clean, professional audio with distinct voices for each speaker
-- Cached audio segments for faster re-generation
-- Production-ready podcasts with robust error handling
+Contributions are welcome! Please see [CONTRIBUTING.md](docs/CONTRIBUTING.md) for details.
 
-## 🛠️ Technical Stack
+## 📄 License
 
-### Core Dependencies
-- **Python 3.8+** - Primary language with modern features
-- **Flask 3.0+** - Web framework for the UI and API
-- **Requests & BeautifulSoup4** - Web scraping for Microsoft Learn content
-- **Azure Cognitive Services Speech** - Multi-voice text-to-speech synthesis
-- **Azure OpenAI** - AI-powered script enhancement (optional)
-- **PyDub** - Audio processing and manipulation
-- **python-dotenv** - Environment variable management
-
-### Standard Library Modules Used
-- **pathlib** - Modern path handling
-- **threading** - Background processing for web interface
-- **uuid** - Unique ID generation for tracking
-- **argparse** - Command-line argument parsing
-- **tempfile** - Temporary file management for audio processing
-- **json** - Data serialization
-- **re** - Regular expressions for text processing
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 - **hashlib** - Caching and content identification
 - **urllib.parse** - URL parsing and manipulation
 - **abc** - Abstract base classes for service interfaces
@@ -140,8 +169,8 @@ For containerized deployment:
 
 ```bash
 # Build and run with Docker Compose
-./docker-helper.sh build
-./docker-helper.sh run
+./scripts/docker-helper.sh build
+./scripts/docker-helper.sh run
 
 # Or manually
 docker-compose up -d
