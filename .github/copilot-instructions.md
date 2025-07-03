@@ -2,7 +2,37 @@
 
 ## Project Context
 
-This project converts Microsoft Learn content into edutainment-style podcasts with AI-enhanced multi-voice narration. We use Python as our primary language with a focus on clean, maintainable code and Azure cloud services.
+EdutainmentForge is a Python-based web application that transforms Microsoft Learn technical content into engaging educational podcasts using AI-enhanced multi-voice narration. The project uses Flask for the web interface and relies on Azure services including Azure OpenAI (gpt-4o-mini), Azure Speech, and Container Apps for deployment.
+
+### Current Status
+- Core functionality is working: content scraping, AI enhancement, and audio generation
+- Basic Flask web UI is implemented and deployed to Azure Container Apps
+- Current focus is adding user authentication via Microsoft Entra ID (Azure AD B2C)
+
+### Authentication Requirements
+- Need to implement email-based registration for all users before they can access the app
+- Support both Microsoft organizational accounts and personal accounts (outlook.com, etc.)
+- Admin should be able to control the number of users and revoke access
+- This will be used for a hackathon, so authentication should be simple but secure
+- Prefer Azure-native solutions that integrate well with existing infrastructure
+
+### Technical Environment
+- Python 3.8+ Flask application
+- Azure Container Apps for hosting
+- Azure Key Vault for secret management
+- All infrastructure defined and deployed through Azure CLI or Bicep
+- Testing done in WSL environment before deployment
+
+### Current Priorities
+1. Implement and test Microsoft Entra ID B2C authentication
+2. Ensure it works with both organizational and personal accounts
+3. Deploy the updated application to Azure
+4. Document the authentication flow for users
+
+### Key Challenges
+- Need to balance security with ease of use for hackathon participants
+- Must maintain clean separation between auth code and business logic
+- Environment variables must be consistent between local and Azure deployments
 
 ## Azure Infrastructure Reference
 
@@ -97,6 +127,11 @@ When working with Azure resources, always use the MCP server to:
 - `azure-openai-endpoint` - Azure OpenAI endpoint URL
 - `sarah-voice` - Sarah's voice identifier (e.g., "en-US-EmmaNeural")
 - `mike-voice` - Mike's voice identifier (e.g., "en-US-DavisNeural")
+- `azure-ad-b2c-tenant-id` - Azure AD B2C tenant ID
+- `azure-ad-b2c-client-id` - Azure AD B2C application client ID
+- `azure-ad-b2c-client-secret` - Azure AD B2C application client secret
+- `azure-ad-b2c-policy-name` - Azure AD B2C user flow policy name
+- `flask-secret-key` - Flask session secret key
 
 ### Configuration Best Practices
 1. **Single Source of Truth**: Each environment has one source for each config value
@@ -123,6 +158,8 @@ When working with Azure resources, always use the MCP server to:
   - **Deployed Model**: `gpt-4o-mini`
 - **Azure Key Vault**: For secure secret management
   - **Service**: `edutainmentforge-kv` (eastus)
+- **Azure AD B2C**: `msal>=1.24.0` and `Flask-Session>=0.5.0` for authentication
+  - **Service**: Azure AD B2C tenant for user management
 - **TTS Fallback**: `pyttsx3>=2.90` for local development
 
 ### Testing Dependencies
@@ -314,6 +351,32 @@ When working with the AI script enhancement feature:
 - **Current Voices**: Emma (en-US-EmmaNeural) for Sarah, Davis (en-US-DavisNeural) for Mike
 - Use descriptive test names that explain the scenario
 - Mock external dependencies appropriately
+
+## Azure AD B2C Authentication Guidelines
+
+### Implementation Requirements
+- **Authentication Flow**: Use MSAL Python library with PKCE for secure authentication
+- **User Experience**: Seamless sign-up/sign-in with both Microsoft accounts and external accounts
+- **Session Management**: Use Flask-Session for secure session handling
+- **Route Protection**: Implement decorators to protect routes requiring authentication
+
+### Azure AD B2C Configuration
+- **Tenant Setup**: Create dedicated B2C tenant for user management
+- **User Flows**: Configure sign-up/sign-in policies with customizable user experience
+- **App Registration**: Register Flask application with proper redirect URIs and permissions
+- **Multi-Account Support**: Enable both organizational (Azure AD) and personal (MSA) accounts
+
+### Security Best Practices
+- **Token Validation**: Properly validate ID tokens and access tokens
+- **Session Security**: Use secure session cookies with appropriate expiration
+- **CSRF Protection**: Implement CSRF protection for authentication flows
+- **Error Handling**: Graceful error handling for authentication failures
+
+### Development Workflow
+1. **Local Testing**: Use Azure AD B2C development tenant for local testing
+2. **Environment Consistency**: Maintain consistent configuration between local and production
+3. **Secret Management**: Store all B2C configuration in Azure Key Vault
+4. **Testing**: Implement comprehensive tests for authentication flows
 
 ## Performance & Optimization Guidelines
 

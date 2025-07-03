@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - EdutainmentForge</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0085CA 0%, #101820 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #BFC0BF;
+        }
+        
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .nav-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-button:hover, .nav-button.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            color: #333;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header h1 {
+            color: #0085CA;
+            margin-bottom: 10px;
+        }
+        
+        .profile-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .info-value {
+            color: #6c757d;
+        }
+        
+        .actions {
+            text-align: center;
+        }
+        
+        .btn {
+            background: #0085CA;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #006ba1;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/app" class="nav-button">Create Podcast</a>
+        <a href="/library" class="nav-button">Podcast Library</a>
+        <a href="/auth/profile" class="nav-button active">Profile</a>
+        <a href="/auth/logout" class="nav-button">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+            <p>Your account information and settings</p>
+        </div>
+        
+        <div class="profile-info">
+            <div class="welcome-message" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #0085CA; margin-bottom: 10px;">Welcome, {{ user.name or user.given_name or 'User' }}!</h2>
+                <p style="color: #6c757d; font-size: 1.1em;">Thank you for using EdutainmentForge to transform Microsoft Learn content into engaging educational podcasts.</p>
+            </div>
+            
+            {% if user.email %}
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ user.email }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="actions">
+            <a href="/app" class="btn">Back to Create Podcast</a>
+            <a href="/auth/logout" class="btn btn-secondary">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

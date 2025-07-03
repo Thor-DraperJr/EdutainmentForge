@@ -289,6 +289,10 @@ The following secrets are managed in Azure Key Vault:
 - `azure-openai-api-key` - Azure OpenAI API key
 - `azure-openai-api-version` - Azure OpenAI API version
 - `azure-openai-deployment-name` - Azure OpenAI deployment name
+- `azure-ad-tenant-id` - Azure AD tenant ID for authentication
+- `azure-ad-client-id` - Azure AD application client ID
+- `azure-ad-client-secret` - Azure AD application client secret
+- `flask-secret-key` - Flask session encryption key
 
 #### Fallback Mechanism
 The application uses a robust fallback system:

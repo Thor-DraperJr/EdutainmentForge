@@ -28,6 +28,18 @@ properties:
       - name: mike-voice
         keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/mike-voice"
         identity: "system"
+      - name: azure-ad-tenant-id
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-ad-tenant-id"
+        identity: "system"
+      - name: azure-ad-client-id
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-ad-client-id"
+        identity: "system"
+      - name: azure-ad-client-secret
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/azure-ad-client-secret"
+        identity: "system"
+      - name: flask-secret-key
+        keyVaultUrl: "https://edutainmentforge-kv.vault.azure.net/secrets/flask-secret-key"
+        identity: "system"
     registries:
       - server: "edutainmentforge.azurecr.io"
         username: "edutainmentforge"
@@ -73,6 +85,14 @@ properties:
             secretRef: sarah-voice
           - name: MIKE_VOICE
             secretRef: mike-voice
+          - name: AZURE_AD_TENANT_ID
+            secretRef: azure-ad-tenant-id
+          - name: AZURE_AD_CLIENT_ID
+            secretRef: azure-ad-client-id
+          - name: AZURE_AD_CLIENT_SECRET
+            secretRef: azure-ad-client-secret
+          - name: FLASK_SECRET_KEY
+            secretRef: flask-secret-key
         resources:
           cpu: 1.0
           memory: 2.0Gi

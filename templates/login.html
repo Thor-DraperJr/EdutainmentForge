@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdutainmentForge - Sign In</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0085CA 0%, #101820 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #101820;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #0085CA;
+            margin-bottom: 30px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: #101820;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+        
+        .login-button {
+            background: #0085CA;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .login-button:hover {
+            background: #101820;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 133, 202, 0.3);
+        }
+        
+        .microsoft-logo {
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        .features {
+            text-align: left;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(16, 24, 32, 0.1);
+        }
+        
+        .features h3 {
+            color: #101820;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .features ul {
+            color: #101820;
+            padding-left: 20px;
+            opacity: 0.8;
+        }
+        
+        .features li {
+            margin-bottom: 8px;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .info-message {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🎧 EdutainmentForge</div>
+        <div class="subtitle">Transform learning into engaging podcasts</div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ 'error-message' if category == 'error' else 'info-message' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="description">
+            {% if auth_service %}
+                Convert Microsoft Learn content into AI-enhanced podcasts with natural conversation between Sarah and Mike.
+            {% else %}
+                <strong>Authentication is required but not configured.</strong><br>
+                Please contact the administrator to set up Azure AD B2C authentication.
+            {% endif %}
+        </div>
+        
+        {% if auth_service %}
+            <a href="{{ url_for('auth_login', action='signin') }}" style="text-decoration: none;">
+                <button class="login-button">
+                    <svg class="microsoft-logo" viewBox="0 0 23 23" fill="currentColor">
+                        <path d="M1 1h10v10H1zM12 1h10v10H12zM1 12h10v10H1zM12 12h10v10H12z"/>
+                    </svg>
+                    Sign in with Microsoft
+                </button>
+            </a>
+        {% else %}
+            <button class="login-button" disabled style="background: #ccc; cursor: not-allowed;">
+                <svg class="microsoft-logo" viewBox="0 0 23 23" fill="currentColor">
+                    <path d="M1 1h10v10H1zM12 1h10v10H12zM1 12h10v10H1zM12 12h10v10H12z"/>
+                </svg>
+                Authentication Not Configured
+            </button>
+        {% endif %}
+        
+        <div class="features">
+            <h3>✨ Features</h3>
+            <ul>
+                <li>Convert any Microsoft Learn module to audio</li>
+                <li>AI-enhanced conversational format</li>
+                <li>Premium Azure voices (Sarah & Mike)</li>
+                <li>Instant podcast generation</li>
+                <li>Download and listen anywhere</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

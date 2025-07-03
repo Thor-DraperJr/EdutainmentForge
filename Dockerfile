@@ -31,4 +31,4 @@ ENV FLASK_ENV=production
 ENV PYTHONPATH=/app/src
 
 # Run the Flask application with Gunicorn for production
-CMD ["gunicorn", "--config", "gunicorn.conf.py", "app:app"]
+CMD ["gunicorn", "--config", "config/gunicorn.conf.py", "app:app"]

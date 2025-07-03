@@ -2,12 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-        .stats-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #0085CA;
-        }=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Podcast Library - EdutainmentForge</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <style>
         * {
             margin: 0;
@@ -291,9 +289,14 @@
 <body>
     <!-- Navigation -->
     <div class="nav">
-        <a href="/" class="nav-button">Single URL</a>
-        <a href="/batch" class="nav-button">Batch Processing</a>
+        <a href="/app" class="nav-button">Create Podcast</a>
         <a href="/library" class="nav-button active">Podcast Library</a>
+        {% if session.user %}
+        <a href="/auth/profile" class="nav-button">Profile</a>
+        <a href="/auth/logout" class="nav-button">Logout</a>
+        {% else %}
+        <a href="/auth/login" class="nav-button">Login</a>
+        {% endif %}
     </div>
 
     <div class="container">
@@ -332,7 +335,7 @@
             <h3>📭 No podcasts yet</h3>
             <p>Your podcast library is empty. Start by creating your first podcast!</p>
             <br>
-            <a href="/">Create Single Podcast</a> | <a href="/batch">Batch Process URLs</a>
+            <a href="/app">Create Podcast</a>
         </div>
         
         <div class="podcast-grid" id="podcast-grid">

@@ -2,17 +2,20 @@
 EdutainmentForge Web Application
 
 Local web interface for processing Microsoft Learn URLs into podcasts.
-Supports single URL processing and batch processing with multi-voice TTS.
+Supports single URL processing with multi-voice TTS and Azure AD B2C authentication.
+Requires user authentication via Microsoft Entra ID (Azure AD B2C).
 """
 
 import os
 import sys
 import re
 from pathlib import Path
-from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
 import threading
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
+import logging
+from functools import wraps
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -24,12 +27,18 @@ from audio import create_best_multivoice_tts_service
 from utils.config import load_config
 from utils.premium_integration import print_feature_status
 
+# Authentication imports
+from auth import AuthService, require_auth, AuthConfig
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 
-# Global storage for processing status and batch jobs (with thread-safe access)
+# Global storage for processing status (with thread-safe access)
 import threading
 processing_status = {}
-batch_jobs = {}
 status_lock = threading.Lock()
 
 def debug_log_status():
@@ -53,9 +62,146 @@ def load_env():
 # Load environment on startup
 load_env()
 
+# Initialize authentication
+try:
+    auth_config = AuthConfig()
+    auth_config.validate()
+    auth_service = AuthService(auth_config)
+    
+    # Configure Flask session
+    app.secret_key = auth_config.flask_secret_key
+    app.permanent_session_lifetime = timedelta(hours=24)
+    
+    logger.info("Authentication configured successfully")
+    AUTHENTICATION_REQUIRED = True
+except Exception as e:
+    logger.error(f"Authentication configuration failed: {e}")
+    logger.warning("Authentication is REQUIRED but not configured properly")
+    logger.info("Please configure Azure AD B2C environment variables to use the application")
+    auth_service = None
+    AUTHENTICATION_REQUIRED = True  # Always require auth
+    # Set a temporary secret key for development
+    app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-me')
+
+# Authentication routes
+@app.route('/auth/login')
+def auth_login():
+    """Show login page or initiate Azure AD B2C login flow."""
+    if not auth_service:
+        # Authentication is not configured
+        flash("Authentication is required but not configured. Please set up Azure AD B2C configuration.", "error")
+        return render_template('login.html', auth_service=None)
+    
+    # Check if this is a direct access to login page or a redirect from auth flow
+    if request.args.get('action') == 'signin':
+        try:
+            # Get the base URL for redirect URI (auth service will use public URL if needed)
+            base_url = request.url_root
+            auth_url = auth_service.get_auth_url(base_url)
+            return redirect(auth_url)
+        except Exception as e:
+            logger.error(f"Error initiating login: {e}")
+            flash("Login failed. Please try again.", "error")
+            return render_template('login.html', auth_service=auth_service)
+    
+    # Show the login page
+    return render_template('login.html', auth_service=auth_service)
+
+@app.route('/auth/callback')
+def auth_callback():
+    """Handle Azure AD B2C authentication callback."""
+    if not auth_service:
+        flash("Authentication is not configured.", "error")
+        return redirect(url_for('index'))
+    
+    try:
+        base_url = request.url_root
+        user_info = auth_service.handle_callback(base_url)
+        
+        if user_info:
+            flash(f"Welcome, {user_info.get('name', user_info.get('email', 'User'))}!", "success")
+            
+            # Redirect to originally requested page or main app
+            next_url = session.pop('next_url', url_for('main_app'))
+            return redirect(next_url)
+        else:
+            flash("Authentication failed. Please try again.", "error")
+            return redirect(url_for('auth_login'))
+            
+    except Exception as e:
+        logger.error(f"Error handling authentication callback: {e}")
+        flash("Authentication error. Please try again.", "error")
+        return redirect(url_for('auth_login'))
+
+@app.route('/auth/logout')
+def auth_logout():
+    """Log out the current user."""
+    if not auth_service:
+        session.clear()
+        return redirect(url_for('index'))
+    
+    try:
+        logout_url = auth_service.logout()
+        flash("You have been logged out successfully.", "info")
+        
+        # Redirect to Azure AD B2C logout, which will then redirect back to our app
+        return redirect(logout_url)
+    except Exception as e:
+        logger.error(f"Error during logout: {e}")
+        session.clear()
+        flash("Logout completed.", "info")
+        return redirect(url_for('index'))
+
+@app.route('/auth/profile')
+@require_auth
+def auth_profile():
+    """Display user profile information."""
+    if not auth_service:
+        return redirect(url_for('index'))
+    
+    user = auth_service.get_current_user()
+    return render_template('profile.html', user=user)
+
+# Helper function to check authentication - ALWAYS required
+def _require_auth(f):
+    """Apply authentication requirement - ALWAYS required."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if authentication service is available
+        if not auth_service:
+            flash("Authentication is required but not configured. Please contact the administrator.", "error")
+            return render_template('login.html', auth_service=None)
+        
+        # Check if user is authenticated
+        if not auth_service.is_authenticated():
+            logger.info(f"Unauthenticated access attempt to {request.endpoint}")
+            session['next_url'] = request.url
+            return redirect(url_for('auth_login'))
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
 def index():
-    """Main page with URL input form and podcast library."""
+    """Landing page - always requires authentication."""
+    # Check if authentication service is available
+    if not auth_service:
+        # Show login page with error message about missing configuration
+        flash("Authentication is required but not properly configured. Please contact the administrator.", "error")
+        return render_template('login.html', auth_service=None)
+    
+    # Check if user is authenticated
+    if not auth_service.is_authenticated():
+        # Redirect to login page
+        return redirect(url_for('auth_login'))
+    
+    # User is authenticated, redirect to main app
+    return redirect(url_for('main_app'))
+
+@app.route('/app')
+@_require_auth
+def main_app():
+    """Main application page with URL input form and podcast library."""
     # Get list of available podcasts from local output directory
     podcasts = []
     output_dir = Path("output")
@@ -79,12 +225,8 @@ def index():
     
     return render_template('index.html', podcasts=podcasts)
 
-@app.route('/batch')
-def batch_page():
-    """Batch processing page for multiple URLs."""
-    return render_template('batch.html')
-
 @app.route('/library')
+@_require_auth
 def library_page():
     """Podcast library page."""
     # Get list of available podcasts from local output directory
@@ -110,6 +252,7 @@ def library_page():
     return render_template('library.html', podcasts=podcasts)
 
 @app.route('/api/process', methods=['POST'])
+@_require_auth
 def process_url():
     """Process a Microsoft Learn URL into a podcast."""
     try:
@@ -278,6 +421,7 @@ def process_url_background(task_id, url, voice):
                 print(f"DEBUG: Task {task_id} failed with exception: {e}")
 
 @app.route('/api/status/<task_id>')
+@_require_auth
 def get_status(task_id):
     """Get processing status for a task."""
     with status_lock:
@@ -290,6 +434,7 @@ def get_status(task_id):
         return jsonify(processing_status[task_id])
 
 @app.route('/api/audio/<task_id>')
+@_require_auth
 def get_audio(task_id):
     """Download or stream the generated audio file."""
     if task_id not in processing_status:
@@ -325,32 +470,8 @@ def get_voices():
     }
     return jsonify(voices)
 
-@app.route('/api/process-batch', methods=['POST'])
-def process_batch():
-    """Process multiple Microsoft Learn URLs as a batch."""
-    return jsonify({'error': 'Batch processing temporarily disabled for demo'}), 501
-
-@app.route('/api/batch-status/<batch_id>')
-def get_batch_status(batch_id):
-    """Get batch processing status."""
-    if batch_id not in batch_jobs:
-        return jsonify({'error': 'Batch not found'}), 404
-    
-    return jsonify(batch_jobs[batch_id])
-
-@app.route('/api/batches')
-def list_batches():
-    """List all batch jobs."""
-    # Return recent batches (last 10)
-    recent_batches = list(batch_jobs.values())[-10:]
-    recent_batches.sort(key=lambda x: x['created_at'], reverse=True)
-    
-    return jsonify({
-        'batches': recent_batches,
-        'total': len(batch_jobs)
-    })
-
 @app.route('/api/podcasts')
+@_require_auth
 def list_podcasts():
     """List all available podcasts from local storage."""
     try:
@@ -424,6 +545,7 @@ def stream_podcast(filename):
         return jsonify({'error': str(e)}), 404
 
 @app.route('/api/delete-podcast/<path:filename>', methods=['DELETE'])
+@_require_auth
 def delete_podcast(filename):
     """Delete a podcast from local storage."""
     try:
