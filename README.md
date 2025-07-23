@@ -1,6 +1,12 @@
 # EdutainmentForge 🎙️
 
-Transform Microsoft Learn content into engaging, conversational podcasts with AI-powered multi-voice narration.
+# EdutainmentForge
+
+🎙️ **Transform Microsoft Learn content into engaging educational podcasts with AI-enhanced multi-voice narration**
+
+EdutainmentForge is a Python-based web application that scrapes Microsoft Learn technical content and converts it into conversational podcast-style audio content using Azure AI services.
+
+✨ **Latest Update**: GitHub Actions CI/CD pipeline configured for automated deployments!
 
 ## 🎧 The Vision Behind EdutainmentForge
 
