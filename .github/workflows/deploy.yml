@@ -1,0 +1,40 @@
+name: Deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  AZURE_CONTAINERAPP_NAME: edutainmentforge-app
+  AZURE_GROUP_NAME: edutainmentforge-rg
+  AZURE_CONTAINERAPP_ENV: edutainmentforge-env
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Container Apps
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        appSourcePath: ${{ github.workspace }}
+        resourceGroup: ${{ env.AZURE_GROUP_NAME }}
+        containerAppName: ${{ env.AZURE_CONTAINERAPP_NAME }}
+        containerAppEnvironment: ${{ env.AZURE_CONTAINERAPP_ENV }}
+
+    - name: Get App URL
+      run: |
+        APP_URL=$(az containerapp show \
+          --name ${{ env.AZURE_CONTAINERAPP_NAME }} \
+          --resource-group ${{ env.AZURE_GROUP_NAME }} \
+          --query properties.configuration.ingress.fqdn \
+          --output tsv)
+        echo "🚀 Deployed successfully to: https://$APP_URL"
