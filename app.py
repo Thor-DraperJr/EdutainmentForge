@@ -232,6 +232,12 @@ def discover_page():
     """Discovery page for browsing Microsoft Learn catalog."""
     return render_template('discover.html')
 
+@app.route('/library')
+@_require_auth
+def library_page():
+    """Podcast library page for managing generated podcasts."""
+    return render_template('library.html')
+
 @app.route('/api/catalog/search', methods=['GET'])
 @_require_auth
 def catalog_search():
