@@ -1,4 +1,4 @@
-"""
+SC-100: Design solutions that align with security best practices and priorities"""
 Microsoft Learn Catalog API integration.
 
 This module provides functionality to search, browse, and discover content
@@ -249,51 +249,156 @@ class MSLearnCatalogService:
         """Provide fallback results when API is unavailable."""
         logger.info("Using fallback catalog results for development")
         
-        # Sample results for development/testing
+        # SC-300 and SC-100 focused content for Microsoft Identity and Access Administrator studies
         sample_modules = [
             {
-                'id': 'get-started-ai-fundamentals',
-                'title': 'Introduction to AI fundamentals',
-                'summary': 'Learn about artificial intelligence concepts and fundamentals',
-                'url': 'https://learn.microsoft.com/en-us/training/modules/get-started-ai-fundamentals/',
-                'type': 'module',
-                'duration_minutes': 45,
-                'products': ['azure'],
-                'roles': ['ai-engineer', 'developer'],
-                'subjects': ['artificial-intelligence'],
-                'levels': ['beginner'],
-                'rating': 4.5,
-                'last_modified': '2024-01-15T00:00:00Z',
+                'id': 'sc-300-implement-identity-management-solution',
+                'title': 'SC-300: Implement an identity management solution',
+                'summary': 'Learn to implement and manage Azure AD identity solutions, including user and group management, authentication methods, and identity governance',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/implement-identity-management-solution/',
+                'type': 'learning-path',
+                'duration_minutes': 420,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'governance'],
+                'levels': ['intermediate'],
+                'rating': 4.8,
+                'last_modified': '2024-07-01T00:00:00Z',
                 'icon_url': ''
             },
             {
-                'id': 'fundamentals-machine-learning',
-                'title': 'Introduction to machine learning',
-                'summary': 'Understand the fundamentals of machine learning and its applications',
-                'url': 'https://learn.microsoft.com/en-us/training/modules/fundamentals-machine-learning/',
+                'id': 'sc-300-implement-authentication-access-management',
+                'title': 'SC-300: Implement authentication and access management',
+                'summary': 'Configure and manage authentication methods, conditional access policies, and access reviews for Azure AD',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/implement-authentication-access-management/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'authentication'],
+                'levels': ['intermediate'],
+                'rating': 4.9,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'sc-300-implement-access-management-apps',
+                'title': 'SC-300: Implement access management for applications',
+                'summary': 'Manage application access, configure enterprise applications, and implement application proxy for secure remote access',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/implement-access-management-apps/',
+                'type': 'learning-path',
+                'duration_minutes': 300,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'application-security'],
+                'levels': ['intermediate'],
+                'rating': 4.7,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'sc-300-plan-implement-identity-governance',
+                'title': 'SC-300: Plan and implement identity governance strategy',
+                'summary': 'Design and implement identity governance including entitlement management, access reviews, and privileged identity management',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/plan-implement-identity-governance-strategy/',
+                'type': 'learning-path',
+                'duration_minutes': 390,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'governance', 'compliance'],
+                'levels': ['advanced'],
+                'rating': 4.8,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'sc-100-design-zero-trust-strategy',
+                'title': 'SC-100: Design a Zero Trust strategy and architecture',
+                'summary': 'Learn to design comprehensive Zero Trust security strategies and architectures aligned with business requirements',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/design-zero-trust-strategy-architecture/',
+                'type': 'learning-path',
+                'duration_minutes': 480,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'security-architect', 'administrator'],
+                'subjects': ['security', 'architecture', 'zero-trust'],
+                'levels': ['advanced'],
+                'rating': 4.9,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'sc-100-evaluate-governance-risk-compliance',
+                'title': 'SC-100: Evaluate governance, risk, and compliance (GRC) strategies',
+                'summary': 'Design and evaluate governance, risk management, and compliance strategies for enterprise security',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/evaluate-governance-risk-compliance-strategies/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'security-architect', 'administrator'],
+                'subjects': ['security', 'governance', 'compliance', 'risk-management'],
+                'levels': ['advanced'],
+                'rating': 4.7,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'azure-ad-conditional-access',
+                'title': 'Configure Azure AD Conditional Access',
+                'summary': 'Deep dive into Azure AD Conditional Access policies, risk-based authentication, and access controls',
+                'url': 'https://learn.microsoft.com/en-us/training/modules/configure-azure-ad-conditional-access/',
+                'type': 'module',
+                'duration_minutes': 75,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'conditional-access'],
+                'levels': ['intermediate'],
+                'rating': 4.8,
+                'last_modified': '2024-06-15T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'azure-ad-privileged-identity-management',
+                'title': 'Implement Azure AD Privileged Identity Management',
+                'summary': 'Configure and manage Azure AD PIM for just-in-time administrative access and privileged role management',
+                'url': 'https://learn.microsoft.com/en-us/training/modules/azure-ad-privileged-identity-management/',
+                'type': 'module',
+                'duration_minutes': 90,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'privileged-access'],
+                'levels': ['advanced'],
+                'rating': 4.9,
+                'last_modified': '2024-06-20T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'azure-ad-identity-protection',
+                'title': 'Configure Azure AD Identity Protection',
+                'summary': 'Implement identity protection policies, risk detection, and automated remediation for user and sign-in risks',
+                'url': 'https://learn.microsoft.com/en-us/training/modules/azure-ad-identity-protection/',
                 'type': 'module',
                 'duration_minutes': 60,
-                'products': ['azure'],
-                'roles': ['data-scientist', 'ai-engineer'],
-                'subjects': ['machine-learning'],
-                'levels': ['beginner'],
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'risk-management'],
+                'levels': ['intermediate'],
                 'rating': 4.7,
-                'last_modified': '2024-01-20T00:00:00Z',
+                'last_modified': '2024-06-25T00:00:00Z',
                 'icon_url': ''
             },
             {
-                'id': 'fundamentals-generative-ai',
-                'title': 'Introduction to generative AI',
-                'summary': 'Explore generative AI concepts and applications',
-                'url': 'https://learn.microsoft.com/en-us/training/modules/fundamentals-generative-ai/',
+                'id': 'azure-ad-access-reviews',
+                'title': 'Implement Azure AD Access Reviews',
+                'summary': 'Configure and manage access reviews for groups, applications, and privileged roles to maintain least privilege access',
+                'url': 'https://learn.microsoft.com/en-us/training/modules/azure-ad-access-reviews/',
                 'type': 'module',
-                'duration_minutes': 50,
-                'products': ['azure'],
-                'roles': ['developer', 'ai-engineer'],
-                'subjects': ['artificial-intelligence'],
-                'levels': ['beginner'],
-                'rating': 4.8,
-                'last_modified': '2024-02-01T00:00:00Z',
+                'duration_minutes': 45,
+                'products': ['azure', 'microsoft-365'],
+                'roles': ['security-engineer', 'administrator', 'identity-access-admin'],
+                'subjects': ['security', 'identity', 'governance', 'access-management'],
+                'levels': ['intermediate'],
+                'rating': 4.6,
+                'last_modified': '2024-06-30T00:00:00Z',
                 'icon_url': ''
             }
         ]
@@ -371,33 +476,36 @@ class MSLearnCatalogService:
         ]
     
     def _get_fallback_facets(self) -> Dict:
-        """Provide fallback facets for development."""
+        """Provide fallback facets focused on SC-300 and SC-100 certification paths."""
         return {
             'products': [
-                {'id': 'azure', 'name': 'Azure', 'count': 150},
+                {'id': 'azure', 'name': 'Azure', 'count': 85},
                 {'id': 'microsoft-365', 'name': 'Microsoft 365', 'count': 75},
-                {'id': 'power-platform', 'name': 'Power Platform', 'count': 45},
-                {'id': 'dynamics-365', 'name': 'Dynamics 365', 'count': 30},
-                {'id': 'windows', 'name': 'Windows', 'count': 25}
+                {'id': 'power-platform', 'name': 'Power Platform', 'count': 15},
+                {'id': 'dynamics-365', 'name': 'Dynamics 365', 'count': 10},
+                {'id': 'windows', 'name': 'Windows', 'count': 8}
             ],
             'roles': [
-                {'id': 'developer', 'name': 'Developer', 'count': 120},
-                {'id': 'administrator', 'name': 'Administrator', 'count': 80},
-                {'id': 'ai-engineer', 'name': 'AI Engineer', 'count': 40},
-                {'id': 'data-scientist', 'name': 'Data Scientist', 'count': 35},
-                {'id': 'security-engineer', 'name': 'Security Engineer', 'count': 30}
+                {'id': 'identity-access-admin', 'name': 'Identity and Access Administrator', 'count': 45},
+                {'id': 'security-engineer', 'name': 'Security Engineer', 'count': 40},
+                {'id': 'security-architect', 'name': 'Security Architect', 'count': 25},
+                {'id': 'administrator', 'name': 'Administrator', 'count': 35},
+                {'id': 'developer', 'name': 'Developer', 'count': 20}
             ],
             'subjects': [
-                {'id': 'artificial-intelligence', 'name': 'Artificial Intelligence', 'count': 45},
-                {'id': 'machine-learning', 'name': 'Machine Learning', 'count': 35},
-                {'id': 'cloud-computing', 'name': 'Cloud Computing', 'count': 80},
-                {'id': 'security', 'name': 'Security', 'count': 60},
-                {'id': 'data-analytics', 'name': 'Data Analytics', 'count': 50}
+                {'id': 'security', 'name': 'Security', 'count': 80},
+                {'id': 'identity', 'name': 'Identity', 'count': 65},
+                {'id': 'governance', 'name': 'Governance', 'count': 35},
+                {'id': 'compliance', 'name': 'Compliance', 'count': 30},
+                {'id': 'zero-trust', 'name': 'Zero Trust', 'count': 25},
+                {'id': 'conditional-access', 'name': 'Conditional Access', 'count': 20},
+                {'id': 'privileged-access', 'name': 'Privileged Access', 'count': 18},
+                {'id': 'risk-management', 'name': 'Risk Management', 'count': 15}
             ],
             'levels': [
-                {'id': 'beginner', 'name': 'Beginner', 'count': 180},
-                {'id': 'intermediate', 'name': 'Intermediate', 'count': 120},
-                {'id': 'advanced', 'name': 'Advanced', 'count': 60}
+                {'id': 'beginner', 'name': 'Beginner', 'count': 25},
+                {'id': 'intermediate', 'name': 'Intermediate', 'count': 45},
+                {'id': 'advanced', 'name': 'Advanced', 'count': 30}
             ]
         }
 
