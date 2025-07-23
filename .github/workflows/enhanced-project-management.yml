@@ -1,0 +1,142 @@
+name: Enhanced Project Board Management
+
+on:
+  issues:
+    types: [opened, reopened, closed, labeled, unlabeled]
+  pull_request:
+    types: [opened, reopened, closed, merged, ready_for_review, converted_to_draft]
+  issue_comment:
+    types: [created]
+
+jobs:
+  manage-project-items:
+    runs-on: ubuntu-latest
+    name: Manage Project Board Items
+    steps:
+      - name: Add item to project
+        id: add-to-project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.PROJECT_URL || 'https://github.com/users/Thor-DraperJr/projects/1' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set status based on activity
+        uses: titoportas/update-project-fields@v0.1.0
+        if: steps.add-to-project.outputs.itemId
+        with:
+          project-url: ${{ vars.PROJECT_URL || 'https://github.com/users/Thor-DraperJr/projects/1' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          item-id: ${{ steps.add-to-project.outputs.itemId }}
+          field-keys: Status
+          field-values: |
+            ${{ 
+              github.event_name == 'issues' && github.event.action == 'opened' && 'Backlog' ||
+              github.event_name == 'pull_request' && github.event.action == 'opened' && 'In Progress' ||
+              github.event_name == 'pull_request' && github.event.action == 'ready_for_review' && 'Review' ||
+              github.event_name == 'issues' && github.event.action == 'closed' && 'Done' ||
+              github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged && 'Done' ||
+              'Backlog'
+            }}
+
+  label-management:
+    runs-on: ubuntu-latest
+    name: Auto-label Issues and PRs
+    if: github.event.action == 'opened'
+    steps:
+      - name: Auto-label new issues
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ['backlog'];
+            
+            // Add priority labels based on title keywords
+            const title = context.payload.issue.title.toLowerCase();
+            if (title.includes('[critical]') || title.includes('critical')) {
+              labels.push('critical');
+            } else if (title.includes('[high]') || title.includes('high')) {
+              labels.push('high');
+            } else if (title.includes('[hackathon]') || title.includes('hackathon')) {
+              labels.push('hackathon');
+            }
+            
+            // Add component labels based on title/body
+            const content = (title + ' ' + context.payload.issue.body).toLowerCase();
+            if (content.includes('audio') || content.includes('tts') || content.includes('speech')) {
+              labels.push('audio');
+            }
+            if (content.includes('ui') || content.includes('interface') || content.includes('frontend')) {
+              labels.push('ui');
+            }
+            if (content.includes('azure') || content.includes('cloud')) {
+              labels.push('azure');
+            }
+            if (content.includes('api') || content.includes('endpoint')) {
+              labels.push('api');
+            }
+            if (content.includes('ms learn') || content.includes('microsoft learn')) {
+              labels.push('ms-learn');
+            }
+            
+            // Apply labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: labels
+            });
+
+      - name: Auto-label new PRs
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ['in-progress'];
+            
+            // Add labels based on PR title and branch
+            const title = context.payload.pull_request.title.toLowerCase();
+            const branch = context.payload.pull_request.head.ref.toLowerCase();
+            
+            if (title.includes('fix') || branch.includes('fix') || title.includes('bug')) {
+              labels.push('bug');
+            }
+            if (title.includes('feat') || branch.includes('feat') || title.includes('feature')) {
+              labels.push('enhancement');
+            }
+            if (title.includes('docs') || branch.includes('docs')) {
+              labels.push('documentation');
+            }
+            if (title.includes('hackathon') || branch.includes('hackathon')) {
+              labels.push('hackathon');
+            }
+            
+            // Apply labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: labels
+            });
+
+  comment-management:
+    runs-on: ubuntu-latest
+    name: Project Board Comment Management
+    if: github.event_name == 'issue_comment' && github.event.action == 'created'
+    steps:
+      - name: Move to review on review request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment.body.toLowerCase();
+            
+            // Check for review-related keywords
+            if (comment.includes('ready for review') || comment.includes('please review') || comment.includes('/review')) {
+              // This would require additional project board API calls
+              // For now, we'll just add a label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                labels: ['review']
+              });
+            }

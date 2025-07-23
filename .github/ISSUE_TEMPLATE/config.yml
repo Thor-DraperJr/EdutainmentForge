@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 General Discussion
+    url: https://github.com/Thor-DraperJr/EdutainmentForge/discussions
+    about: Ask questions or discuss ideas about EdutainmentForge
+  - name: 📖 Documentation
+    url: https://github.com/Thor-DraperJr/EdutainmentForge/blob/main/README.md
+    about: Read the project documentation and setup guide
+  - name: 🎮 Live Demo
+    url: https://edutainmentforge.azurecontainerapps.io
+    about: Try out the live EdutainmentForge application

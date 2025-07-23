@@ -1,0 +1,38 @@
+name: Project Board Management
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+  pull_request:
+    types: [opened, reopened, closed, merged]
+
+jobs:
+  manage-project-board:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move new issues to Backlog
+        if: github.event.action == 'opened' && github.event_name == 'issues'
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.PROJECT_URL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: backlog
+          label-operator: OR
+
+      - name: Move new PRs to In Progress
+        if: github.event.action == 'opened' && github.event_name == 'pull_request'
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.PROJECT_URL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: in-progress
+          label-operator: OR
+
+      - name: Move closed issues/PRs to Done
+        if: github.event.action == 'closed' || github.event.action == 'merged'
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ vars.PROJECT_URL }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          labeled: done
+          label-operator: OR

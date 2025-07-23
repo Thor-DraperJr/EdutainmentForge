@@ -82,6 +82,21 @@ For more detailed information, see the documentation files:
 - [Development Guide](docs/DEVELOPMENT.md) - Setup and contribution guidelines
 - [Azure Deployment](docs/AZURE_DEPLOYMENT.md) - Production deployment steps
 - [Architecture Overview](docs/ARCHITECTURE.md) - System design and components
+- [Project Board Guide](docs/PROJECT_BOARD.md) - Hackathon task tracking and team collaboration
+
+## 📋 Project Management
+
+EdutainmentForge uses a **GitHub Project Board** for hackathon task tracking and team collaboration:
+
+🎯 **[View Project Board](https://github.com/Thor-DraperJr/EdutainmentForge/projects)** | 📝 **[Project Board Documentation](docs/PROJECT_BOARD.md)**
+
+### Quick Project Board Overview
+- **Backlog**: New issues and planned features
+- **In Progress**: Active development work  
+- **Review**: Code review and testing phase
+- **Done**: Completed and merged work
+
+All issues and pull requests are automatically organized on the project board with smart labeling and status updates.
 
 ## 📋 Recent Changes
 
