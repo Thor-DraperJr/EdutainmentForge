@@ -28,13 +28,15 @@ The project showcases several advanced AI and cloud engineering techniques:
 
 ## 📊 Current Status & Features
 
+✅ **Microsoft Learn Catalog Integration**: Automated content discovery with search & filtering  
 ✅ **Azure Speech Service**: Premium neural voices with SSML styling  
 ✅ **Azure OpenAI**: GPT-4o and GPT-4o-mini with smart model selection  
 ✅ **Multi-Voice TTS**: Enhanced conversational styles with distinct hosts  
+✅ **Batch Processing**: Queue entire learning paths for automated podcast generation  
 ✅ **Security**: Key Vault integration with managed identity  
 ✅ **Enterprise-Ready**: Containerized with proper CI/CD pipelines  
 
-**Last Tested**: July 1, 2025 with Microsoft Learn Zero Trust content - ✅ **Working Perfectly**
+**Last Tested**: July 23, 2025 with Microsoft Learn Catalog API integration - ✅ **Working Perfectly**
 
 ## 🚀 Quick Start
 
@@ -84,6 +86,14 @@ For more detailed information, see the documentation files:
 - [Architecture Overview](docs/ARCHITECTURE.md) - System design and components
 
 ## 📋 Recent Changes
+
+### v2.1.0 - Microsoft Learn Catalog API Integration
+- **🔍 Automated Content Discovery** - Browse Microsoft Learn catalog without manual URLs
+- **🔍 Advanced Search & Filtering** - Find content by product (Azure, M365, etc.), role, topic, and difficulty level
+- **📚 Learning Path Queuing** - Select and queue entire learning paths for batch processing
+- **🎯 Enhanced User Experience** - Rich discovery interface with content browsing and selection
+- **⚡ Batch Processing** - Process multiple modules or entire learning paths automatically
+- **🔧 Backward Compatibility** - Maintains existing URL input functionality alongside new discovery features
 
 ### v2.0.0 - Premium AI Enhancement & Modern Development
 - **Premium Service Integration** - GPT-4 support with neural voice capabilities
@@ -201,7 +211,15 @@ Deploy to Azure Container Apps with integrated Key Vault secret management:
 
 ## 📖 Usage
 
-### Web Interface
+### Web Interface - Discovery Method (Recommended)
+1. Open `http://localhost:5000`
+2. Click "Discover Content" to browse Microsoft Learn catalog
+3. Search by keywords, filter by product/role/topic
+4. Select individual modules or entire learning paths
+5. Queue multiple items for batch processing
+6. Download your multi-voice podcasts!
+
+### Web Interface - Direct URL Method
 1. Open `http://localhost:5000`
 2. Enter a Microsoft Learn URL
 3. Click "Generate Podcast"

@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.logger import get_logger
+from .catalog import MSLearnCatalogService
 
 
 logger = get_logger(__name__)
@@ -42,6 +43,93 @@ class MSLearnFetcher:
         self.session.headers.update({
             'User-Agent': 'EdutainmentForge/1.0 (Educational Podcast Generator)'
         })
+        # Initialize catalog service for discovery features
+        self.catalog_service = MSLearnCatalogService()
+    
+    def fetch_content_from_catalog_item(self, catalog_item: Dict[str, str]) -> Dict[str, str]:
+        """
+        Fetch content from a catalog item (from search/discovery).
+        
+        Args:
+            catalog_item: Catalog item dictionary with URL and metadata
+            
+        Returns:
+            Dictionary containing module content
+            
+        Raises:
+            ContentFetchError: If content cannot be retrieved
+        """
+        try:
+            url = catalog_item.get('url', '')
+            if not url:
+                raise ContentFetchError("No URL provided in catalog item")
+            
+            logger.info(f"Fetching catalog item: {catalog_item.get('title', 'Unknown')}")
+            
+            # Use existing fetch_module_content method
+            content = self.fetch_module_content(url)
+            
+            # Enhance content with catalog metadata
+            content.update({
+                'catalog_id': catalog_item.get('id', ''),
+                'duration_minutes': catalog_item.get('duration_minutes', 0),
+                'products': catalog_item.get('products', []),
+                'roles': catalog_item.get('roles', []),
+                'subjects': catalog_item.get('subjects', []),
+                'rating': catalog_item.get('rating', 0)
+            })
+            
+            return content
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch catalog item content: {e}")
+            raise ContentFetchError(f"Catalog content fetch failed: {e}")
+    
+    def fetch_learning_path_content(self, learning_path_id: str) -> List[Dict[str, str]]:
+        """
+        Fetch content from all modules in a learning path.
+        
+        Args:
+            learning_path_id: Learning path identifier
+            
+        Returns:
+            List of module content dictionaries
+            
+        Raises:
+            ContentFetchError: If learning path cannot be retrieved
+        """
+        try:
+            logger.info(f"Fetching learning path: {learning_path_id}")
+            
+            # Get modules from catalog service
+            modules = self.catalog_service.get_learning_path_modules(learning_path_id)
+            
+            if not modules:
+                raise ContentFetchError(f"No modules found in learning path: {learning_path_id}")
+            
+            # Fetch content for each module
+            module_contents = []
+            for i, module in enumerate(modules, 1):
+                try:
+                    logger.info(f"Fetching module {i}/{len(modules)}: {module.get('title', 'Unknown')}")
+                    
+                    content = self.fetch_content_from_catalog_item(module)
+                    module_contents.append(content)
+                    
+                    # Be respectful to the server
+                    time.sleep(1)
+                    
+                except Exception as e:
+                    logger.warning(f"Failed to fetch module {i}: {e}")
+                    # Continue with other modules rather than failing completely
+                    continue
+            
+            logger.info(f"Successfully fetched {len(module_contents)} modules from learning path")
+            return module_contents
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch learning path content: {e}")
+            raise ContentFetchError(f"Learning path fetch failed: {e}")
     
     def fetch_module_content(self, module_url: str) -> Dict[str, str]:
         """
