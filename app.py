@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from content.fetcher import MSLearnFetcher
 from content.processor import ScriptProcessor
+from content.catalog import create_catalog_service
 from audio.tts import create_tts_service
 from audio import create_best_multivoice_tts_service
 from utils.config import load_config
@@ -225,31 +226,145 @@ def main_app():
     
     return render_template('index.html', podcasts=podcasts)
 
-@app.route('/library')
+@app.route('/discover')
 @_require_auth
-def library_page():
-    """Podcast library page."""
-    # Get list of available podcasts from local output directory
-    podcasts = []
-    output_dir = Path("output")
-    if output_dir.exists():
-        try:
-            # Find all .wav files in output directory
-            for wav_file in output_dir.glob("*.wav"):
-                # Skip demo files
-                if "demo_" not in wav_file.name:
-                    podcasts.append({
-                        'name': wav_file.stem,
-                        'filename': wav_file.name,
-                        'size': f"{wav_file.stat().st_size / (1024*1024):.1f}MB",
-                        'created': datetime.fromtimestamp(wav_file.stat().st_mtime).strftime('%Y-%m-%d %H:%M')
-                    })
-            # Sort by creation time (newest first)
-            podcasts.sort(key=lambda x: x['created'], reverse=True)
-        except Exception as e:
-            print(f"Could not load local podcasts: {e}")
-    
-    return render_template('library.html', podcasts=podcasts)
+def discover_page():
+    """Discovery page for browsing Microsoft Learn catalog."""
+    return render_template('discover.html')
+
+@app.route('/api/catalog/search', methods=['GET'])
+@_require_auth
+def catalog_search():
+    """Search the Microsoft Learn catalog."""
+    try:
+        # Get query parameters
+        query = request.args.get('q', '').strip()
+        content_type = request.args.get('type', 'modules')
+        product = request.args.get('product', '')
+        role = request.args.get('role', '')
+        topic = request.args.get('topic', '')
+        limit = min(int(request.args.get('limit', 20)), 50)  # Cap at 50
+        
+        # Create catalog service and search
+        catalog_service = create_catalog_service()
+        results = catalog_service.search_content(
+            query=query,
+            content_type=content_type,
+            product=product if product else None,
+            role=role if role else None,
+            topic=topic if topic else None,
+            limit=limit
+        )
+        
+        return jsonify(results)
+        
+    except Exception as e:
+        logger.error(f"Catalog search failed: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/catalog/facets', methods=['GET'])
+@_require_auth
+def catalog_facets():
+    """Get available catalog facets for filtering."""
+    try:
+        catalog_service = create_catalog_service()
+        facets = catalog_service.get_catalog_facets()
+        return jsonify(facets)
+        
+    except Exception as e:
+        logger.error(f"Failed to get catalog facets: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/catalog/learning-path/<path_id>/modules', methods=['GET'])
+@_require_auth
+def get_learning_path_modules(path_id):
+    """Get modules in a learning path."""
+    try:
+        catalog_service = create_catalog_service()
+        modules = catalog_service.get_learning_path_modules(path_id)
+        return jsonify({'modules': modules, 'total': len(modules)})
+        
+    except Exception as e:
+        logger.error(f"Failed to get learning path modules: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/process-catalog-item', methods=['POST'])
+@_require_auth
+def process_catalog_item():
+    """Process a catalog item (module or learning path) into a podcast."""
+    try:
+        data = request.get_json()
+        catalog_item = data.get('catalog_item', {})
+        
+        if not catalog_item:
+            return jsonify({'error': 'Catalog item is required'}), 400
+        
+        if not catalog_item.get('url'):
+            return jsonify({'error': 'Catalog item must have a URL'}), 400
+        
+        # Generate unique ID for this processing task
+        task_id = str(uuid.uuid4())
+        
+        # Initialize status
+        with status_lock:
+            processing_status[task_id] = {
+                'status': 'started',
+                'progress': 0,
+                'message': f'Starting processing of "{catalog_item.get("title", "Unknown")}"...',
+                'catalog_item': catalog_item,
+                'created_at': datetime.now().isoformat()
+            }
+        
+        # Start processing in background thread
+        thread = threading.Thread(target=process_catalog_item_background, args=(task_id, catalog_item))
+        thread.daemon = True
+        thread.start()
+        
+        return jsonify({'task_id': task_id, 'status': 'processing'}), 202
+        
+    except Exception as e:
+        logger.error(f"Catalog item processing failed: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/process-learning-path', methods=['POST'])
+@_require_auth
+def process_learning_path():
+    """Process an entire learning path into multiple podcasts."""
+    try:
+        data = request.get_json()
+        learning_path_id = data.get('learning_path_id', '').strip()
+        learning_path_title = data.get('title', 'Learning Path')
+        
+        if not learning_path_id:
+            return jsonify({'error': 'Learning path ID is required'}), 400
+        
+        # Generate unique ID for this batch processing task
+        task_id = str(uuid.uuid4())
+        
+        # Initialize status
+        with status_lock:
+            processing_status[task_id] = {
+                'status': 'started',
+                'progress': 0,
+                'message': f'Starting batch processing of "{learning_path_title}"...',
+                'learning_path_id': learning_path_id,
+                'learning_path_title': learning_path_title,
+                'batch_processing': True,
+                'completed_modules': [],
+                'failed_modules': [],
+                'created_at': datetime.now().isoformat()
+            }
+        
+        # Start processing in background thread
+        thread = threading.Thread(target=process_learning_path_background, args=(task_id, learning_path_id, learning_path_title))
+        thread.daemon = True
+        thread.start()
+        
+        return jsonify({'task_id': task_id, 'status': 'processing', 'batch': True}), 202
+        
+    except Exception as e:
+        logger.error(f"Learning path processing failed: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/process', methods=['POST'])
 @_require_auth
@@ -419,6 +534,239 @@ def process_url_background(task_id, url, voice):
                     'message': f'Processing error: {str(e)}'
                 })
                 print(f"DEBUG: Task {task_id} failed with exception: {e}")
+
+def process_catalog_item_background(task_id, catalog_item):
+    """Background processing of catalog item to podcast."""
+    try:
+        # Update status
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'fetching',
+                    'progress': 20,
+                    'message': f'Fetching content for "{catalog_item.get("title", "Unknown")}"...'
+                })
+        
+        # Load config
+        config = load_config()
+        
+        # Fetch content using enhanced fetcher
+        fetcher = MSLearnFetcher()
+        content = fetcher.fetch_content_from_catalog_item(catalog_item)
+        
+        if not content or not content.get('title') or not content.get('content'):
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'error',
+                        'message': 'Failed to fetch content or content is empty'
+                    })
+            return
+        
+        # Update status
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'processing_script',
+                    'progress': 50,
+                    'message': 'Converting to podcast script...'
+                })
+        
+        # Process into script
+        processor = ScriptProcessor()
+        script_result = processor.process_content_to_script(content)
+        script = script_result.get('script', '')
+        
+        # Update status
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'generating_audio',
+                    'progress': 70,
+                    'message': 'Generating audio with Azure Speech Service...'
+                })
+        
+        # Generate audio with multi-voice support
+        multivoice_tts = create_best_multivoice_tts_service(config)
+        
+        # Create output filename
+        clean_title = "".join(c for c in content['title'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
+        clean_title = clean_title.replace(' ', '_')[:50]
+        output_name = f"{clean_title}_{task_id[:8]}"
+        
+        output_dir = Path("output")
+        output_dir.mkdir(exist_ok=True)
+        
+        # Save script
+        script_path = output_dir / f"{output_name}_script.txt"
+        script_path.write_text(script)
+        
+        # Define progress callback
+        def tts_progress_callback(progress, message):
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'progress': progress,
+                        'message': message
+                    })
+        
+        # Generate audio
+        audio_path = output_dir / f"{output_name}.wav"
+        success = multivoice_tts.synthesize_dialogue_script(script, audio_path, progress_callback=tts_progress_callback)
+        
+        if success and audio_path.exists():
+            file_size = audio_path.stat().st_size
+            
+            # Update status - completed
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'completed',
+                        'progress': 100,
+                        'message': f'Podcast for "{content["title"]}" generated successfully!',
+                        'audio_file': str(audio_path),
+                        'audio_filename': audio_path.name,
+                        'script_file': str(script_path),
+                        'title': content['title'],
+                        'file_size': file_size,
+                        'duration_estimate': len(script) / 12,
+                        'catalog_item': catalog_item
+                    })
+        else:
+            error_details = f"success={success}, file_exists={audio_path.exists() if audio_path else False}"
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'error',
+                        'message': f'Failed to generate audio file. Details: {error_details}'
+                    })
+                    
+    except Exception as e:
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'error',
+                    'message': f'Processing error: {str(e)}'
+                })
+
+def process_learning_path_background(task_id, learning_path_id, learning_path_title):
+    """Background processing of entire learning path to multiple podcasts."""
+    try:
+        # Update status
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'fetching',
+                    'progress': 10,
+                    'message': f'Fetching modules for "{learning_path_title}"...'
+                })
+        
+        # Load config
+        config = load_config()
+        
+        # Fetch learning path modules
+        fetcher = MSLearnFetcher()
+        module_contents = fetcher.fetch_learning_path_content(learning_path_id)
+        
+        if not module_contents:
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'status': 'error',
+                        'message': 'No modules found in learning path'
+                    })
+            return
+        
+        total_modules = len(module_contents)
+        completed_modules = []
+        failed_modules = []
+        
+        # Process each module
+        for i, content in enumerate(module_contents, 1):
+            try:
+                # Update progress
+                base_progress = 20 + (i - 1) * 70 // total_modules
+                with status_lock:
+                    if task_id in processing_status:
+                        processing_status[task_id].update({
+                            'progress': base_progress,
+                            'message': f'Processing module {i}/{total_modules}: "{content.get("title", "Unknown")}"...'
+                        })
+                
+                # Process into script
+                processor = ScriptProcessor()
+                script_result = processor.process_content_to_script(content)
+                script = script_result.get('script', '')
+                
+                # Generate audio
+                multivoice_tts = create_best_multivoice_tts_service(config)
+                
+                # Create output filename
+                clean_title = "".join(c for c in content['title'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                clean_title = clean_title.replace(' ', '_')[:50]
+                output_name = f"{learning_path_title.replace(' ', '_')}_Module_{i:02d}_{clean_title}_{task_id[:8]}"
+                
+                output_dir = Path("output")
+                output_dir.mkdir(exist_ok=True)
+                
+                # Save script
+                script_path = output_dir / f"{output_name}_script.txt"
+                script_path.write_text(script)
+                
+                # Generate audio
+                audio_path = output_dir / f"{output_name}.wav"
+                success = multivoice_tts.synthesize_dialogue_script(script, audio_path)
+                
+                if success and audio_path.exists():
+                    completed_modules.append({
+                        'title': content['title'],
+                        'filename': audio_path.name,
+                        'file_size': audio_path.stat().st_size
+                    })
+                else:
+                    failed_modules.append({
+                        'title': content['title'],
+                        'error': 'Audio generation failed'
+                    })
+                
+            except Exception as e:
+                logger.error(f"Failed to process module {i}: {e}")
+                failed_modules.append({
+                    'title': content.get('title', f'Module {i}'),
+                    'error': str(e)
+                })
+            
+            # Update status with current progress
+            with status_lock:
+                if task_id in processing_status:
+                    processing_status[task_id].update({
+                        'completed_modules': completed_modules,
+                        'failed_modules': failed_modules
+                    })
+        
+        # Final status update
+        final_progress = 100
+        success_count = len(completed_modules)
+        fail_count = len(failed_modules)
+        
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'completed' if success_count > 0 else 'error',
+                    'progress': final_progress,
+                    'message': f'Learning path processing completed: {success_count} succeeded, {fail_count} failed',
+                    'completed_modules': completed_modules,
+                    'failed_modules': failed_modules,
+                    'total_modules': total_modules
+                })
+                
+    except Exception as e:
+        with status_lock:
+            if task_id in processing_status:
+                processing_status[task_id].update({
+                    'status': 'error',
+                    'message': f'Learning path processing error: {str(e)}'
+                })
 
 @app.route('/api/status/<task_id>')
 @_require_auth
