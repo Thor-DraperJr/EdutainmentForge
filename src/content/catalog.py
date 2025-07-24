@@ -1,4 +1,4 @@
-SC-100: Design solutions that align with security best practices and priorities"""
+"""
 Microsoft Learn Catalog API integration.
 
 This module provides functionality to search, browse, and discover content
