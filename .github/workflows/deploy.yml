@@ -9,6 +9,7 @@ env:
   AZURE_CONTAINERAPP_NAME: edutainmentforge-app
   AZURE_GROUP_NAME: edutainmentforge-rg
   AZURE_CONTAINERAPP_ENV: edutainmentforge-env
+  AZURE_CONTAINER_REGISTRY: edutainmentforge.azurecr.io
 
 jobs:
   deploy:
@@ -26,6 +27,7 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         appSourcePath: ${{ github.workspace }}
+        acrName: edutainmentforge
         resourceGroup: ${{ env.AZURE_GROUP_NAME }}
         containerAppName: ${{ env.AZURE_CONTAINERAPP_NAME }}
         containerAppEnvironment: ${{ env.AZURE_CONTAINERAPP_ENV }}
