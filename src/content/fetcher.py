@@ -66,8 +66,38 @@ class MSLearnFetcher:
             
             logger.info(f"Fetching catalog item: {catalog_item.get('title', 'Unknown')}")
             
-            # Use existing fetch_module_content method
-            content = self.fetch_module_content(url)
+            # Check if this is a unit-specific request
+            if catalog_item.get('type') == 'unit' and catalog_item.get('unitTitle'):
+                # For unit-specific content, we need to fetch the module and filter to specific unit
+                content = self.fetch_module_content(url)
+                
+                # Extract only the specific unit content
+                unit_title = catalog_item.get('unitTitle')
+                module_title = catalog_item.get('moduleTitle', content.get('title', ''))
+                
+                # Find the unit section in the content
+                unit_content = self._extract_unit_content(content.get('content', ''), unit_title)
+                
+                if unit_content:
+                    content.update({
+                        'title': f"{module_title} - {unit_title}",
+                        'content': unit_content,
+                        'is_unit': True,
+                        'unit_title': unit_title,
+                        'module_title': module_title
+                    })
+                else:
+                    # If we can't find specific unit content, fall back to full module
+                    logger.warning(f"Could not find specific content for unit '{unit_title}', using full module")
+                    content.update({
+                        'title': f"{module_title} - {unit_title}",
+                        'is_unit': True,
+                        'unit_title': unit_title,
+                        'module_title': module_title
+                    })
+            else:
+                # Use existing fetch_module_content method for full modules
+                content = self.fetch_module_content(url)
             
             # Enhance content with catalog metadata
             content.update({
@@ -666,6 +696,53 @@ class MSLearnFetcher:
         text = re.sub(r'Progress:\s*\d+%', '', text, flags=re.IGNORECASE)
         
         return text.strip()
+
+    def _extract_unit_content(self, full_content: str, unit_title: str) -> str:
+        """
+        Extract content for a specific unit from the full module content.
+        
+        Args:
+            full_content: The full module content
+            unit_title: The title of the unit to extract
+            
+        Returns:
+            Extracted unit content or empty string if not found
+        """
+        try:
+            # Split content into sections based on common heading patterns
+            sections = re.split(r'\n(?=\w)', full_content)
+            
+            # Look for the unit by title
+            unit_content = ""
+            found_unit = False
+            
+            for i, section in enumerate(sections):
+                # Check if this section contains the unit title
+                if unit_title.lower() in section.lower()[:200]:  # Check first 200 chars
+                    found_unit = True
+                    unit_content = section
+                    
+                    # Try to include the next few sections that might be part of this unit
+                    for j in range(i + 1, min(i + 5, len(sections))):
+                        next_section = sections[j]
+                        # Stop if we hit what looks like another unit/section header
+                        if (re.match(r'^(Unit|Module|Exercise|Lab|Introduction|Summary|Conclusion)', next_section.strip(), re.IGNORECASE) or
+                            len(next_section.strip()) < 50):  # Short sections are likely headers
+                            break
+                        unit_content += "\n\n" + next_section
+                    break
+            
+            if found_unit and unit_content:
+                # Clean up the extracted content
+                unit_content = re.sub(r'\s+', ' ', unit_content)
+                unit_content = re.sub(r'\n\s*\n', '\n\n', unit_content)
+                return unit_content.strip()
+            
+            return ""
+            
+        except Exception as e:
+            logger.warning(f"Error extracting unit content for '{unit_title}': {e}")
+            return ""
 
 
 def create_sample_content() -> Dict[str, str]:

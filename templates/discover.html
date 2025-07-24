@@ -309,14 +309,46 @@
             margin: 0;
         }
         
-        .units-list li {
-            padding: 2px 0;
+        .units-list .unit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .units-list .unit-item:last-child {
+            border-bottom: none;
+        }
+        
+        .unit-title {
+            flex: 1;
             color: #6c757d;
         }
         
-        .units-list li:before {
+        .unit-title:before {
             content: "📑 ";
             margin-right: 5px;
+        }
+        
+        .unit-generate-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        }
+        
+        .unit-generate-button:hover {
+            background: linear-gradient(135deg, #218838, #1ea085);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
         }
         
         .toggle-units {
@@ -590,13 +622,17 @@
                         <div class="units-preview" id="units-${index}">
                             <h5>Module Units:</h5>
                             <ul class="units-list">
-                                ${module.unit_details.map(unit => `<li>${unit}</li>`).join('')}
+                                ${module.unit_details.map((unit, unitIndex) => `
+                                    <li class="unit-item">
+                                        <span class="unit-title">${unit}</span>
+                                        <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}')">
+                                            🎙️ Generate Podcast
+                                        </button>
+                                    </li>
+                                `).join('')}
                             </ul>
                         </div>
                     ` : ''}
-                    <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title}')">
-                        🎙️ Generate Podcast
-                    </button>
                 </div>
             `).join('');
         }
@@ -678,6 +714,53 @@
             });
         }
         
+        // Generate podcast for a specific unit
+        function generateUnitPodcast(moduleUrl, unitTitle, moduleTitle) {
+            if (!confirm(`Generate podcast for unit "${unitTitle}" from module "${moduleTitle}"?`)) {
+                return;
+            }
+            
+            // Create catalog item object for the specific unit
+            const catalogItem = {
+                title: `${moduleTitle} - ${unitTitle}`,
+                url: moduleUrl,
+                type: 'unit',
+                unitTitle: unitTitle,
+                moduleTitle: moduleTitle
+            };
+            
+            // Send to processing endpoint
+            fetch('/api/process-catalog-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    catalog_item: catalogItem
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                alert('Unit podcast generation started! Check the "Podcast Library" tab to monitor progress.');
+                
+                // Store the task for progress monitoring
+                if (data.task_id) {
+                    const storedTasks = JSON.parse(localStorage.getItem('processingTasks') || '{}');
+                    storedTasks[data.task_id] = { title: `${moduleTitle} - ${unitTitle}` };
+                    localStorage.setItem('processingTasks', JSON.stringify(storedTasks));
+                }
+            })
+            .catch(error => {
+                console.error('Error starting unit podcast generation:', error);
+                alert('Failed to start unit podcast generation. Please try again.');
+            });
+        }
+        
         // Utility functions
         function showLoading(containerId) {
             document.getElementById(containerId).innerHTML = `
@@ -694,764 +777,6 @@
                     Error: ${message}
                 </div>
             `;
-        }
-    </script>
-</body>
-</html>
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #0085CA, #101820);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        
-        .search-section {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .search-input {
-            flex: 1;
-            min-width: 300px;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        
-        .search-btn {
-            background: linear-gradient(45deg, #0085CA, #101820);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .search-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .filters-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .filter-group label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .filter-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: white;
-        }
-        
-        .results-section {
-            margin-bottom: 30px;
-        }
-        
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .results-count {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .content-type-tabs {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .tab {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            background: #f8f9fa;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .tab.active {
-            background: #0085CA;
-            color: white;
-            border-color: #0085CA;
-        }
-        
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        .result-card {
-            border: 1px solid #e1e5e9;
-            border-radius: 10px;
-            padding: 20px;
-            background: white;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-        }
-        
-        .result-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .result-card.selected {
-            border-color: #0085CA;
-            background: #f0f9ff;
-        }
-        
-        .result-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-        
-        .result-summary {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-        
-        .result-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .meta-tag {
-            background: #e9ecef;
-            color: #495057;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        
-        .result-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-        }
-        
-        .btn-primary {
-            background: #0085CA;
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .action-btn:hover {
-            opacity: 0.9;
-        }
-        
-        .queue-section {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            padding: 20px;
-            min-width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .queue-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        
-        .queue-item {
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-        }
-        
-        .queue-item-title {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #0085CA;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-        
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        /* Flash message styles */
-        .flash-messages {
-            margin-bottom: 20px;
-        }
-        
-        .flash-success {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px 16px;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .flash-error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px 16px;
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .flash-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            padding: 12px 16px;
-            border: 1px solid #bee5eb;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <div class="nav">
-        <a href="/app" class="nav-button">Create Podcast</a>
-        <a href="/discover" class="nav-button active">Discover Content</a>
-        <a href="/library" class="nav-button">Podcast Library</a>
-        {% if session.user %}
-        <a href="/auth/profile" class="nav-button">Profile</a>
-        <a href="/auth/logout" class="nav-button">Logout</a>
-        {% else %}
-        <a href="/auth/login" class="nav-button">Login</a>
-        {% endif %}
-    </div>
-
-    <div class="container">
-        <div class="header">
-            <h1>🔍 Discover Learning Content</h1>
-            <p>Browse and search Microsoft Learn modules and learning paths</p>
-        </div>
-        
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Search Section -->
-        <div class="search-section">
-            <input type="text" id="search-input" class="search-input" 
-                   placeholder="Search for AI, Azure, security, or any topic...">
-            <button id="search-btn" class="search-btn">🔍 Search</button>
-        </div>
-        
-        <!-- Filters Section -->
-        <div class="filters-section" id="filters-section">
-            <div class="filter-group">
-                <label for="product-filter">Product</label>
-                <select id="product-filter">
-                    <option value="">All Products</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="role-filter">Role</label>
-                <select id="role-filter">
-                    <option value="">All Roles</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="topic-filter">Topic</label>
-                <select id="topic-filter">
-                    <option value="">All Topics</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label for="level-filter">Level</label>
-                <select id="level-filter">
-                    <option value="">All Levels</option>
-                </select>
-            </div>
-        </div>
-        
-        <!-- Results Section -->
-        <div class="results-section">
-            <div class="results-header">
-                <div class="content-type-tabs">
-                    <div class="tab active" data-type="modules">Modules</div>
-                    <div class="tab" data-type="learning-paths">Learning Paths</div>
-                </div>
-                <div class="results-count" id="results-count">Search to find content</div>
-            </div>
-            
-            <div id="results-container">
-                <div class="empty-state">
-                    <h3>Welcome to Content Discovery!</h3>
-                    <p>Use the search box above to find Microsoft Learn modules and learning paths.<br>
-                    You can filter by product, role, topic, and difficulty level.</p>
-                    <p style="margin-top: 20px; font-style: italic;">
-                        Try searching for: "AI fundamentals", "Azure security", or "Power Platform"
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Processing Queue -->
-    <div id="queue-section" class="queue-section">
-        <div class="queue-header">
-            <h4>Processing Queue</h4>
-            <button id="close-queue" style="background: none; border: none; cursor: pointer;">✕</button>
-        </div>
-        <div id="queue-items"></div>
-        <div style="text-align: center; margin-top: 15px;">
-            <button id="process-queue-btn" class="action-btn btn-success">
-                🎵 Process All Items
-            </button>
-        </div>
-    </div>
-
-    <script>
-        let currentResults = [];
-        let selectedQueue = [];
-        let currentContentType = 'modules';
-        let facets = {};
-        
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFacets();
-            setupEventListeners();
-        });
-        
-        function setupEventListeners() {
-            // Search functionality
-            document.getElementById('search-btn').addEventListener('click', performSearch);
-            document.getElementById('search-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-            
-            // Filter changes
-            ['product-filter', 'role-filter', 'topic-filter', 'level-filter'].forEach(id => {
-                document.getElementById(id).addEventListener('change', performSearch);
-            });
-            
-            // Content type tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentContentType = this.dataset.type;
-                    performSearch();
-                });
-            });
-            
-            // Queue management
-            document.getElementById('close-queue').addEventListener('click', function() {
-                document.getElementById('queue-section').style.display = 'none';
-            });
-            
-            document.getElementById('process-queue-btn').addEventListener('click', processQueue);
-        }
-        
-        async function loadFacets() {
-            try {
-                const response = await fetch('/api/catalog/facets');
-                if (response.ok) {
-                    facets = await response.json();
-                    populateFilters();
-                }
-            } catch (error) {
-                console.error('Error loading facets:', error);
-            }
-        }
-        
-        function populateFilters() {
-            // Populate product filter
-            const productFilter = document.getElementById('product-filter');
-            facets.products?.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = `${product.name} (${product.count})`;
-                productFilter.appendChild(option);
-            });
-            
-            // Populate role filter
-            const roleFilter = document.getElementById('role-filter');
-            facets.roles?.forEach(role => {
-                const option = document.createElement('option');
-                option.value = role.id;
-                option.textContent = `${role.name} (${role.count})`;
-                roleFilter.appendChild(option);
-            });
-            
-            // Populate topic filter
-            const topicFilter = document.getElementById('topic-filter');
-            facets.subjects?.forEach(subject => {
-                const option = document.createElement('option');
-                option.value = subject.id;
-                option.textContent = `${subject.name} (${subject.count})`;
-                topicFilter.appendChild(option);
-            });
-            
-            // Populate level filter
-            const levelFilter = document.getElementById('level-filter');
-            facets.levels?.forEach(level => {
-                const option = document.createElement('option');
-                option.value = level.id;
-                option.textContent = `${level.name} (${level.count})`;
-                levelFilter.appendChild(option);
-            });
-        }
-        
-        async function performSearch() {
-            const query = document.getElementById('search-input').value.trim();
-            const product = document.getElementById('product-filter').value;
-            const role = document.getElementById('role-filter').value;
-            const topic = document.getElementById('topic-filter').value;
-            const level = document.getElementById('level-filter').value;
-            
-            // Show loading
-            document.getElementById('results-container').innerHTML = 
-                '<div class="loading"><div class="spinner"></div><br>Searching...</div>';
-            
-            try {
-                const params = new URLSearchParams({
-                    q: query,
-                    type: currentContentType,
-                    limit: 20
-                });
-                
-                if (product) params.append('product', product);
-                if (role) params.append('role', role);
-                if (topic) params.append('topic', topic);
-                if (level) params.append('level', level);
-                
-                const response = await fetch(`/api/catalog/search?${params}`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    currentResults = data.results || [];
-                    displayResults(data);
-                } else {
-                    throw new Error('Search failed');
-                }
-                
-            } catch (error) {
-                console.error('Search error:', error);
-                document.getElementById('results-container').innerHTML = 
-                    '<div class="error-message">Search failed. Please try again.</div>';
-            }
-        }
-        
-        function displayResults(data) {
-            const container = document.getElementById('results-container');
-            const results = data.results || [];
-            
-            // Update results count
-            document.getElementById('results-count').textContent = 
-                `Found ${results.length} ${currentContentType}`;
-            
-            if (results.length === 0) {
-                container.innerHTML = 
-                    '<div class="empty-state"><h3>No results found</h3><p>Try adjusting your search terms or filters.</p></div>';
-                return;
-            }
-            
-            // Create results grid
-            const grid = document.createElement('div');
-            grid.className = 'results-grid';
-            
-            results.forEach(item => {
-                const card = createResultCard(item);
-                grid.appendChild(card);
-            });
-            
-            container.innerHTML = '';
-            container.appendChild(grid);
-        }
-        
-        function createResultCard(item) {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            card.dataset.itemId = item.id;
-            
-            // Create meta tags
-            const metaTags = [];
-            if (item.products?.length) metaTags.push(...item.products);
-            if (item.roles?.length) metaTags.push(...item.roles);
-            if (item.subjects?.length) metaTags.push(...item.subjects);
-            
-            const duration = item.duration_minutes ? `${item.duration_minutes} min` : '';
-            const rating = item.rating ? `⭐ ${item.rating.toFixed(1)}` : '';
-            
-            card.innerHTML = `
-                <div class="result-title">${item.title}</div>
-                <div class="result-summary">${item.summary}</div>
-                <div class="result-meta">
-                    ${metaTags.slice(0, 3).map(tag => `<span class="meta-tag">${tag}</span>`).join('')}
-                    ${duration ? `<span class="meta-tag">⏱️ ${duration}</span>` : ''}
-                    ${rating ? `<span class="meta-tag">${rating}</span>` : ''}
-                </div>
-                <div class="result-actions">
-                    <button class="action-btn btn-primary" onclick="processItem('${item.id}')">
-                        🎵 Create Podcast
-                    </button>
-                    <button class="action-btn btn-secondary" onclick="addToQueue('${item.id}')">
-                        ➕ Add to Queue
-                    </button>
-                    ${currentContentType === 'learning-paths' ? 
-                        `<button class="action-btn btn-success" onclick="processLearningPath('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
-                            📚 Process Path
-                        </button>` : ''}
-                </div>
-            `;
-            
-            return card;
-        }
-        
-        function addToQueue(itemId) {
-            const item = currentResults.find(r => r.id === itemId);
-            if (!item) return;
-            
-            // Check if already in queue
-            if (selectedQueue.find(q => q.id === itemId)) {
-                alert('Item already in queue');
-                return;
-            }
-            
-            selectedQueue.push(item);
-            updateQueueDisplay();
-            
-            // Highlight the card
-            const card = document.querySelector(`[data-item-id="${itemId}"]`);
-            if (card) {
-                card.classList.add('selected');
-            }
-        }
-        
-        function updateQueueDisplay() {
-            const queueSection = document.getElementById('queue-section');
-            const queueItems = document.getElementById('queue-items');
-            
-            if (selectedQueue.length === 0) {
-                queueSection.style.display = 'none';
-                return;
-            }
-            
-            queueSection.style.display = 'block';
-            
-            queueItems.innerHTML = selectedQueue.map(item => `
-                <div class="queue-item">
-                    <div class="queue-item-title">${item.title}</div>
-                    <button onclick="removeFromQueue('${item.id}')" 
-                            style="float: right; background: none; border: none; cursor: pointer; color: #dc3545;">✕</button>
-                </div>
-            `).join('');
-        }
-        
-        function removeFromQueue(itemId) {
-            selectedQueue = selectedQueue.filter(item => item.id !== itemId);
-            updateQueueDisplay();
-            
-            // Remove highlight from card
-            const card = document.querySelector(`[data-item-id="${itemId}"]`);
-            if (card) {
-                card.classList.remove('selected');
-            }
-        }
-        
-        async function processItem(itemId) {
-            const item = currentResults.find(r => r.id === itemId);
-            if (!item) return;
-            
-            try {
-                const response = await fetch('/api/process-catalog-item', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ catalog_item: item })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(`Processing started for "${item.title}". Check the main page for progress.`);
-                    // Optionally redirect to main page
-                    // window.location.href = '/app';
-                } else {
-                    throw new Error('Processing failed');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to start processing. Please try again.');
-            }
-        }
-        
-        async function processLearningPath(pathId, title) {
-            try {
-                const response = await fetch('/api/process-learning-path', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        learning_path_id: pathId,
-                        title: title
-                    })
-                });
-                
-                if (response.ok) {
-                    alert(`Batch processing started for learning path "${title}". This will create podcasts for all modules.`);
-                } else {
-                    throw new Error('Processing failed');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to start learning path processing. Please try again.');
-            }
-        }
-        
-        async function processQueue() {
-            if (selectedQueue.length === 0) {
-                alert('No items in queue');
-                return;
-            }
-            
-            const confirmed = confirm(`Process ${selectedQueue.length} items from the queue?`);
-            if (!confirmed) return;
-            
-            // Process each item in the queue
-            for (const item of selectedQueue) {
-                try {
-                    await processItem(item.id);
-                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between requests
-                } catch (error) {
-                    console.error(`Failed to process ${item.title}:`, error);
-                }
-            }
-            
-            alert(`Started processing ${selectedQueue.length} items. Check the main page for progress.`);
-            
-            // Clear the queue
-            selectedQueue = [];
-            updateQueueDisplay();
-            
-            // Remove all selections
-            document.querySelectorAll('.result-card.selected').forEach(card => {
-                card.classList.remove('selected');
-            });
         }
     </script>
 </body>
