@@ -265,9 +265,70 @@
             font-size: 0.8rem;
         }
         
+        .module-units {
+            background: #17a2b8;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
         .module-level.beginner { background: #28a745; }
         .module-level.intermediate { background: #ffc107; color: #333; }
         .module-level.advanced { background: #dc3545; }
+        
+        .module-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        
+        .units-preview {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .units-preview.show {
+            display: block;
+        }
+        
+        .units-preview h5 {
+            color: #495057;
+            margin: 0 0 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        .units-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .units-list li {
+            padding: 2px 0;
+            color: #6c757d;
+        }
+        
+        .units-list li:before {
+            content: "📑 ";
+            margin-right: 5px;
+        }
+        
+        .toggle-units {
+            background: none;
+            border: none;
+            color: #0085CA;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            padding: 0;
+            margin-top: 5px;
+        }
         
         .generate-button {
             background: #28a745;
@@ -511,15 +572,28 @@
         function displayModules(modules) {
             const moduleList = document.getElementById('moduleList');
             
-            moduleList.innerHTML = modules.map(module => `
+            moduleList.innerHTML = modules.map((module, index) => `
                 <div class="module-item">
                     <div class="module-header">
                         <div class="module-title">${module.title}</div>
                         <div class="module-meta">
                             <div class="module-duration">${module.duration}</div>
                             <div class="module-level ${module.level.toLowerCase()}">${module.level}</div>
+                            ${module.units ? `<div class="module-units">${module.units} unit${module.units !== 1 ? 's' : ''}</div>` : ''}
                         </div>
                     </div>
+                    ${module.description ? `<div class="module-description">${module.description}</div>` : ''}
+                    ${module.unit_details ? `
+                        <button class="toggle-units" onclick="toggleUnits('units-${index}')">
+                            📑 View ${module.units} units
+                        </button>
+                        <div class="units-preview" id="units-${index}">
+                            <h5>Module Units:</h5>
+                            <ul class="units-list">
+                                ${module.unit_details.map(unit => `<li>${unit}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
                     <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title}')">
                         🎙️ Generate Podcast
                     </button>
@@ -540,6 +614,20 @@
             document.getElementById('moduleSection').style.display = 'none';
             document.getElementById('certificationSection').style.display = 'block';
             currentCertification = null;
+        }
+        
+        // Toggle unit details display
+        function toggleUnits(unitsId) {
+            const unitsDiv = document.getElementById(unitsId);
+            const button = unitsDiv.previousElementSibling;
+            
+            if (unitsDiv.classList.contains('show')) {
+                unitsDiv.classList.remove('show');
+                button.textContent = `📑 View ${unitsDiv.querySelectorAll('li').length} units`;
+            } else {
+                unitsDiv.classList.add('show');
+                button.textContent = '📑 Hide units';
+            }
         }
         
         // Generate podcast for a module
@@ -573,6 +661,13 @@
                 }
                 
                 alert('Podcast generation started! Check the "Podcast Library" tab to monitor progress.');
+                
+                // Store the task for progress monitoring
+                if (data.task_id) {
+                    const storedTasks = JSON.parse(localStorage.getItem('processingTasks') || '{}');
+                    storedTasks[data.task_id] = { title: moduleTitle };
+                    localStorage.setItem('processingTasks', JSON.stringify(storedTasks));
+                }
                 
                 // Optionally redirect to library tab
                 // window.location.href = '/library';

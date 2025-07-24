@@ -348,7 +348,84 @@
         let allPodcasts = [];
         
         // Load podcasts on page load
-        window.addEventListener('load', loadPodcasts);
+        window.addEventListener('load', function() {
+            loadPodcasts();
+            checkForProcessingTasks();
+        });
+        
+        // Simple progress monitoring
+        function checkForProcessingTasks() {
+            const storedTasks = localStorage.getItem('processingTasks');
+            if (storedTasks) {
+                try {
+                    const tasks = JSON.parse(storedTasks);
+                    const taskIds = Object.keys(tasks);
+                    
+                    if (taskIds.length > 0) {
+                        showProcessingMessage(taskIds.length);
+                        
+                        // Check tasks periodically and reload when done
+                        const checkInterval = setInterval(async () => {
+                            let allCompleted = true;
+                            
+                            for (const taskId of taskIds) {
+                                try {
+                                    const response = await fetch(`/api/status/${taskId}`);
+                                    if (response.ok) {
+                                        const status = await response.json();
+                                        if (status.status !== 'completed' && status.status !== 'failed') {
+                                            allCompleted = false;
+                                        }
+                                    }
+                                } catch (e) {
+                                    // Task might be completed and cleaned up
+                                }
+                            }
+                            
+                            if (allCompleted) {
+                                clearInterval(checkInterval);
+                                localStorage.removeItem('processingTasks');
+                                hideProcessingMessage();
+                                loadPodcasts(); // Reload to show new podcasts
+                            }
+                        }, 5000); // Check every 5 seconds
+                    }
+                } catch (e) {
+                    console.error('Error checking processing tasks:', e);
+                }
+            }
+        }
+        
+        function showProcessingMessage(taskCount) {
+            const header = document.querySelector('.header');
+            const existingMsg = document.getElementById('processing-message');
+            
+            if (!existingMsg) {
+                const processingDiv = document.createElement('div');
+                processingDiv.id = 'processing-message';
+                processingDiv.style.cssText = `
+                    background: #d1ecf1;
+                    color: #0c5460;
+                    padding: 15px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                    text-align: center;
+                    font-weight: 600;
+                `;
+                processingDiv.innerHTML = `
+                    🔄 Processing ${taskCount} podcast${taskCount > 1 ? 's' : ''}... 
+                    <span style="font-weight: normal;">This page will update automatically when complete.</span>
+                `;
+                header.parentNode.insertBefore(processingDiv, header.nextSibling);
+            }
+        }
+        
+        function hideProcessingMessage() {
+            const processingMsg = document.getElementById('processing-message');
+            if (processingMsg) {
+                processingMsg.remove();
+            }
+        }
         
         // Search functionality
         document.getElementById('search').addEventListener('input', function(e) {

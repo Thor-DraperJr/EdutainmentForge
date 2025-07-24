@@ -272,14 +272,37 @@ class MSLearnCatalogService:
                                 'title': 'Design governance Risk and Compliance strategies',
                                 'url': 'https://learn.microsoft.com/en-us/training/modules/design-governance-risk-compliance-strategies/',
                                 'duration': '45 min',
-                                'level': 'Advanced'
+                                'level': 'Advanced',
+                                'units': 8,
+                                'unit_details': [
+                                    'Introduction to governance',
+                                    'Risk assessment strategies',
+                                    'Compliance frameworks',
+                                    'Regulatory requirements',
+                                    'Risk mitigation strategies',
+                                    'Governance implementation',
+                                    'Monitoring and reporting',
+                                    'Knowledge check'
+                                ]
                             },
                             {
                                 'id': 'design-security-operations-strategy',
                                 'title': 'Design security operations strategy',
                                 'url': 'https://learn.microsoft.com/en-us/training/modules/design-security-operations-strategy/',
                                 'duration': '50 min',
-                                'level': 'Advanced'
+                                'level': 'Advanced',
+                                'units': 9,
+                                'unit_details': [
+                                    'Introduction to security operations',
+                                    'Security monitoring strategies',
+                                    'Incident response planning',
+                                    'Threat detection methods',
+                                    'Security orchestration',
+                                    'Vulnerability management',
+                                    'Security metrics and KPIs',
+                                    'Continuous improvement',
+                                    'Knowledge check'
+                                ]
                             }
                         ]
                     },
@@ -292,14 +315,33 @@ class MSLearnCatalogService:
                                 'title': 'Explore Zero Trust guiding principles',
                                 'url': 'https://learn.microsoft.com/en-us/training/modules/explore-zero-trust-guiding-principles/',
                                 'duration': '30 min',
-                                'level': 'Intermediate'
+                                'level': 'Intermediate',
+                                'units': 6,
+                                'unit_details': [
+                                    'Introduction to Zero Trust',
+                                    'Zero Trust guiding principles',
+                                    'Zero Trust implementation',
+                                    'Identity verification',
+                                    'Device compliance',
+                                    'Knowledge check'
+                                ]
                             },
                             {
                                 'id': 'explore-authentication-capabilities',
                                 'title': 'Explore authentication capabilities',
                                 'url': 'https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/',
                                 'duration': '35 min',
-                                'level': 'Intermediate'
+                                'level': 'Intermediate',
+                                'units': 7,
+                                'unit_details': [
+                                    'Introduction to authentication',
+                                    'Authentication methods',
+                                    'Multi-factor authentication',
+                                    'Passwordless authentication',
+                                    'Conditional access',
+                                    'Self-service password reset',
+                                    'Knowledge check'
+                                ]
                             }
                         ]
                     }
