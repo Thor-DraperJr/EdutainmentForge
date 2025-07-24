@@ -48,6 +48,561 @@
         
         .container {
             background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0085CA 0%, #0066A0 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        /* Role-based navigation */
+        .role-selection {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .role-selection h2 {
+            margin-bottom: 20px;
+            color: #0085CA;
+        }
+        
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .role-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .role-card:hover {
+            border-color: #0085CA;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 133, 202, 0.2);
+        }
+        
+        .role-card.selected {
+            border-color: #0085CA;
+            background: #e3f2ff;
+        }
+        
+        .role-card h3 {
+            color: #0085CA;
+            margin-bottom: 10px;
+        }
+        
+        .role-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .cert-count {
+            background: #0085CA;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        /* Certification selection */
+        .certification-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .back-button:hover {
+            background: #5a6268;
+        }
+        
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .cert-card {
+            background: #fff;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cert-card:hover {
+            border-color: #28a745;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        
+        .cert-id {
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .cert-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        .cert-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .module-count {
+            background: #17a2b8;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        /* Module list */
+        .module-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .module-list {
+            margin-top: 20px;
+        }
+        
+        .module-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .module-item:hover {
+            border-color: #0085CA;
+            background: #e3f2ff;
+        }
+        
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .module-title {
+            color: #0085CA;
+            font-weight: 600;
+            margin-bottom: 5px;
+            flex: 1;
+        }
+        
+        .module-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .module-duration, .module-level {
+            background: #6c757d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .module-level.beginner { background: #28a745; }
+        .module-level.intermediate { background: #ffc107; color: #333; }
+        .module-level.advanced { background: #dc3545; }
+        
+        .generate-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .generate-button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+        
+        .breadcrumb {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .breadcrumb a {
+            color: #0085CA;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Loading states */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0085CA;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="nav">
+        <a href="/app" class="nav-button">Create Podcast</a>
+        <a href="/discover" class="nav-button active">Discover Content</a>
+        <a href="/library" class="nav-button">Podcast Library</a>
+        <a href="/batch" class="nav-button">Batch Processing</a>
+        <a href="/auth/logout" class="nav-button">Logout</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Discover Learning Content</h1>
+            <p>Browse Microsoft certifications by role and create podcasts from learning modules</p>
+        </div>
+        
+        <div class="content">
+            <!-- Role Selection -->
+            <div class="role-selection" id="roleSelection">
+                <h2>Choose Your Role</h2>
+                <div class="role-grid" id="roleGrid">
+                    <!-- Roles will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Certification Selection -->
+            <div class="certification-section" id="certificationSection">
+                <button class="back-button" onclick="showRoles()">← Back to Roles</button>
+                <div class="breadcrumb" id="breadcrumb"></div>
+                <h2 id="certificationTitle">Certifications</h2>
+                <div class="cert-grid" id="certGrid">
+                    <!-- Certifications will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Module Selection -->
+            <div class="module-section" id="moduleSection">
+                <button class="back-button" onclick="showCertifications()">← Back to Certifications</button>
+                <div class="breadcrumb" id="moduleBreadcrumb"></div>
+                <h2 id="moduleTitle">Learning Modules</h2>
+                <div class="module-list" id="moduleList">
+                    <!-- Modules will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = null;
+        let currentCertification = null;
+        let rolesData = {};
+        
+        // Load roles on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRoles();
+        });
+        
+        // Load available roles
+        function loadRoles() {
+            showLoading('roleGrid');
+            
+            fetch('/api/catalog/roles')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showError('roleGrid', data.error);
+                        return;
+                    }
+                    
+                    displayRoles(data.roles);
+                })
+                .catch(error => {
+                    console.error('Error loading roles:', error);
+                    showError('roleGrid', 'Failed to load roles. Please try again.');
+                });
+        }
+        
+        // Display roles
+        function displayRoles(roles) {
+            const roleGrid = document.getElementById('roleGrid');
+            
+            roleGrid.innerHTML = roles.map(role => `
+                <div class="role-card" onclick="selectRole('${role.id}', '${role.name}')">
+                    <h3>${role.name}</h3>
+                    <p>${role.description}</p>
+                    <div class="cert-count">${role.certification_count} certification${role.certification_count !== 1 ? 's' : ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Select a role and load its certifications
+        function selectRole(roleId, roleName) {
+            currentRole = { id: roleId, name: roleName };
+            showLoading('certGrid');
+            
+            // Hide role selection, show certification section
+            document.getElementById('roleSelection').style.display = 'none';
+            document.getElementById('certificationSection').style.display = 'block';
+            
+            // Update breadcrumb and title
+            document.getElementById('breadcrumb').innerHTML = `<a href="#" onclick="showRoles()">Roles</a> > ${roleName}`;
+            document.getElementById('certificationTitle').textContent = `${roleName} Certifications`;
+            
+            // Load certifications for this role
+            fetch(`/api/catalog/roles/${roleId}/certifications`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showError('certGrid', data.error);
+                        return;
+                    }
+                    
+                    displayCertifications(data.certifications);
+                })
+                .catch(error => {
+                    console.error('Error loading certifications:', error);
+                    showError('certGrid', 'Failed to load certifications. Please try again.');
+                });
+        }
+        
+        // Display certifications
+        function displayCertifications(certifications) {
+            const certGrid = document.getElementById('certGrid');
+            
+            certGrid.innerHTML = certifications.map(cert => `
+                <div class="cert-card" onclick="selectCertification('${cert.id}', '${cert.name}')">
+                    <div class="cert-id">${cert.id}</div>
+                    <h4>${cert.name}</h4>
+                    <p>${cert.description}</p>
+                    <div class="module-count">${cert.module_count} module${cert.module_count !== 1 ? 's' : ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Select a certification and load its modules
+        function selectCertification(certId, certName) {
+            currentCertification = { id: certId, name: certName };
+            showLoading('moduleList');
+            
+            // Hide certification section, show module section
+            document.getElementById('certificationSection').style.display = 'none';
+            document.getElementById('moduleSection').style.display = 'block';
+            
+            // Update breadcrumb and title
+            document.getElementById('moduleBreadcrumb').innerHTML = 
+                `<a href="#" onclick="showRoles()">Roles</a> > <a href="#" onclick="showCertifications()">${currentRole.name}</a> > ${certId}`;
+            document.getElementById('moduleTitle').textContent = `${certName} - Learning Modules`;
+            
+            // Load modules for this certification
+            fetch(`/api/catalog/certifications/${certId}/modules`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showError('moduleList', data.error);
+                        return;
+                    }
+                    
+                    displayModules(data.modules);
+                })
+                .catch(error => {
+                    console.error('Error loading modules:', error);
+                    showError('moduleList', 'Failed to load modules. Please try again.');
+                });
+        }
+        
+        // Display modules
+        function displayModules(modules) {
+            const moduleList = document.getElementById('moduleList');
+            
+            moduleList.innerHTML = modules.map(module => `
+                <div class="module-item">
+                    <div class="module-header">
+                        <div class="module-title">${module.title}</div>
+                        <div class="module-meta">
+                            <div class="module-duration">${module.duration}</div>
+                            <div class="module-level ${module.level.toLowerCase()}">${module.level}</div>
+                        </div>
+                    </div>
+                    <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title}')">
+                        🎙️ Generate Podcast
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // Navigation functions
+        function showRoles() {
+            document.getElementById('certificationSection').style.display = 'none';
+            document.getElementById('moduleSection').style.display = 'none';
+            document.getElementById('roleSelection').style.display = 'block';
+            currentRole = null;
+            currentCertification = null;
+        }
+        
+        function showCertifications() {
+            document.getElementById('moduleSection').style.display = 'none';
+            document.getElementById('certificationSection').style.display = 'block';
+            currentCertification = null;
+        }
+        
+        // Generate podcast for a module
+        function generatePodcast(moduleUrl, moduleTitle) {
+            if (!confirm(`Generate podcast for "${moduleTitle}"?`)) {
+                return;
+            }
+            
+            // Create catalog item object
+            const catalogItem = {
+                title: moduleTitle,
+                url: moduleUrl,
+                type: 'module'
+            };
+            
+            // Send to processing endpoint
+            fetch('/api/process-catalog-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    catalog_item: catalogItem
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                alert('Podcast generation started! Check the "Podcast Library" tab to monitor progress.');
+                
+                // Optionally redirect to library tab
+                // window.location.href = '/library';
+            })
+            .catch(error => {
+                console.error('Error starting podcast generation:', error);
+                alert('Failed to start podcast generation. Please try again.');
+            });
+        }
+        
+        // Utility functions
+        function showLoading(containerId) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>Loading...</div>
+                </div>
+            `;
+        }
+        
+        function showError(containerId, message) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="error">
+                    Error: ${message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             padding: 40px;

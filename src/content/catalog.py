@@ -254,14 +254,336 @@ class MSLearnCatalogService:
             logger.warning(f"Failed to process catalog item: {e}")
             return None
     
-    def _get_fallback_results(self, query: str, content_type: str, 
-                            product: Optional[str], role: Optional[str], 
-                            topic: Optional[str]) -> Dict:
-        """Provide fallback results when API is unavailable."""
-        logger.info("Using fallback catalog results for development")
+    def get_certification_tracks(self) -> Dict[str, Dict]:
+        """Get organized certification tracks grouped by role."""
+        logger.info("Retrieving certification tracks organized by role")
         
-        # Comprehensive Microsoft certification content covering major cert paths
-        sample_modules = [
+        return {
+            'security_engineer': {
+                'name': 'Security Engineer',
+                'description': 'Design and implement security solutions',
+                'certifications': {
+                    'SC-100': {
+                        'name': 'Microsoft Cybersecurity Architect',
+                        'description': 'Design solutions that align with security best practices and priorities',
+                        'modules': [
+                            {
+                                'id': 'security-governance-risk-compliance',
+                                'title': 'Design governance Risk and Compliance strategies',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-governance-risk-compliance-strategies/',
+                                'duration': '45 min',
+                                'level': 'Advanced'
+                            },
+                            {
+                                'id': 'design-security-operations-strategy',
+                                'title': 'Design security operations strategy',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-security-operations-strategy/',
+                                'duration': '50 min',
+                                'level': 'Advanced'
+                            }
+                        ]
+                    },
+                    'SC-300': {
+                        'name': 'Microsoft Identity and Access Administrator',
+                        'description': 'Implement, configure, and manage identity and access management systems',
+                        'modules': [
+                            {
+                                'id': 'explore-zero-trust-guiding-principles',
+                                'title': 'Explore Zero Trust guiding principles',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-zero-trust-guiding-principles/',
+                                'duration': '30 min',
+                                'level': 'Intermediate'
+                            },
+                            {
+                                'id': 'explore-authentication-capabilities',
+                                'title': 'Explore authentication capabilities',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/',
+                                'duration': '35 min',
+                                'level': 'Intermediate'
+                            }
+                        ]
+                    }
+                }
+            },
+            'azure_administrator': {
+                'name': 'Azure Administrator',
+                'description': 'Manage Azure subscriptions, secure identities, administer infrastructure',
+                'certifications': {
+                    'AZ-104': {
+                        'name': 'Microsoft Azure Administrator',
+                        'description': 'Implement, manage, and monitor identity, governance, storage, compute, and virtual networks',
+                        'modules': [
+                            {
+                                'id': 'configure-subscriptions',
+                                'title': 'Configure Azure subscriptions',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/configure-subscriptions/',
+                                'duration': '30 min',
+                                'level': 'Intermediate'
+                            },
+                            {
+                                'id': 'configure-azure-policy',
+                                'title': 'Configure Azure Policy',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/configure-azure-policy/',
+                                'duration': '45 min',
+                                'level': 'Intermediate'
+                            }
+                        ]
+                    },
+                    'AZ-900': {
+                        'name': 'Microsoft Azure Fundamentals',
+                        'description': 'Demonstrate foundational knowledge of cloud services and Azure',
+                        'modules': [
+                            {
+                                'id': 'describe-cloud-computing',
+                                'title': 'Describe cloud computing',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/describe-cloud-computing/',
+                                'duration': '25 min',
+                                'level': 'Beginner'
+                            },
+                            {
+                                'id': 'azure-architecture-services',
+                                'title': 'Describe Azure architecture and services',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/describe-azure-architecture-services/',
+                                'duration': '40 min',
+                                'level': 'Beginner'
+                            }
+                        ]
+                    }
+                }
+            },
+            'azure_developer': {
+                'name': 'Azure Developer',
+                'description': 'Design, build, test, and maintain cloud applications and services',
+                'certifications': {
+                    'AZ-204': {
+                        'name': 'Developing Solutions for Microsoft Azure',
+                        'description': 'Develop Azure compute solutions, storage, security, and monitoring',
+                        'modules': [
+                            {
+                                'id': 'create-azure-app-service-web-apps',
+                                'title': 'Create Azure App Service Web Apps',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/create-azure-app-service-web-apps/',
+                                'duration': '55 min',
+                                'level': 'Intermediate'
+                            },
+                            {
+                                'id': 'develop-solutions-blob-storage',
+                                'title': 'Develop solutions that use Blob storage',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/develop-solutions-blob-storage/',
+                                'duration': '50 min',
+                                'level': 'Intermediate'
+                            }
+                        ]
+                    }
+                }
+            },
+            'azure_solutions_architect': {
+                'name': 'Azure Solutions Architect',
+                'description': 'Design and implement solutions that run on Azure',
+                'certifications': {
+                    'AZ-305': {
+                        'name': 'Designing Microsoft Azure Infrastructure Solutions',
+                        'description': 'Design identity, governance, monitoring, data storage, business continuity, and infrastructure solutions',
+                        'modules': [
+                            {
+                                'id': 'design-governance-solution',
+                                'title': 'Design a governance solution',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-governance-solution/',
+                                'duration': '45 min',
+                                'level': 'Advanced'
+                            },
+                            {
+                                'id': 'design-authentication-authorization-solution',
+                                'title': 'Design authentication and authorization solutions',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/',
+                                'duration': '55 min',
+                                'level': 'Advanced'
+                            }
+                        ]
+                    }
+                }
+            },
+            'data_engineer': {
+                'name': 'Data Engineer', 
+                'description': 'Design and implement data solutions and data processing systems',
+                'certifications': {
+                    'DP-900': {
+                        'name': 'Microsoft Azure Data Fundamentals',
+                        'description': 'Demonstrate foundational knowledge of core data concepts and services',
+                        'modules': [
+                            {
+                                'id': 'explore-core-data-concepts',
+                                'title': 'Explore core data concepts',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-core-data-concepts/',
+                                'duration': '35 min',
+                                'level': 'Beginner'
+                            },
+                            {
+                                'id': 'explore-relational-data-azure',
+                                'title': 'Explore relational data in Azure',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-relational-data-azure/',
+                                'duration': '40 min',
+                                'level': 'Beginner'
+                            }
+                        ]
+                    },
+                    'DP-203': {
+                        'name': 'Data Engineering on Microsoft Azure',
+                        'description': 'Implement data storage solutions, manage and develop data processing, monitor and optimize data solutions',
+                        'modules': [
+                            {
+                                'id': 'data-engineering-lakehouse-architecture',
+                                'title': 'Introduction to data engineering on Azure',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-to-data-engineering-azure/',
+                                'duration': '45 min',
+                                'level': 'Intermediate'
+                            }
+                        ]
+                    }
+                }
+            },
+            'power_platform_developer': {
+                'name': 'Power Platform Developer',
+                'description': 'Design and develop Power Platform solutions',
+                'certifications': {
+                    'PL-900': {
+                        'name': 'Microsoft Power Platform Fundamentals',
+                        'description': 'Demonstrate foundational knowledge of Power Platform components',
+                        'modules': [
+                            {
+                                'id': 'introduction-power-platform',
+                                'title': 'Introduction to Microsoft Power Platform',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-power-platform/',
+                                'duration': '30 min',
+                                'level': 'Beginner'
+                            },
+                            {
+                                'id': 'introduction-power-apps',
+                                'title': 'Introduction to Power Apps',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-power-apps/',
+                                'duration': '35 min',
+                                'level': 'Beginner'
+                            }
+                        ]
+                    },
+                    'PL-400': {
+                        'name': 'Microsoft Power Platform Developer',
+                        'description': 'Design, develop, secure, and troubleshoot Power Platform solutions',
+                        'modules': [
+                            {
+                                'id': 'power-platform-architecture',
+                                'title': 'Power Platform architecture',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/power-platform-architecture/',
+                                'duration': '50 min',
+                                'level': 'Advanced'
+                            }
+                        ]
+                    }
+                }
+            },
+            'microsoft_365_administrator': {
+                'name': 'Microsoft 365 Administrator',
+                'description': 'Plan, deploy, configure, and manage Microsoft 365 services',
+                'certifications': {
+                    'MS-900': {
+                        'name': 'Microsoft 365 Fundamentals',
+                        'description': 'Demonstrate foundational knowledge of Microsoft 365 services',
+                        'modules': [
+                            {
+                                'id': 'microsoft-365-productivity-teamwork-solutions',
+                                'title': 'Describe Microsoft 365 productivity and teamwork solutions',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/microsoft-365-productivity-teamwork-solutions/',
+                                'duration': '40 min',
+                                'level': 'Beginner'
+                            }
+                        ]
+                    },
+                    'MS-100': {
+                        'name': 'Microsoft 365 Identity and Services',
+                        'description': 'Design and implement Microsoft 365 services',
+                        'modules': [
+                            {
+                                'id': 'plan-your-premises-infrastructure-microsoft-365',
+                                'title': 'Plan your on-premises infrastructure for Microsoft 365',
+                                'url': 'https://learn.microsoft.com/en-us/training/modules/plan-your-premises-infrastructure-microsoft-365/',
+                                'duration': '45 min',
+                                'level': 'Advanced'
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
+    def _get_fallback_content(self) -> List[Dict]:
+        """Provide fallback content when the Microsoft Learn API is unavailable."""
+        logger.info("Using fallback content - comprehensive Microsoft certification catalog")
+        
+        # Get structured certification data
+        cert_tracks = self.get_certification_tracks()
+        
+        # Flatten into module list for search compatibility
+        modules = []
+        for role_id, role_data in cert_tracks.items():
+            for cert_id, cert_data in role_data['certifications'].items():
+                for module in cert_data['modules']:
+                    # Enhanced module data with certification context
+                    enhanced_module = {
+                        'uid': module['id'],
+                        'title': module['title'],
+                        'url': module['url'],
+                        'summary': f"Part of {cert_data['name']} ({cert_id}) certification path. {cert_data['description']}",
+                        'duration_in_minutes': int(module['duration'].split()[0]) if 'min' in module['duration'] else 45,
+                        'rating': 4.5,
+                        'icon_url': f"https://learn.microsoft.com/en-us/media/learn/certification/{cert_id.lower()}.svg",
+                        'last_modified': '2024-07-15T10:00:00Z',
+                        'locale': 'en-us',
+                        'certification': cert_id,
+                        'certification_name': cert_data['name'],
+                        'role': role_data['name'],
+                        'role_id': role_id,
+                        'level': module['level'],
+                        'products': self._get_products_for_role(role_id),
+                        'roles': [role_data['name']],
+                        'subjects': self._get_subjects_for_certification(cert_id)
+                    }
+                    modules.append(enhanced_module)
+        
+        return modules
+
+    def _get_products_for_role(self, role_id: str) -> List[str]:
+        """Get relevant products for a role."""
+        role_products = {
+            'security_engineer': ['Azure', 'Microsoft 365', 'Microsoft Entra ID'],
+            'azure_administrator': ['Azure'],
+            'azure_developer': ['Azure', 'Visual Studio'],
+            'azure_solutions_architect': ['Azure'],
+            'data_engineer': ['Azure', 'Power BI', 'SQL Server'],
+            'power_platform_developer': ['Power Platform', 'Power Apps', 'Power Automate'],
+            'microsoft_365_administrator': ['Microsoft 365', 'Microsoft Teams', 'SharePoint']
+        }
+        return role_products.get(role_id, ['Azure'])
+
+    def _get_subjects_for_certification(self, cert_id: str) -> List[str]:
+        """Get relevant subjects for a certification."""
+        cert_subjects = {
+            'SC-100': ['Security', 'Architecture', 'Governance'],
+            'SC-300': ['Security', 'Identity', 'Access Management'],
+            'AZ-104': ['Administration', 'Cloud', 'Infrastructure'],
+            'AZ-900': ['Fundamentals', 'Cloud', 'Azure Basics'],
+            'AZ-204': ['Development', 'Cloud', 'Applications'],
+            'AZ-305': ['Architecture', 'Solutions Design', 'Infrastructure'],
+            'DP-900': ['Data', 'Fundamentals', 'Analytics'],
+            'DP-203': ['Data Engineering', 'Analytics', 'Storage'],
+            'PL-900': ['Power Platform', 'Fundamentals', 'Low-code'],
+            'PL-400': ['Power Platform', 'Development', 'Applications'],
+            'MS-900': ['Microsoft 365', 'Fundamentals', 'Productivity'],
+            'MS-100': ['Microsoft 365', 'Administration', 'Identity']
+        }
+        return cert_subjects.get(cert_id, ['General'])
+
+        # Comprehensive catalog covering all major Microsoft certification paths
+        return [
             {
                 'id': 'sc-300-implement-identity-management-solution',
                 'title': 'SC-300: Implement an identity management solution',

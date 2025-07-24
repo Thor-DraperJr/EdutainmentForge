@@ -268,6 +268,116 @@ def catalog_search():
         logger.error(f"Catalog search failed: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/catalog/certification-tracks', methods=['GET'])
+@_require_auth
+def get_certification_tracks():
+    """Get organized certification tracks grouped by role."""
+    try:
+        catalog_service = create_catalog_service()
+        tracks = catalog_service.get_certification_tracks()
+        return jsonify(tracks)
+        
+    except Exception as e:
+        logger.error(f"Failed to get certification tracks: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/catalog/roles', methods=['GET'])
+@_require_auth  
+def get_roles():
+    """Get available roles for certification browsing."""
+    try:
+        catalog_service = create_catalog_service()
+        tracks = catalog_service.get_certification_tracks()
+        
+        roles = []
+        for role_id, role_data in tracks.items():
+            roles.append({
+                'id': role_id,
+                'name': role_data['name'],
+                'description': role_data['description'],
+                'certification_count': len(role_data['certifications'])
+            })
+        
+        return jsonify({'roles': roles})
+        
+    except Exception as e:
+        logger.error(f"Failed to get roles: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/catalog/roles/<role_id>/certifications', methods=['GET'])
+@_require_auth
+def get_role_certifications(role_id):
+    """Get certifications for a specific role."""
+    try:
+        catalog_service = create_catalog_service()
+        tracks = catalog_service.get_certification_tracks()
+        
+        if role_id not in tracks:
+            return jsonify({'error': 'Role not found'}), 404
+        
+        role_data = tracks[role_id]
+        certifications = []
+        
+        for cert_id, cert_data in role_data['certifications'].items():
+            certifications.append({
+                'id': cert_id,
+                'name': cert_data['name'],
+                'description': cert_data['description'],
+                'module_count': len(cert_data['modules'])
+            })
+        
+        return jsonify({
+            'role': {
+                'id': role_id,
+                'name': role_data['name'],
+                'description': role_data['description']
+            },
+            'certifications': certifications
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to get certifications for role {role_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/catalog/certifications/<cert_id>/modules', methods=['GET'])  
+@_require_auth
+def get_certification_modules(cert_id):
+    """Get modules for a specific certification."""
+    try:
+        catalog_service = create_catalog_service()
+        tracks = catalog_service.get_certification_tracks()
+        
+        # Find the certification across all roles
+        cert_data = None
+        role_info = None
+        
+        for role_id, role_data in tracks.items():
+            if cert_id in role_data['certifications']:
+                cert_data = role_data['certifications'][cert_id] 
+                role_info = {
+                    'id': role_id,
+                    'name': role_data['name'],
+                    'description': role_data['description']
+                }
+                break
+        
+        if not cert_data:
+            return jsonify({'error': 'Certification not found'}), 404
+        
+        return jsonify({
+            'certification': {
+                'id': cert_id,
+                'name': cert_data['name'],
+                'description': cert_data['description']
+            },
+            'role': role_info,
+            'modules': cert_data['modules']
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to get modules for certification {cert_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/catalog/facets', methods=['GET'])
 @_require_auth
 def catalog_facets():
