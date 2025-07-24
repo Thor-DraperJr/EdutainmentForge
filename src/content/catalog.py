@@ -71,12 +71,17 @@ class MSLearnCatalogService:
             CatalogAPIError: If the API request fails
         """
         try:
-            # Build query parameters
-            params = {
-                'locale': locale,
-                'type': content_type,
-                '$top': limit
-            }
+            # FOR DEVELOPMENT: Always use fallback data for consistent experience
+            # TODO: Re-enable API calls once MS Learn API is stable
+            logger.info("Using fallback data for development")
+            return self._get_fallback_results(query, content_type, product, role, topic)
+            
+            # Build query parameters (disabled for development)
+            # params = {
+            #     'locale': locale,
+            #     'type': content_type,
+            #     '$top': limit
+            # }
             
             if query:
                 params['$filter'] = f"contains(title, '{query}') or contains(summary, '{query}')"
@@ -255,7 +260,7 @@ class MSLearnCatalogService:
         """Provide fallback results when API is unavailable."""
         logger.info("Using fallback catalog results for development")
         
-        # SC-300 and SC-100 focused content for Microsoft Identity and Access Administrator studies
+        # Comprehensive Microsoft certification content covering major cert paths
         sample_modules = [
             {
                 'id': 'sc-300-implement-identity-management-solution',
@@ -406,6 +411,258 @@ class MSLearnCatalogService:
                 'rating': 4.6,
                 'last_modified': '2024-06-30T00:00:00Z',
                 'icon_url': ''
+            },
+            # Azure Fundamentals (AZ-900)
+            {
+                'id': 'az-900-cloud-concepts',
+                'title': 'AZ-900: Describe cloud concepts',
+                'summary': 'Learn fundamental cloud concepts including high availability, scalability, and cloud service types',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/',
+                'type': 'learning-path',
+                'duration_minutes': 180,
+                'products': ['azure'],
+                'roles': ['administrator', 'developer', 'engineer'],
+                'subjects': ['cloud', 'fundamentals'],
+                'levels': ['beginner'],
+                'rating': 4.8,
+                'last_modified': '2024-07-15T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'az-900-azure-architecture',
+                'title': 'AZ-900: Describe Azure architecture and services',
+                'summary': 'Explore core Azure architectural components and services including compute, networking, and storage',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/azure-fundamentals-describe-azure-architecture-services/',
+                'type': 'learning-path',
+                'duration_minutes': 240,
+                'products': ['azure'],
+                'roles': ['administrator', 'developer', 'engineer'],
+                'subjects': ['cloud', 'fundamentals', 'architecture'],
+                'levels': ['beginner'],
+                'rating': 4.7,
+                'last_modified': '2024-07-10T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure Administrator (AZ-104)
+            {
+                'id': 'az-104-manage-identities-governance',
+                'title': 'AZ-104: Manage Azure identities and governance',
+                'summary': 'Configure Azure AD, implement governance solutions, and manage subscriptions and resources',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/az-104-manage-identities-governance/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['azure'],
+                'roles': ['administrator'],
+                'subjects': ['identity', 'governance', 'administration'],
+                'levels': ['intermediate'],
+                'rating': 4.6,
+                'last_modified': '2024-07-05T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'az-104-implement-manage-storage',
+                'title': 'AZ-104: Implement and manage storage',
+                'summary': 'Configure storage accounts, implement Azure Files, and manage data protection and backup',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/az-104-manage-storage/',
+                'type': 'learning-path',
+                'duration_minutes': 300,
+                'products': ['azure'],
+                'roles': ['administrator'],
+                'subjects': ['storage', 'data-management', 'backup'],
+                'levels': ['intermediate'],
+                'rating': 4.5,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure Developer (AZ-204)
+            {
+                'id': 'az-204-develop-azure-compute-solutions',
+                'title': 'AZ-204: Develop Azure compute solutions',
+                'summary': 'Implement solutions using Azure App Service, Azure Functions, and containerized solutions',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/create-azure-app-service-web-apps/',
+                'type': 'learning-path',
+                'duration_minutes': 420,
+                'products': ['azure'],
+                'roles': ['developer'],
+                'subjects': ['development', 'compute', 'containers'],
+                'levels': ['intermediate'],
+                'rating': 4.7,
+                'last_modified': '2024-06-28T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'az-204-develop-for-azure-storage',
+                'title': 'AZ-204: Develop for Azure storage',
+                'summary': 'Implement solutions that use Cosmos DB, blob storage, and Azure SQL Database',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/develop-for-azure-storage/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['azure'],
+                'roles': ['developer'],
+                'subjects': ['development', 'storage', 'data'],
+                'levels': ['intermediate'],
+                'rating': 4.6,
+                'last_modified': '2024-06-25T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure Solutions Architect (AZ-305)
+            {
+                'id': 'az-305-design-identity-governance-monitoring',
+                'title': 'AZ-305: Design identity, governance, and monitoring solutions',
+                'summary': 'Design authentication, authorization, governance, and monitoring solutions for Azure',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/design-identity-governance-monitor-solutions/',
+                'type': 'learning-path',
+                'duration_minutes': 480,
+                'products': ['azure'],
+                'roles': ['solution-architect'],
+                'subjects': ['architecture', 'identity', 'governance', 'monitoring'],
+                'levels': ['advanced'],
+                'rating': 4.8,
+                'last_modified': '2024-07-12T00:00:00Z',
+                'icon_url': ''
+            },
+            {
+                'id': 'az-305-design-business-continuity-solutions',
+                'title': 'AZ-305: Design business continuity solutions',
+                'summary': 'Design backup, disaster recovery, and high availability solutions for Azure workloads',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/design-business-continuity-solutions/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['azure'],
+                'roles': ['solution-architect'],
+                'subjects': ['architecture', 'backup', 'disaster-recovery', 'availability'],
+                'levels': ['advanced'],
+                'rating': 4.7,
+                'last_modified': '2024-07-08T00:00:00Z',
+                'icon_url': ''
+            },
+            # Microsoft 365 Fundamentals (MS-900)
+            {
+                'id': 'ms-900-microsoft-365-fundamentals',
+                'title': 'MS-900: Microsoft 365 fundamentals',
+                'summary': 'Learn about Microsoft 365 services, security, compliance, privacy, and pricing',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/m365-fundamentals/',
+                'type': 'learning-path',
+                'duration_minutes': 300,
+                'products': ['microsoft-365'],
+                'roles': ['administrator', 'developer'],
+                'subjects': ['fundamentals', 'productivity', 'collaboration'],
+                'levels': ['beginner'],
+                'rating': 4.6,
+                'last_modified': '2024-07-03T00:00:00Z',
+                'icon_url': ''
+            },
+            # Microsoft 365 Administrator (MS-102)
+            {
+                'id': 'ms-102-deploy-manage-microsoft-365-tenant',
+                'title': 'MS-102: Deploy and manage a Microsoft 365 tenant',
+                'summary': 'Configure and manage Microsoft 365 tenant settings, domains, and organizational settings',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/deploy-manage-microsoft-365-tenant/',
+                'type': 'learning-path',
+                'duration_minutes': 420,
+                'products': ['microsoft-365'],
+                'roles': ['administrator'],
+                'subjects': ['administration', 'tenant-management', 'collaboration'],
+                'levels': ['intermediate'],
+                'rating': 4.5,
+                'last_modified': '2024-06-30T00:00:00Z',
+                'icon_url': ''
+            },
+            # Power Platform Fundamentals (PL-900)
+            {
+                'id': 'pl-900-power-platform-fundamentals',
+                'title': 'PL-900: Microsoft Power Platform fundamentals',
+                'summary': 'Learn about Power Apps, Power Automate, Power BI, and Power Virtual Agents capabilities',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/power-plat-fundamentals/',
+                'type': 'learning-path',
+                'duration_minutes': 240,
+                'products': ['power-platform'],
+                'roles': ['business-analyst', 'developer', 'administrator'],
+                'subjects': ['fundamentals', 'low-code', 'automation', 'analytics'],
+                'levels': ['beginner'],
+                'rating': 4.7,
+                'last_modified': '2024-07-01T00:00:00Z',
+                'icon_url': ''
+            },
+            # Power Apps Developer (PL-400)
+            {
+                'id': 'pl-400-create-technical-designs',
+                'title': 'PL-400: Create technical designs for Power Platform solutions',
+                'summary': 'Design and implement complex Power Platform solutions using advanced development techniques',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/create-technical-designs-power-platform/',
+                'type': 'learning-path',
+                'duration_minutes': 360,
+                'products': ['power-platform'],
+                'roles': ['developer'],
+                'subjects': ['development', 'low-code', 'solution-architecture'],
+                'levels': ['advanced'],
+                'rating': 4.6,
+                'last_modified': '2024-06-28T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure AI Fundamentals (AI-900)
+            {
+                'id': 'ai-900-artificial-intelligence-fundamentals',
+                'title': 'AI-900: Artificial Intelligence fundamentals',
+                'summary': 'Learn AI concepts, Azure AI services, and responsible AI practices',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/get-started-with-artificial-intelligence-on-azure/',
+                'type': 'learning-path',
+                'duration_minutes': 180,
+                'products': ['azure'],
+                'roles': ['ai-engineer', 'developer', 'data-scientist'],
+                'subjects': ['artificial-intelligence', 'machine-learning', 'fundamentals'],
+                'levels': ['beginner'],
+                'rating': 4.8,
+                'last_modified': '2024-07-10T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure AI Engineer (AI-102)
+            {
+                'id': 'ai-102-design-implement-ai-solution',
+                'title': 'AI-102: Design and implement an Azure AI solution',
+                'summary': 'Build AI solutions using Azure Cognitive Services, Azure OpenAI, and Azure Machine Learning',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/design-implement-azure-ai-solution/',
+                'type': 'learning-path',
+                'duration_minutes': 480,
+                'products': ['azure'],
+                'roles': ['ai-engineer'],
+                'subjects': ['artificial-intelligence', 'cognitive-services', 'machine-learning'],
+                'levels': ['intermediate'],
+                'rating': 4.7,
+                'last_modified': '2024-07-05T00:00:00Z',
+                'icon_url': ''
+            },
+            # Data Fundamentals (DP-900)
+            {
+                'id': 'dp-900-azure-data-fundamentals',
+                'title': 'DP-900: Azure Data fundamentals',
+                'summary': 'Learn core data concepts and Azure data services including databases, analytics, and data processing',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/azure-data-fundamentals-explore-core-data-concepts/',
+                'type': 'learning-path',
+                'duration_minutes': 240,
+                'products': ['azure'],
+                'roles': ['data-engineer', 'data-analyst', 'data-scientist'],
+                'subjects': ['data', 'fundamentals', 'analytics', 'databases'],
+                'levels': ['beginner'],
+                'rating': 4.6,
+                'last_modified': '2024-07-02T00:00:00Z',
+                'icon_url': ''
+            },
+            # Azure Data Engineer (DP-203)
+            {
+                'id': 'dp-203-design-implement-data-storage',
+                'title': 'DP-203: Design and implement data storage',
+                'summary': 'Design and implement data storage solutions using Azure Data Lake, Azure Synapse, and Azure SQL',
+                'url': 'https://learn.microsoft.com/en-us/training/paths/design-implement-data-storage-azure/',
+                'type': 'learning-path',
+                'duration_minutes': 420,
+                'products': ['azure'],
+                'roles': ['data-engineer'],
+                'subjects': ['data-engineering', 'storage', 'analytics', 'big-data'],
+                'levels': ['intermediate'],
+                'rating': 4.5,
+                'last_modified': '2024-06-25T00:00:00Z',
+                'icon_url': ''
             }
         ]
         
@@ -417,8 +674,13 @@ class MSLearnCatalogService:
             # Check query match
             if query:
                 query_lower = query.lower()
-                if (query_lower not in module['title'].lower() and 
-                    query_lower not in module['summary'].lower()):
+                title_match = query_lower in module['title'].lower()
+                summary_match = query_lower in module['summary'].lower()
+                subjects_match = any(query_lower in subject.lower() for subject in module['subjects'])
+                products_match = any(query_lower in product.lower() for product in module['products'])
+                roles_match = any(query_lower in role.lower() for role in module['roles'])
+                
+                if not (title_match or summary_match or subjects_match or products_match or roles_match):
                     match = False
             
             # Check product filter
@@ -482,36 +744,55 @@ class MSLearnCatalogService:
         ]
     
     def _get_fallback_facets(self) -> Dict:
-        """Provide fallback facets focused on SC-300 and SC-100 certification paths."""
+        """Provide comprehensive fallback facets covering all major Microsoft certification paths."""
         return {
             'products': [
-                {'id': 'azure', 'name': 'Azure', 'count': 85},
-                {'id': 'microsoft-365', 'name': 'Microsoft 365', 'count': 75},
-                {'id': 'power-platform', 'name': 'Power Platform', 'count': 15},
-                {'id': 'dynamics-365', 'name': 'Dynamics 365', 'count': 10},
-                {'id': 'windows', 'name': 'Windows', 'count': 8}
+                {'id': 'azure', 'name': 'Azure', 'count': 180},
+                {'id': 'microsoft-365', 'name': 'Microsoft 365', 'count': 95},
+                {'id': 'power-platform', 'name': 'Power Platform', 'count': 45},
+                {'id': 'dynamics-365', 'name': 'Dynamics 365', 'count': 35},
+                {'id': 'windows', 'name': 'Windows', 'count': 25},
+                {'id': 'sql-server', 'name': 'SQL Server', 'count': 20},
+                {'id': 'teams', 'name': 'Microsoft Teams', 'count': 18}
             ],
             'roles': [
-                {'id': 'identity-access-admin', 'name': 'Identity and Access Administrator', 'count': 45},
+                {'id': 'administrator', 'name': 'Administrator', 'count': 95},
+                {'id': 'developer', 'name': 'Developer', 'count': 80},
+                {'id': 'engineer', 'name': 'Engineer', 'count': 65},
+                {'id': 'solution-architect', 'name': 'Solutions Architect', 'count': 45},
                 {'id': 'security-engineer', 'name': 'Security Engineer', 'count': 40},
-                {'id': 'security-architect', 'name': 'Security Architect', 'count': 25},
-                {'id': 'administrator', 'name': 'Administrator', 'count': 35},
-                {'id': 'developer', 'name': 'Developer', 'count': 20}
+                {'id': 'data-engineer', 'name': 'Data Engineer', 'count': 35},
+                {'id': 'ai-engineer', 'name': 'AI Engineer', 'count': 30},
+                {'id': 'identity-access-admin', 'name': 'Identity and Access Administrator', 'count': 25},
+                {'id': 'data-analyst', 'name': 'Data Analyst', 'count': 22},
+                {'id': 'data-scientist', 'name': 'Data Scientist', 'count': 18},
+                {'id': 'business-analyst', 'name': 'Business Analyst', 'count': 15},
+                {'id': 'security-architect', 'name': 'Security Architect', 'count': 12}
             ],
             'subjects': [
-                {'id': 'security', 'name': 'Security', 'count': 80},
-                {'id': 'identity', 'name': 'Identity', 'count': 65},
-                {'id': 'governance', 'name': 'Governance', 'count': 35},
-                {'id': 'compliance', 'name': 'Compliance', 'count': 30},
-                {'id': 'zero-trust', 'name': 'Zero Trust', 'count': 25},
-                {'id': 'conditional-access', 'name': 'Conditional Access', 'count': 20},
-                {'id': 'privileged-access', 'name': 'Privileged Access', 'count': 18},
-                {'id': 'risk-management', 'name': 'Risk Management', 'count': 15}
+                {'id': 'fundamentals', 'name': 'Fundamentals', 'count': 85},
+                {'id': 'cloud', 'name': 'Cloud Computing', 'count': 75},
+                {'id': 'security', 'name': 'Security', 'count': 65},
+                {'id': 'development', 'name': 'Development', 'count': 60},
+                {'id': 'administration', 'name': 'Administration', 'count': 55},
+                {'id': 'architecture', 'name': 'Architecture', 'count': 45},
+                {'id': 'data', 'name': 'Data', 'count': 42},
+                {'id': 'artificial-intelligence', 'name': 'Artificial Intelligence', 'count': 38},
+                {'id': 'analytics', 'name': 'Analytics', 'count': 35},
+                {'id': 'identity', 'name': 'Identity', 'count': 32},
+                {'id': 'automation', 'name': 'Automation', 'count': 30},
+                {'id': 'low-code', 'name': 'Low-code/No-code', 'count': 28},
+                {'id': 'governance', 'name': 'Governance', 'count': 25},
+                {'id': 'collaboration', 'name': 'Collaboration', 'count': 22},
+                {'id': 'productivity', 'name': 'Productivity', 'count': 20},
+                {'id': 'machine-learning', 'name': 'Machine Learning', 'count': 18},
+                {'id': 'storage', 'name': 'Storage', 'count': 15},
+                {'id': 'compliance', 'name': 'Compliance', 'count': 12}
             ],
             'levels': [
-                {'id': 'beginner', 'name': 'Beginner', 'count': 25},
-                {'id': 'intermediate', 'name': 'Intermediate', 'count': 45},
-                {'id': 'advanced', 'name': 'Advanced', 'count': 30}
+                {'id': 'beginner', 'name': 'Beginner', 'count': 120},
+                {'id': 'intermediate', 'name': 'Intermediate', 'count': 180},
+                {'id': 'advanced', 'name': 'Advanced', 'count': 95}
             ]
         }
 
