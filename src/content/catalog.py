@@ -128,7 +128,13 @@ class MSLearnCatalogService:
                 if processed_item:
                     results['results'].append(processed_item)
             
-            logger.info(f"Found {len(results['results'])} results")
+            logger.info(f"Found {len(results['results'])} results from API")
+            
+            # If API returned no results, use fallback data for better user experience
+            if len(results['results']) == 0:
+                logger.info("API returned no results, using fallback data")
+                return self._get_fallback_results(query, content_type, product, role, topic)
+            
             return results
             
         except requests.RequestException as e:
