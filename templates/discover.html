@@ -672,11 +672,21 @@
                 });
         }
         
-        // Display certifications
+        // Display certifications with priority sorting
         function displayCertifications(certifications) {
             const certGrid = document.getElementById('certGrid');
             
-            certGrid.innerHTML = certifications.map(cert => `
+            // Sort certifications: Fundamentals first, then alphabetically
+            const sortedCerts = certifications.sort((a, b) => {
+                const aIsFundamentals = a.name.toLowerCase().includes('fundamentals');
+                const bIsFundamentals = b.name.toLowerCase().includes('fundamentals');
+                
+                if (aIsFundamentals && !bIsFundamentals) return -1;
+                if (!aIsFundamentals && bIsFundamentals) return 1;
+                return a.name.localeCompare(b.name);
+            });
+            
+            certGrid.innerHTML = sortedCerts.map(cert => `
                 <div class="cert-card" onclick="selectCertification('${cert.id}', '${cert.name}')">
                     <div class="cert-id">${cert.id}</div>
                     <h4>${cert.name}</h4>
@@ -717,17 +727,31 @@
                 });
         }
         
-        // Display modules
+        // Display modules with smart organization
         function displayModules(modules) {
             const moduleList = document.getElementById('moduleList');
             
-            moduleList.innerHTML = modules.map((module, index) => `
+            // Sort modules: Beginner first, then by estimated duration
+            const sortedModules = modules.sort((a, b) => {
+                const levelOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+                const aLevel = levelOrder[a.level?.toLowerCase()] || 2;
+                const bLevel = levelOrder[b.level?.toLowerCase()] || 2;
+                
+                if (aLevel !== bLevel) return aLevel - bLevel;
+                
+                // If same level, sort by duration (shorter first for better user experience)
+                const aDuration = parseInt(a.duration?.match(/\d+/)?.[0]) || 60;
+                const bDuration = parseInt(b.duration?.match(/\d+/)?.[0]) || 60;
+                return aDuration - bDuration;
+            });
+            
+            moduleList.innerHTML = sortedModules.map((module, index) => `
                 <div class="module-item">
                     <div class="module-header">
                         <div class="module-title">${module.title}</div>
                         <div class="module-meta">
                             <div class="module-duration">${module.duration}</div>
-                            <div class="module-level ${module.level.toLowerCase()}">${module.level}</div>
+                            <div class="module-level ${module.level?.toLowerCase() || 'intermediate'}">${module.level || 'Intermediate'}</div>
                             ${module.units ? `<div class="module-units">${module.units} unit${module.units !== 1 ? 's' : ''}</div>` : ''}
                         </div>
                     </div>
