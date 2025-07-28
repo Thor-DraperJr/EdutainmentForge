@@ -48,8 +48,8 @@
         
         .container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             max-width: 1200px;
             margin: 0 auto;
             overflow: hidden;
@@ -57,21 +57,24 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #0085CA 0%, #0066A0 100%);
-            color: white;
-            padding: 30px;
             text-align: center;
+            padding: 40px 30px 30px;
         }
         
         .header h1 {
-            font-size: 2.5rem;
+            color: #333;
+            font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: 300;
+            background: linear-gradient(45deg, #0085CA, #101820);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 10px;
         }
         
         .content {
@@ -542,8 +545,12 @@
         <a href="/app" class="nav-button">Create Podcast</a>
         <a href="/discover" class="nav-button active">Discover Content</a>
         <a href="/library" class="nav-button">Podcast Library</a>
-        <a href="/batch" class="nav-button">Batch Processing</a>
+        {% if session.get('user') %}
+        <a href="/auth/profile" class="nav-button">Profile</a>
         <a href="/auth/logout" class="nav-button">Logout</a>
+        {% else %}
+        <a href="/auth/login" class="nav-button">Login</a>
+        {% endif %}
     </div>
 
     <div class="container">
