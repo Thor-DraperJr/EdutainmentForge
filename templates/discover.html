@@ -331,6 +331,12 @@
             margin-right: 5px;
         }
         
+        .unit-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
         .unit-generate-button {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
@@ -340,7 +346,6 @@
             cursor: pointer;
             font-size: 0.8rem;
             font-weight: 500;
-            margin-left: 10px;
             transition: all 0.3s ease;
             box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
         }
@@ -349,6 +354,89 @@
             background: linear-gradient(135deg, #218838, #1ea085);
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+        
+        .unit-generate-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .unit-play-button {
+            background: linear-gradient(135deg, #0085CA, #007bb5);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 133, 202, 0.2);
+        }
+        
+        .unit-play-button:hover {
+            background: linear-gradient(135deg, #007bb5, #006ba1);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 133, 202, 0.3);
+        }
+        
+        .unit-status {
+            font-size: 0.7rem;
+            color: #6c757d;
+            background: #f8f9fa;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        
+        .unit-status.processing {
+            background: #fff3cd;
+            color: #856404;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Progress monitoring for discovery page */
+        .discovery-progress {
+            display: none;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .discovery-progress.active {
+            display: block;
+            border-color: #0085CA;
+        }
+        
+        .discovery-progress h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .discovery-progress-bar {
+            background: #e9ecef;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .discovery-progress-fill {
+            background: linear-gradient(90deg, #0085CA 0%, #28a745 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .discovery-status-message {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
         }
         
         .toggle-units {
@@ -432,6 +520,19 @@
             padding: 15px;
             border-radius: 5px;
             margin: 20px 0;
+        }
+        
+        /* Animation keyframes */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -623,11 +724,13 @@
                             <h5>Module Units:</h5>
                             <ul class="units-list">
                                 ${module.unit_details.map((unit, unitIndex) => `
-                                    <li class="unit-item">
+                                    <li class="unit-item" id="unit-${index}-${unitIndex}">
                                         <span class="unit-title">${unit}</span>
-                                        <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}')">
-                                            🎙️ Generate Podcast
-                                        </button>
+                                        <div class="unit-controls">
+                                            <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}', ${index}, ${unitIndex})">
+                                                🎙️ Generate Podcast
+                                            </button>
+                                        </div>
                                     </li>
                                 `).join('')}
                             </ul>
@@ -635,6 +738,98 @@
                     ` : ''}
                 </div>
             `).join('');
+            
+            // Check for existing podcasts after rendering
+            setTimeout(() => checkExistingPodcasts(), 500);
+        }
+        
+        // Check for existing podcasts and update UI accordingly
+        async function checkExistingPodcasts() {
+            try {
+                const response = await fetch('/api/podcasts');
+                const data = await response.json();
+                
+                if (response.ok && data.podcasts) {
+                    const existingPodcasts = data.podcasts;
+                    
+                    // Check each unit item for existing podcasts
+                    document.querySelectorAll('.unit-item').forEach(unitItem => {
+                        const unitTitle = unitItem.querySelector('.unit-title').textContent;
+                        const moduleTitle = getModuleTitleForUnit(unitItem);
+                        
+                        // Look for matching podcast
+                        const matchingPodcast = existingPodcasts.find(podcast => {
+                            const podcastTitle = podcast.title.toLowerCase();
+                            const searchTitle = `${moduleTitle} - ${unitTitle}`.toLowerCase();
+                            return podcastTitle.includes(unitTitle.toLowerCase()) && 
+                                   podcastTitle.includes(moduleTitle.toLowerCase());
+                        });
+                        
+                        if (matchingPodcast) {
+                            addPlayButton(unitItem, matchingPodcast);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error checking existing podcasts:', error);
+            }
+        }
+        
+        // Get module title for a unit item
+        function getModuleTitleForUnit(unitItem) {
+            const moduleItem = unitItem.closest('.module-item');
+            return moduleItem ? moduleItem.querySelector('.module-title').textContent : '';
+        }
+        
+        // Add play button to unit item
+        function addPlayButton(unitItem, podcast) {
+            const controls = unitItem.querySelector('.unit-controls');
+            const generateButton = controls.querySelector('.unit-generate-button');
+            
+            // Replace generate button with play button
+            generateButton.style.display = 'none';
+            
+            const playButton = document.createElement('button');
+            playButton.className = 'unit-play-button';
+            playButton.innerHTML = '🎵 Play Podcast';
+            playButton.onclick = () => playPodcast(podcast);
+            
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'unit-status';
+            statusSpan.textContent = 'Ready';
+            
+            controls.appendChild(playButton);
+            controls.appendChild(statusSpan);
+        }
+        
+        // Play podcast function
+        function playPodcast(podcast) {
+            // Create audio player if it doesn't exist
+            let audioPlayer = document.getElementById('discovery-audio-player');
+            if (!audioPlayer) {
+                audioPlayer = document.createElement('audio');
+                audioPlayer.id = 'discovery-audio-player';
+                audioPlayer.controls = true;
+                audioPlayer.style.width = '100%';
+                audioPlayer.style.marginTop = '10px';
+                
+                // Add to progress container
+                const progressContainer = document.getElementById('discoveryProgress');
+                progressContainer.appendChild(audioPlayer);
+                progressContainer.classList.add('active');
+                
+                // Update progress title to show audio player
+                document.getElementById('discoveryProgressTitle').textContent = 'Audio Player';
+                document.getElementById('discoveryStatusMessage').textContent = `Playing: ${podcast.title}`;
+            }
+            
+            // Set audio source and play
+            audioPlayer.src = `/api/podcast/${encodeURIComponent(podcast.filename)}`;
+            audioPlayer.load();
+            audioPlayer.play();
+            
+            // Show progress container
+            document.getElementById('discoveryProgress').classList.add('active');
         }
         
         // Navigation functions
@@ -715,10 +910,39 @@
         }
         
         // Generate podcast for a specific unit
-        function generateUnitPodcast(moduleUrl, unitTitle, moduleTitle) {
+        // Generate podcast for a specific unit with progress monitoring
+        function generateUnitPodcast(moduleUrl, unitTitle, moduleTitle, moduleIndex, unitIndex) {
             if (!confirm(`Generate podcast for unit "${unitTitle}" from module "${moduleTitle}"?`)) {
                 return;
             }
+            
+            // Show progress container
+            const progressContainer = document.getElementById('discoveryProgress');
+            const progressTitle = document.getElementById('discoveryProgressTitle');
+            const progressFill = document.getElementById('discoveryProgressFill');
+            const statusMessage = document.getElementById('discoveryStatusMessage');
+            
+            progressContainer.classList.add('active');
+            progressTitle.textContent = `Generating: ${moduleTitle} - ${unitTitle}`;
+            progressFill.style.width = '0%';
+            statusMessage.textContent = 'Initializing podcast generation...';
+            
+            // Update unit button state
+            const unitItem = document.getElementById(`unit-${moduleIndex}-${unitIndex}`);
+            const generateButton = unitItem.querySelector('.unit-generate-button');
+            generateButton.disabled = true;
+            generateButton.textContent = 'Generating...';
+            
+            // Add processing status
+            const controls = unitItem.querySelector('.unit-controls');
+            let statusSpan = controls.querySelector('.unit-status');
+            if (!statusSpan) {
+                statusSpan = document.createElement('span');
+                statusSpan.className = 'unit-status processing';
+                controls.appendChild(statusSpan);
+            }
+            statusSpan.textContent = 'Processing...';
+            statusSpan.className = 'unit-status processing';
             
             // Create catalog item object for the specific unit
             const catalogItem = {
@@ -742,23 +966,168 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert('Error: ' + data.error);
+                    showDiscoveryError(data.error, unitItem);
                     return;
                 }
                 
-                alert('Unit podcast generation started! Check the "Podcast Library" tab to monitor progress.');
-                
-                // Store the task for progress monitoring
+                // Start progress monitoring
                 if (data.task_id) {
+                    currentTaskId = data.task_id;
+                    
+                    // Store the task for progress monitoring
                     const storedTasks = JSON.parse(localStorage.getItem('processingTasks') || '{}');
-                    storedTasks[data.task_id] = { title: `${moduleTitle} - ${unitTitle}` };
+                    storedTasks[data.task_id] = { 
+                        title: `${moduleTitle} - ${unitTitle}`,
+                        unitItem: `unit-${moduleIndex}-${unitIndex}`
+                    };
                     localStorage.setItem('processingTasks', JSON.stringify(storedTasks));
+                    
+                    // Start status checking
+                    setTimeout(() => checkDiscoveryStatus(unitItem), 1000);
+                } else {
+                    showDiscoveryError('No task ID returned', unitItem);
                 }
             })
             .catch(error => {
                 console.error('Error starting unit podcast generation:', error);
-                alert('Failed to start unit podcast generation. Please try again.');
+                showDiscoveryError('Failed to start unit podcast generation: ' + error.message, unitItem);
             });
+        }
+        
+        // Progress monitoring variables
+        let currentTaskId = null;
+        let discoveryStatusInterval = null;
+        
+        // Check status for discovery progress
+        async function checkDiscoveryStatus(unitItem) {
+            if (!currentTaskId) return;
+            
+            try {
+                const response = await fetch(`/api/status/${currentTaskId}`);
+                const status = await response.json();
+                
+                if (response.ok) {
+                    updateDiscoveryProgress(status);
+                    
+                    if (status.status === 'completed') {
+                        showDiscoveryCompleted(status, unitItem);
+                        clearTimeout(discoveryStatusInterval);
+                    } else if (status.status === 'error') {
+                        showDiscoveryError(status.message, unitItem);
+                        clearTimeout(discoveryStatusInterval);
+                    } else {
+                        // Continue checking
+                        const pollInterval = status.status === 'generating_audio' ? 1000 : 2000;
+                        discoveryStatusInterval = setTimeout(() => checkDiscoveryStatus(unitItem), pollInterval);
+                    }
+                } else {
+                    if (response.status === 404 && (window.discoveryRetries || 0) < 5) {
+                        window.discoveryRetries = (window.discoveryRetries || 0) + 1;
+                        discoveryStatusInterval = setTimeout(() => checkDiscoveryStatus(unitItem), 4000);
+                    } else {
+                        showDiscoveryError(`Failed to get status: ${status.error || 'Unknown error'}`, unitItem);
+                        clearTimeout(discoveryStatusInterval);
+                    }
+                }
+            } catch (error) {
+                console.error('Discovery status check error:', error);
+                showDiscoveryError('Network error: ' + error.message, unitItem);
+                clearTimeout(discoveryStatusInterval);
+            }
+        }
+        
+        // Update discovery progress display
+        function updateDiscoveryProgress(status) {
+            const progressFill = document.getElementById('discoveryProgressFill');
+            const statusMessage = document.getElementById('discoveryStatusMessage');
+            
+            progressFill.style.width = status.progress + '%';
+            statusMessage.textContent = status.message;
+            
+            // Add pulsing animation during TTS
+            const progressContainer = document.getElementById('discoveryProgress');
+            if (status.status === 'generating_audio' && status.progress >= 70) {
+                progressContainer.style.animation = 'pulse 2s ease-in-out infinite';
+            } else {
+                progressContainer.style.animation = 'none';
+            }
+        }
+        
+        // Show completion for discovery
+        function showDiscoveryCompleted(status, unitItem) {
+            const progressContainer = document.getElementById('discoveryProgress');
+            const progressTitle = document.getElementById('discoveryProgressTitle');
+            const statusMessage = document.getElementById('discoveryStatusMessage');
+            
+            progressContainer.style.animation = 'none';
+            progressTitle.textContent = 'Podcast Generated Successfully!';
+            statusMessage.textContent = `✅ ${status.title} - Ready to play!`;
+            
+            // Update unit item
+            const generateButton = unitItem.querySelector('.unit-generate-button');
+            const statusSpan = unitItem.querySelector('.unit-status');
+            const controls = unitItem.querySelector('.unit-controls');
+            
+            // Hide generate button
+            generateButton.style.display = 'none';
+            
+            // Add play button
+            const playButton = document.createElement('button');
+            playButton.className = 'unit-play-button';
+            playButton.innerHTML = '🎵 Play';
+            playButton.onclick = () => {
+                const podcast = { 
+                    title: status.title, 
+                    filename: status.audio_filename 
+                };
+                playPodcast(podcast);
+            };
+            
+            controls.appendChild(playButton);
+            
+            // Update status
+            statusSpan.textContent = 'Ready';
+            statusSpan.className = 'unit-status';
+            
+            // Hide progress after a few seconds
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+            }, 3000);
+            
+            // Reset task tracking
+            currentTaskId = null;
+            window.discoveryRetries = 0;
+        }
+        
+        // Show error for discovery
+        function showDiscoveryError(message, unitItem) {
+            const progressContainer = document.getElementById('discoveryProgress');
+            const progressTitle = document.getElementById('discoveryProgressTitle');
+            const statusMessage = document.getElementById('discoveryStatusMessage');
+            
+            progressContainer.style.animation = 'none';
+            progressTitle.textContent = 'Generation Failed';
+            statusMessage.textContent = '❌ ' + message;
+            
+            // Reset unit item
+            const generateButton = unitItem.querySelector('.unit-generate-button');
+            const statusSpan = unitItem.querySelector('.unit-status');
+            
+            generateButton.disabled = false;
+            generateButton.textContent = '🎙️ Generate Podcast';
+            
+            if (statusSpan) {
+                statusSpan.remove();
+            }
+            
+            // Hide progress after showing error
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+            }, 5000);
+            
+            // Reset task tracking
+            currentTaskId = null;
+            window.discoveryRetries = 0;
         }
         
         // Utility functions
