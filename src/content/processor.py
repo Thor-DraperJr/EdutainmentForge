@@ -396,15 +396,10 @@ class ScriptProcessor:
         return initial_script
     
     def _generate_dynamic_introduction(self, title: str, sections: List[str]) -> str:
-        """Generate a concise introduction that gets to the content quickly."""
-        intro_lines = []
-        
-        # Much shorter, punchy intro
-        intro_lines.append("Sarah: Welcome to EdutainmentForge! I'm Sarah.")
-        intro_lines.append("Mike: And I'm Mike. Today we're covering {}.".format(title))
-        intro_lines.append("Sarah: Let's dive right in!")
-        
-        return "\n".join(intro_lines)
+        """Generate no introduction - jump straight into content."""
+        # Return empty string to skip introductions entirely
+        # Mike and Sarah are assumed to be already introduced
+        return ""
     
     def _make_conversational(self, text: str) -> str:
         """Transform formal text into conversational podcast style."""
@@ -625,29 +620,19 @@ class ScriptProcessor:
         return indicator_count >= 2 or "role is really important" in section_lower
     
     def _generate_dynamic_conclusion(self, title: str, sections: List[str]) -> str:
-        """Generate a dynamic conclusion that recaps key points."""
-        # Extract main themes for recap
+        """Generate a minimal conclusion without fluff."""
+        # Very brief wrap-up focused on key takeaways
         key_themes = self._extract_main_themes(sections)
         
         conclusion_lines = []
         
-        # Start the conclusion
-        conclusion_lines.append(f"Sarah: Wow, Mike, we've really covered a lot of ground with {title} today!")
-        
-        # Add a recap if we have themes
-        if key_themes:
-            conclusion_lines.append(f"Mike: We really have, Sarah! We talked about {', '.join(key_themes[:3])}, and I think that gives people a solid foundation.")
-            conclusion_lines.append("Sarah: I love how it all connects together. What would you say is the main takeaway for our listeners?")
-            conclusion_lines.append("Mike: I think the key is to start with the basics and build from there. These concepts really build on each other.")
+        # Quick summary if we have themes
+        if key_themes and len(key_themes) > 0:
+            conclusion_lines.append(f"Sarah: So the key points are {', '.join(key_themes[:2])}.")
+            conclusion_lines.append("Mike: Exactly. That's the foundation you need to get started.")
         else:
-            conclusion_lines.append("Mike: Absolutely! I think we've given our listeners some really practical insights they can use.")
-            conclusion_lines.append("Sarah: I agree! The examples we discussed should help people get started.")
-            conclusion_lines.append("Mike: And remember, the best way to learn is by doing, so don't be afraid to experiment!")
-        
-        # Closing
-        conclusion_lines.append("Sarah: Thanks so much for joining us today, everyone. We love sharing these learning journeys with you!")
-        conclusion_lines.append("Mike: Definitely! Keep that curiosity alive, and we'll see you in the next episode.")
-        conclusion_lines.append("Sarah: Until next time, keep learning and exploring!")
+            conclusion_lines.append("Sarah: Those are the essential concepts to remember.")
+            conclusion_lines.append("Mike: Perfect. Now you can put this into practice.")
         
         return "\n".join(conclusion_lines)
     
