@@ -883,22 +883,13 @@
                 return;
             }
             
-            // Create catalog item object
-            const catalogItem = {
-                title: moduleTitle,
-                url: moduleUrl,
-                type: 'module'
-            };
-            
-            // Send to processing endpoint
-            fetch('/api/process-catalog-item', {
+            // Use the same proven logic as Create Podcast page - just pass the URL
+            fetch('/api/process', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    catalog_item: catalogItem
-                })
+                body: JSON.stringify({ url: moduleUrl })
             })
             .then(response => response.json())
             .then(data => {
@@ -960,24 +951,13 @@
             statusSpan.textContent = 'Processing...';
             statusSpan.className = 'unit-status processing';
             
-            // Create catalog item object for the specific unit
-            const catalogItem = {
-                title: `${moduleTitle} - ${unitTitle}`,
-                url: moduleUrl,
-                type: 'unit',
-                unitTitle: unitTitle,
-                moduleTitle: moduleTitle
-            };
-            
-            // Send to processing endpoint
-            fetch('/api/process-catalog-item', {
+            // Use the same proven logic as Create Podcast page - just pass the URL
+            fetch('/api/process', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    catalog_item: catalogItem
-                })
+                body: JSON.stringify({ url: moduleUrl })
             })
             .then(response => response.json())
             .then(data => {
