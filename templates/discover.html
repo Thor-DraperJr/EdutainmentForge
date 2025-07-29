@@ -366,6 +366,32 @@
             box-shadow: none;
         }
         
+        .unit-knowledge-link {
+            background: linear-gradient(135deg, #6f42c1, #8e44ad);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(111, 66, 193, 0.2);
+            display: inline-block;
+        }
+        
+        .unit-knowledge-link:hover {
+            background: linear-gradient(135deg, #5a32a3, #7d3f98);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .unit-item.knowledge-check {
+            border-left: 3px solid #6f42c1;
+            background: rgba(111, 66, 193, 0.05);
+        }
+        
         .unit-play-button {
             background: linear-gradient(135deg, #0085CA, #007bb5);
             color: white;
@@ -763,16 +789,33 @@
                         <div class="units-preview" id="units-${index}">
                             <h5>Module Units:</h5>
                             <ul class="units-list">
-                                ${module.unit_details.map((unit, unitIndex) => `
-                                    <li class="unit-item" id="unit-${index}-${unitIndex}">
-                                        <span class="unit-title">${unit}</span>
-                                        <div class="unit-controls">
-                                            <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}', ${index}, ${unitIndex})">
-                                                🎙️ Generate Podcast
-                                            </button>
-                                        </div>
-                                    </li>
-                                `).join('')}
+                                ${module.unit_details.map((unit, unitIndex) => {
+                                    const isKnowledgeCheck = unit.toLowerCase().includes('knowledge check');
+                                    
+                                    if (isKnowledgeCheck) {
+                                        return `
+                                            <li class="unit-item knowledge-check" id="unit-${index}-${unitIndex}">
+                                                <span class="unit-title">${unit}</span>
+                                                <div class="unit-controls">
+                                                    <a href="${module.url}" target="_blank" class="unit-knowledge-link">
+                                                        🧠 Take Knowledge Check
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        `;
+                                    } else {
+                                        return `
+                                            <li class="unit-item" id="unit-${index}-${unitIndex}">
+                                                <span class="unit-title">${unit}</span>
+                                                <div class="unit-controls">
+                                                    <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}', ${index}, ${unitIndex})">
+                                                        🎙️ Generate Podcast
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        `;
+                                    }
+                                }).join('')}
                             </ul>
                         </div>
                     ` : ''}
@@ -792,8 +835,8 @@
                 if (response.ok && data.podcasts) {
                     const existingPodcasts = data.podcasts;
                     
-                    // Check each unit item for existing podcasts
-                    document.querySelectorAll('.unit-item').forEach(unitItem => {
+                    // Check each unit item for existing podcasts (skip knowledge checks)
+                    document.querySelectorAll('.unit-item:not(.knowledge-check)').forEach(unitItem => {
                         const unitTitle = unitItem.querySelector('.unit-title').textContent;
                         const moduleTitle = getModuleTitleForUnit(unitItem);
                         
@@ -979,12 +1022,26 @@
             fetch('/api/process', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({ url: moduleUrl })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Process response status:', response.status);
+                console.log('Process response headers:', response.headers);
+                
+                // Check if the response is actually JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON response, got ${contentType}. Status: ${response.status}`);
+                }
+                
+                return response.json();
+            })
             .then(data => {
+                console.log('Process response data:', data);
+                
                 if (data.error) {
                     showDiscoveryError(data.error, unitItem);
                     return;
@@ -993,6 +1050,7 @@
                 // Start progress monitoring
                 if (data.task_id) {
                     currentTaskId = data.task_id;
+                    console.log('Starting progress monitoring for task:', data.task_id);
                     
                     // Store the task for progress monitoring
                     const storedTasks = JSON.parse(localStorage.getItem('processingTasks') || '{}');
@@ -1010,7 +1068,7 @@
             })
             .catch(error => {
                 console.error('Error starting unit podcast generation:', error);
-                showDiscoveryError('Failed to start unit podcast generation: ' + error.message, unitItem);
+                showDiscoveryError('Failed to start podcast generation: ' + error.message, unitItem);
             });
         }
         
@@ -1023,8 +1081,24 @@
             if (!currentTaskId) return;
             
             try {
-                const response = await fetch(`/api/status/${currentTaskId}`);
+                console.log('Checking status for task:', currentTaskId);
+                const response = await fetch(`/api/status/${currentTaskId}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                console.log('Status response status:', response.status);
+                console.log('Status response headers:', response.headers);
+                
+                // Check if the response is actually JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON response, got ${contentType}. Status: ${response.status}`);
+                }
+                
                 const status = await response.json();
+                console.log('Status response data:', status);
                 
                 if (response.ok) {
                     updateDiscoveryProgress(status);
@@ -1043,9 +1117,10 @@
                 } else {
                     if (response.status === 404 && (window.discoveryRetries || 0) < 5) {
                         window.discoveryRetries = (window.discoveryRetries || 0) + 1;
+                        console.log(`Task not found yet, retry ${window.discoveryRetries}/5`);
                         discoveryStatusInterval = setTimeout(() => checkDiscoveryStatus(unitItem), 4000);
                     } else {
-                        showDiscoveryError(`Failed to get status: ${status.error || 'Unknown error'}`, unitItem);
+                        showDiscoveryError(`Failed to get status: ${status.error || 'Unknown error'}. HTTP ${response.status}`, unitItem);
                         clearTimeout(discoveryStatusInterval);
                     }
                 }
