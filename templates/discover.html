@@ -628,32 +628,64 @@
     <script>
         let currentRole = null;
         let currentCertification = null;
-        let rolesData = {};
+        let moduleDetailsCache = new Map(); // Cache for module details to avoid repeated API calls
         
-        // Load roles on page load
+        // Static role data for instant loading - no API call needed
+        const STATIC_ROLES = [
+            {
+                id: 'administrator',
+                name: 'Administrator',
+                description: 'Manage and maintain Azure infrastructure, security, and operations',
+                certification_count: 8
+            },
+            {
+                id: 'developer',
+                name: 'Developer', 
+                description: 'Build applications and solutions on Azure platform',
+                certification_count: 6
+            },
+            {
+                id: 'data-engineer',
+                name: 'Data Engineer',
+                description: 'Design and implement data solutions and analytics on Azure',
+                certification_count: 4
+            },
+            {
+                id: 'security-engineer',
+                name: 'Security Engineer',
+                description: 'Implement security controls and threat protection in Azure',
+                certification_count: 5
+            },
+            {
+                id: 'ai-engineer',
+                name: 'AI Engineer',
+                description: 'Build intelligent solutions using Azure AI and machine learning',
+                certification_count: 3
+            },
+            {
+                id: 'solutions-architect',
+                name: 'Solutions Architect',
+                description: 'Design comprehensive solutions and technical architecture',
+                certification_count: 4
+            },
+            {
+                id: 'devops-engineer',
+                name: 'DevOps Engineer',
+                description: 'Implement CI/CD and infrastructure automation practices',
+                certification_count: 3
+            },
+            {
+                id: 'data-analyst',
+                name: 'Data Analyst',
+                description: 'Transform data into actionable insights using Power BI and analytics',
+                certification_count: 2
+            }
+        ];
+        
+        // Load roles immediately on page load - no API call needed
         document.addEventListener('DOMContentLoaded', function() {
-            loadRoles();
+            displayRoles(STATIC_ROLES);
         });
-        
-        // Load available roles
-        function loadRoles() {
-            showLoading('roleGrid');
-            
-            fetch('/api/catalog/roles')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        showError('roleGrid', data.error);
-                        return;
-                    }
-                    
-                    displayRoles(data.roles);
-                })
-                .catch(error => {
-                    console.error('Error loading roles:', error);
-                    showError('roleGrid', 'Failed to load roles. Please try again.');
-                });
-        }
         
         // Display roles
         function displayRoles(roles) {
@@ -668,20 +700,22 @@
             `).join('');
         }
         
-        // Select a role and load its certifications
+        // Select a role and load its certifications (API call only when needed)
         function selectRole(roleId, roleName) {
             currentRole = { id: roleId, name: roleName };
-            showLoading('certGrid');
             
-            // Hide role selection, show certification section
+            // Hide role selection, show certification section immediately
             document.getElementById('roleSelection').style.display = 'none';
             document.getElementById('certificationSection').style.display = 'block';
             
-            // Update breadcrumb and title
+            // Update breadcrumb and title immediately
             document.getElementById('breadcrumb').innerHTML = `<a href="#" onclick="showRoles()">Roles</a> > ${roleName}`;
             document.getElementById('certificationTitle').textContent = `${roleName} Certifications`;
             
-            // Load certifications for this role
+            // Show loading only for the certification grid
+            showLoading('certGrid');
+            
+            // NOW make the API call to load certifications for this role
             fetch(`/api/catalog/roles/${roleId}/certifications`)
                 .then(response => response.json())
                 .then(data => {
@@ -722,21 +756,23 @@
             `).join('');
         }
         
-        // Select a certification and load its modules
+        // Select a certification and load its modules (API call only when needed)
         function selectCertification(certId, certName) {
             currentCertification = { id: certId, name: certName };
-            showLoading('moduleList');
             
-            // Hide certification section, show module section
+            // Hide certification section, show module section immediately
             document.getElementById('certificationSection').style.display = 'none';
             document.getElementById('moduleSection').style.display = 'block';
             
-            // Update breadcrumb and title
+            // Update breadcrumb and title immediately
             document.getElementById('moduleBreadcrumb').innerHTML = 
                 `<a href="#" onclick="showRoles()">Roles</a> > <a href="#" onclick="showCertifications()">${currentRole.name}</a> > ${certId}`;
             document.getElementById('moduleTitle').textContent = `${certName} - Learning Modules`;
             
-            // Load modules for this certification
+            // Show loading only for the module list
+            showLoading('moduleList');
+            
+            // NOW make the API call to load modules for this certification
             fetch(`/api/catalog/certifications/${certId}/modules`)
                 .then(response => response.json())
                 .then(data => {
@@ -753,7 +789,7 @@
                 });
         }
         
-        // Display modules with smart organization
+        // Display modules with lazy-loaded unit details
         function displayModules(modules) {
             const moduleList = document.getElementById('moduleList');
             
@@ -772,7 +808,7 @@
             });
             
             moduleList.innerHTML = sortedModules.map((module, index) => `
-                <div class="module-item">
+                <div class="module-item" data-module-url="${module.url}" data-module-id="${module.id || ''}">
                     <div class="module-header">
                         <div class="module-title">${module.title}</div>
                         <div class="module-meta">
@@ -782,44 +818,15 @@
                         </div>
                     </div>
                     ${module.description ? `<div class="module-description">${module.description}</div>` : ''}
-                    ${module.unit_details ? `
-                        <button class="toggle-units" onclick="toggleUnits('units-${index}')">
-                            📑 View ${module.units} units
-                        </button>
-                        <div class="units-preview" id="units-${index}">
-                            <h5>Module Units:</h5>
-                            <ul class="units-list">
-                                ${module.unit_details.map((unit, unitIndex) => {
-                                    const isKnowledgeCheck = unit.toLowerCase().includes('knowledge check');
-                                    
-                                    if (isKnowledgeCheck) {
-                                        return `
-                                            <li class="unit-item knowledge-check" id="unit-${index}-${unitIndex}">
-                                                <span class="unit-title">${unit}</span>
-                                                <div class="unit-controls">
-                                                    <a href="#" class="unit-knowledge-link" 
-                                                       onclick="openKnowledgeCheck('${module.url}', ${unitIndex + 1}); return false;">
-                                                        🧠 Take Knowledge Check
-                                                    </a>
-                                                </div>
-                                            </li>
-                                        `;
-                                    } else {
-                                        return `
-                                            <li class="unit-item" id="unit-${index}-${unitIndex}">
-                                                <span class="unit-title">${unit}</span>
-                                                <div class="unit-controls">
-                                                    <button class="unit-generate-button" onclick="generateUnitPodcast('${module.url}', '${unit}', '${module.title}', ${index}, ${unitIndex})">
-                                                        🎙️ Generate Podcast
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        `;
-                                    }
-                                }).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
+                    <button class="toggle-units" onclick="toggleUnitsWithAPI('units-${index}', '${module.url}', '${module.id || ''}', ${index})">
+                        📑 View ${module.units || 'units'}
+                    </button>
+                    <div class="units-preview" id="units-${index}">
+                        <!-- Units will be loaded here when expanded -->
+                    </div>
+                    <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title.replace(/'/g, "\\'")}')">
+                        🎙️ Generate Full Module Podcast
+                    </button>
                 </div>
             `).join('');
             
@@ -931,14 +938,127 @@
             currentCertification = null;
         }
         
-        // Toggle unit details display
+        // Toggle unit details display with API-driven accurate URLs
+        async function toggleUnitsWithAPI(unitsId, moduleUrl, moduleId, moduleIndex) {
+            const unitsDiv = document.getElementById(unitsId);
+            const button = unitsDiv.previousElementSibling;
+            
+            if (unitsDiv.classList.contains('show')) {
+                // Hide units
+                unitsDiv.classList.remove('show');
+                button.textContent = `📑 View units`;
+                return;
+            }
+            
+            // Show units - check if we need to load them
+            if (unitsDiv.innerHTML.trim() === '' || unitsDiv.innerHTML.includes('<!-- Units will be loaded here')) {
+                // Show loading state
+                button.textContent = '⏳ Loading units...';
+                unitsDiv.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Loading unit details...</div>
+                    </div>
+                `;
+                
+                try {
+                    // Get accurate unit details from API with caching
+                    let moduleDetails = moduleDetailsCache.get(moduleUrl);
+                    
+                    if (!moduleDetails) {
+                        const response = await fetch(`/api/catalog/modules/${encodeURIComponent(moduleUrl)}`);
+                        if (response.ok) {
+                            moduleDetails = await response.json();
+                            moduleDetailsCache.set(moduleUrl, moduleDetails);
+                        }
+                    }
+                    
+                    if (moduleDetails && moduleDetails.units) {
+                        // Use API data with accurate URLs
+                        displayUnitsFromAPI(unitsDiv, moduleDetails.units, moduleIndex, moduleDetails.title);
+                    } else {
+                        // Fallback to basic display
+                        displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl);
+                    }
+                    
+                } catch (error) {
+                    console.warn('Failed to load unit details from API, using fallback:', error);
+                    displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl);
+                }
+                
+                button.textContent = '📑 Hide units';
+            } else {
+                // Units already loaded, just show them
+                button.textContent = '📑 Hide units';
+            }
+            
+            unitsDiv.classList.add('show');
+        }
+        
+        // Display units using accurate API data
+        function displayUnitsFromAPI(unitsDiv, units, moduleIndex, moduleTitle) {
+            unitsDiv.innerHTML = `
+                <h5>Module Units:</h5>
+                <ul class="units-list">
+                    ${units.map((unit, unitIndex) => {
+                        const isKnowledgeCheck = unit.title.toLowerCase().includes('knowledge check');
+                        
+                        if (isKnowledgeCheck) {
+                            return `
+                                <li class="unit-item knowledge-check" id="unit-${moduleIndex}-${unitIndex}">
+                                    <span class="unit-title">${unit.title}</span>
+                                    <div class="unit-controls">
+                                        <a href="${unit.url}" target="_blank" class="unit-knowledge-link">
+                                            🧠 Take Knowledge Check
+                                        </a>
+                                    </div>
+                                </li>
+                            `;
+                        } else {
+                            return `
+                                <li class="unit-item" id="unit-${moduleIndex}-${unitIndex}">
+                                    <span class="unit-title">${unit.title}</span>
+                                    <div class="unit-controls">
+                                        <button class="unit-generate-button" onclick="generateUnitPodcast('${unit.url}', '${unit.title.replace(/'/g, "\\'")}', '${moduleTitle.replace(/'/g, "\\'")}', ${moduleIndex}, ${unitIndex})">
+                                            🎙️ Generate Podcast
+                                        </button>
+                                    </div>
+                                </li>
+                            `;
+                        }
+                    }).join('')}
+                </ul>
+            `;
+        }
+        
+        // Fallback display when API is unavailable
+        function displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl) {
+            unitsDiv.innerHTML = `
+                <h5>Module Units:</h5>
+                <div class="error">
+                    Unable to load detailed unit information. You can still generate a podcast for the full module.
+                </div>
+                <ul class="units-list">
+                    <li class="unit-item">
+                        <span class="unit-title">Full Module Content</span>
+                        <div class="unit-controls">
+                            <button class="unit-generate-button" onclick="generatePodcast('${moduleUrl}', 'Full Module')">
+                                🎙️ Generate Full Module Podcast
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            `;
+        }
+        
+        // Legacy toggle function for backward compatibility
         function toggleUnits(unitsId) {
             const unitsDiv = document.getElementById(unitsId);
             const button = unitsDiv.previousElementSibling;
             
             if (unitsDiv.classList.contains('show')) {
                 unitsDiv.classList.remove('show');
-                button.textContent = `📑 View ${unitsDiv.querySelectorAll('li').length} units`;
+                button.textContent = `📑 View units`;
             } else {
                 unitsDiv.classList.add('show');
                 button.textContent = '📑 Hide units';
@@ -1244,33 +1364,16 @@
             `;
         }
         
-        // Knowledge check functionality
-        async function openKnowledgeCheck(moduleUrl, unitIndex) {
-            try {
-                // Try to get accurate URL from module details API
-                const moduleId = extractModuleId(moduleUrl);
-                const response = await fetch(`/api/catalog/modules/${encodeURIComponent(moduleId)}`);
-                
-                if (response.ok) {
-                    const moduleDetails = await response.json();
-                    const units = moduleDetails.units || [];
-                    
-                    // Find the knowledge check unit
-                    for (const unit of units) {
-                        if (unit.title.toLowerCase().includes('knowledge check') && 
-                            unit.url && unit.url.trim()) {
-                            window.open(unit.url, '_blank');
-                            return;
-                        }
-                    }
-                }
-                
-                // Fallback: construct URL based on common patterns
-                openKnowledgeCheckFallback(moduleUrl, unitIndex);
-                
-            } catch (error) {
-                console.warn('Failed to get module details, using fallback:', error);
-                openKnowledgeCheckFallback(moduleUrl, unitIndex);
+        // Knowledge check functionality - simplified since we now have accurate URLs from API
+        function openKnowledgeCheck(url, unitIndex) {
+            // This function is now mainly used as fallback
+            // The new API-driven approach uses direct URLs in the href attributes
+            if (url && url.trim()) {
+                window.open(url, '_blank');
+            } else {
+                // Fallback construction for edge cases
+                console.warn('No URL provided for knowledge check, using fallback construction');
+                openKnowledgeCheckFallback(url, unitIndex);
             }
         }
         
