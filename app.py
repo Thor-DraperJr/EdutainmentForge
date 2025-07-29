@@ -404,6 +404,23 @@ def get_learning_path_modules(path_id):
         logger.error(f"Failed to get learning path modules: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/catalog/modules/<path:module_id>', methods=['GET'])
+@_require_auth
+def get_module_details(module_id):
+    """Get detailed information about a specific module including unit URLs."""
+    try:
+        catalog_service = create_catalog_service()
+        module_details = catalog_service.get_module_details(module_id)
+        
+        if module_details:
+            return jsonify(module_details)
+        else:
+            return jsonify({'error': 'Module not found'}), 404
+        
+    except Exception as e:
+        logger.error(f"Failed to get module details for {module_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/process-catalog-item', methods=['POST'])
 @_require_auth
 def process_catalog_item():

@@ -1159,6 +1159,132 @@ class MSLearnCatalogService:
                 {'id': 'advanced', 'name': 'Advanced', 'count': 95}
             ]
         }
+    
+    def get_module_details(self, module_id: str) -> Optional[Dict]:
+        """
+        Get detailed information about a specific module including unit URLs.
+        
+        Args:
+            module_id: The module identifier or URL
+            
+        Returns:
+            Dictionary with detailed module information including unit URLs
+        """
+        try:
+            # If module_id is a full URL, extract the module ID
+            if module_id.startswith('http'):
+                # Extract module ID from URL like /training/modules/module-name/
+                parts = module_id.split('/')
+                if 'modules' in parts:
+                    module_idx = parts.index('modules')
+                    if module_idx + 1 < len(parts):
+                        module_id = parts[module_idx + 1]
+            
+            url = f"{self.api_base}/modules/{module_id}"
+            
+            response = self.session.get(url, timeout=30)
+            response.raise_for_status()
+            
+            data = response.json()
+            
+            # Extract unit information
+            units = []
+            for unit_data in data.get('units', []):
+                unit_info = {
+                    'title': unit_data.get('title', ''),
+                    'url': unit_data.get('url', ''),
+                    'duration_minutes': unit_data.get('durationInMinutes', 0),
+                    'type': unit_data.get('type', 'content')
+                }
+                
+                # Ensure URL is absolute
+                if unit_info['url'] and not unit_info['url'].startswith('http'):
+                    unit_info['url'] = f"{self.base_url}{unit_info['url']}"
+                
+                units.append(unit_info)
+            
+            return {
+                'id': data.get('uid', module_id),
+                'title': data.get('title', ''),
+                'summary': data.get('summary', ''),
+                'url': data.get('url', ''),
+                'duration_minutes': data.get('durationInMinutes', 0),
+                'units': units
+            }
+            
+        except requests.RequestException as e:
+            logger.warning(f"Failed to get module details from API: {e}")
+            return self._get_fallback_module_details(module_id)
+        except Exception as e:
+            logger.error(f"Error processing module details: {e}")
+            return self._get_fallback_module_details(module_id)
+    
+    def _get_fallback_module_details(self, module_id: str) -> Optional[Dict]:
+        """
+        Provide fallback module details when API is unavailable.
+        
+        Args:
+            module_id: The module identifier
+            
+        Returns:
+            Dictionary with fallback module details including constructed unit URLs
+        """
+        try:
+            # For fallback, construct unit URLs based on common MS Learn patterns
+            # This handles cases where the API is unavailable
+            
+            # Check if we have this module in our fallback certification tracks
+            tracks = self.get_certification_tracks()
+            module_info = None
+            
+            for role_data in tracks.values():
+                for cert_data in role_data['certifications'].values():
+                    for module in cert_data['modules']:
+                        if (module.get('id') == module_id or 
+                            module_id in module.get('url', '')):
+                            module_info = module
+                            break
+                    if module_info:
+                        break
+                if module_info:
+                    break
+            
+            if module_info and module_info.get('unit_details'):
+                base_url = module_info.get('url', '').rstrip('/')
+                units = []
+                
+                for i, unit_title in enumerate(module_info['unit_details'], 1):
+                    # Construct unit URL based on common patterns
+                    unit_slug = unit_title.lower().replace(' ', '-').replace('?', '').replace(':', '')
+                    
+                    # For knowledge checks, use a specific pattern
+                    if 'knowledge check' in unit_title.lower():
+                        unit_url = f"{base_url}/{i}-knowledge-check/"
+                    else:
+                        # Use a generic pattern for other units
+                        unit_url = f"{base_url}/{i}-{unit_slug[:30]}/"  # Limit slug length
+                    
+                    units.append({
+                        'title': unit_title,
+                        'url': unit_url,
+                        'duration_minutes': 5,  # Default estimate
+                        'type': 'knowledge-check' if 'knowledge check' in unit_title.lower() else 'content'
+                    })
+                
+                return {
+                    'id': module_info.get('id', module_id),
+                    'title': module_info.get('title', ''),
+                    'summary': module_info.get('description', ''),
+                    'url': module_info.get('url', ''),
+                    'duration_minutes': module_info.get('duration', '30 min'),
+                    'units': units
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error creating fallback module details: {e}")
+            return None
 
 
 def create_catalog_service() -> MSLearnCatalogService:

@@ -797,7 +797,8 @@
                                             <li class="unit-item knowledge-check" id="unit-${index}-${unitIndex}">
                                                 <span class="unit-title">${unit}</span>
                                                 <div class="unit-controls">
-                                                    <a href="${module.url}" target="_blank" class="unit-knowledge-link">
+                                                    <a href="#" class="unit-knowledge-link" 
+                                                       onclick="openKnowledgeCheck('${module.url}', ${unitIndex + 1}); return false;">
                                                         🧠 Take Knowledge Check
                                                     </a>
                                                 </div>
@@ -1241,6 +1242,54 @@
                     Error: ${message}
                 </div>
             `;
+        }
+        
+        // Knowledge check functionality
+        async function openKnowledgeCheck(moduleUrl, unitIndex) {
+            try {
+                // Try to get accurate URL from module details API
+                const moduleId = extractModuleId(moduleUrl);
+                const response = await fetch(`/api/catalog/modules/${encodeURIComponent(moduleId)}`);
+                
+                if (response.ok) {
+                    const moduleDetails = await response.json();
+                    const units = moduleDetails.units || [];
+                    
+                    // Find the knowledge check unit
+                    for (const unit of units) {
+                        if (unit.title.toLowerCase().includes('knowledge check') && 
+                            unit.url && unit.url.trim()) {
+                            window.open(unit.url, '_blank');
+                            return;
+                        }
+                    }
+                }
+                
+                // Fallback: construct URL based on common patterns
+                openKnowledgeCheckFallback(moduleUrl, unitIndex);
+                
+            } catch (error) {
+                console.warn('Failed to get module details, using fallback:', error);
+                openKnowledgeCheckFallback(moduleUrl, unitIndex);
+            }
+        }
+        
+        function openKnowledgeCheckFallback(moduleUrl, unitIndex) {
+            // Fallback URL construction for knowledge checks
+            const baseUrl = moduleUrl.replace(/\/$/, '');
+            const knowledgeCheckUrl = `${baseUrl}/${unitIndex}-knowledge-check/`;
+            window.open(knowledgeCheckUrl, '_blank');
+        }
+        
+        function extractModuleId(moduleUrl) {
+            // Extract module ID from URL like /training/modules/module-name/
+            const parts = moduleUrl.split('/');
+            const modulesIndex = parts.indexOf('modules');
+            if (modulesIndex !== -1 && modulesIndex + 1 < parts.length) {
+                return parts[modulesIndex + 1];
+            }
+            // If URL doesn't follow expected pattern, return the full URL
+            return moduleUrl;
         }
     </script>
 </body>
