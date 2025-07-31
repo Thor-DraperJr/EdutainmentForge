@@ -2,7 +2,7 @@ apiVersion: 2022-10-01
 location: eastus2
 type: Microsoft.App/containerApps
 properties:
-  managedEnvironmentId: /subscriptions/e440a65b-7418-4865-9821-88e411ffdd5b/resourceGroups/edutainmentforge-rg/providers/Microsoft.App/managedEnvironments/edutainmentforge-env
+  managedEnvironmentId: /subscriptions/${AZURE_SUBSCRIPTION_ID}/resourceGroups/edutainmentforge-rg/providers/Microsoft.App/managedEnvironments/edutainmentforge-env
   configuration:
     ingress:
       external: true

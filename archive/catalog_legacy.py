@@ -254,304 +254,335 @@ class MSLearnCatalogService:
             logger.warning(f"Failed to process catalog item: {e}")
             return None
     
-    def get_certification_tracks(self) -> Dict[str, Dict]:
-        """Get organized certification tracks grouped by role."""
-        logger.info("Retrieving certification tracks organized by role")
-        
-        return {
-            'security_engineer': {
+    def get_roles(self) -> List[Dict]:
+        """Get all available roles from MS Learn API."""
+        try:
+            logger.info("Fetching roles from MS Learn API")
+            url = f"{self.api_base}/?type=roles"
+            
+            response = self.session.get(url, timeout=30)
+            response.raise_for_status()
+            
+            data = response.json()
+            roles = data.get('roles', [])
+            
+            logger.info(f"Retrieved {len(roles)} roles from MS Learn API")
+            return roles
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch roles from MS Learn API: {e}")
+            return self._get_fallback_roles()
+    
+    def _get_fallback_roles(self) -> List[Dict]:
+        """Get fallback role data when API is unavailable."""
+        return [
+            {
+                'uid': 'administrator',
+                'name': 'Administrator',
+                'description': 'Manage and maintain Azure infrastructure, security, and operations'
+            },
+            {
+                'uid': 'developer',
+                'name': 'Developer',
+                'description': 'Build applications and solutions on Azure platform'
+            },
+            {
+                'uid': 'data-engineer',
+                'name': 'Data Engineer',
+                'description': 'Design and implement data solutions and analytics on Azure'
+            },
+            {
+                'uid': 'security-engineer',
                 'name': 'Security Engineer',
-                'description': 'Design and implement security solutions',
-                'certifications': {
-                    'SC-100': {
-                        'name': 'Microsoft Cybersecurity Architect',
-                        'description': 'Design solutions that align with security best practices and priorities',
-                        'modules': [
+                'description': 'Implement security controls and threat protection in Azure'
+            },
+            {
+                'uid': 'ai-engineer',
+                'name': 'AI Engineer',
+                'description': 'Build intelligent solutions using Azure AI and machine learning'
+            },
+            {
+                'uid': 'solutions-architect',
+                'name': 'Solutions Architect',
+                'description': 'Design comprehensive solutions and technical architecture'
+            },
+            {
+                'uid': 'devops-engineer',
+                'name': 'DevOps Engineer',
+                'description': 'Implement CI/CD and infrastructure automation practices'
+            },
+            {
+                'uid': 'data-analyst',
+                'name': 'Data Analyst',
+                'description': 'Transform data into actionable insights using Power BI and analytics'
+            }
+        ]
+    
+    def get_role_certifications(self, role_id: str) -> Dict:
+        """Get certifications for a specific role from MS Learn API."""
+        try:
+            logger.info(f"Fetching certifications for role: {role_id}")
+            
+            # Get all certifications and filter by role
+            url = f"{self.api_base}/?type=certifications"
+            response = self.session.get(url, timeout=30)
+            response.raise_for_status()
+            
+            data = response.json()
+            all_certifications = data.get('certifications', [])
+            
+            # Filter certifications by role
+            role_certifications = []
+            for cert in all_certifications:
+                cert_roles = cert.get('roles', [])
+                if role_id in cert_roles or role_id.replace('-', '') in cert_roles:
+                    role_certifications.append({
+                        'id': cert.get('uid', '').replace('certification.', ''),
+                        'name': cert.get('display_name', cert.get('title', 'Unknown')),
+                        'description': cert.get('summary', 'No description available'),
+                        'url': cert.get('url', ''),
+                        'icon_url': cert.get('icon_url', ''),
+                        'exam_codes': cert.get('exam_codes', [])
+                    })
+            
+            # Get role info
+            roles = self.get_roles()
+            role_info = next((r for r in roles if r.get('uid') == role_id), None)
+            
+            if not role_info:
+                raise ValueError(f"Role {role_id} not found")
+            
+            logger.info(f"Found {len(role_certifications)} certifications for role {role_id}")
+            
+            return {
+                'role': {
+                    'id': role_id,
+                    'name': role_info.get('name', 'Unknown Role'),
+                    'description': role_info.get('description', 'No description available')
+                },
+                'certifications': role_certifications
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch certifications for role {role_id}: {e}")
+            return self._get_fallback_role_certifications(role_id)
+    
+    def _get_fallback_role_certifications(self, role_id: str) -> Dict:
+        """Get fallback certification data when API is unavailable."""
+        fallback_data = {
+            'administrator': {
+                'role': {
+                    'id': 'administrator',
+                    'name': 'Administrator',
+                    'description': 'Manage and maintain Azure infrastructure, security, and operations'
+                },
+                'certifications': [
+                    {
+                        'id': 'AZ-900',
+                        'name': 'Microsoft Azure Fundamentals',
+                        'description': 'Foundational knowledge of cloud services and Azure',
+                        'url': 'https://learn.microsoft.com/en-us/certifications/azure-fundamentals/',
+                        'exam_codes': ['AZ-900']
+                    },
+                    {
+                        'id': 'AZ-104',
+                        'name': 'Microsoft Azure Administrator',
+                        'description': 'Manage Azure subscriptions, secure identities, administer the infrastructure',
+                        'url': 'https://learn.microsoft.com/en-us/certifications/azure-administrator/',
+                        'exam_codes': ['AZ-104']
+                    }
+                ]
+            }
+        }
+        
+        return fallback_data.get(role_id, {
+            'role': {'id': role_id, 'name': 'Unknown Role', 'description': 'No description available'},
+            'certifications': []
+        })
+    
+    def get_certification_modules(self, cert_id: str) -> Dict:
+        """Get modules for a specific certification from MS Learn API."""
+        try:
+            logger.info(f"Fetching modules for certification: {cert_id}")
+            
+            # First get the certification details
+            cert_url = f"{self.api_base}/?type=certifications&uid=certification.{cert_id}"
+            cert_response = self.session.get(cert_url, timeout=30)
+            cert_response.raise_for_status()
+            
+            cert_data = cert_response.json()
+            certifications = cert_data.get('certifications', [])
+            
+            if not certifications:
+                # Try without the 'certification.' prefix
+                cert_url = f"{self.api_base}/?type=certifications&uid={cert_id}"
+                cert_response = self.session.get(cert_url, timeout=30)
+                cert_response.raise_for_status()
+                cert_data = cert_response.json()
+                certifications = cert_data.get('certifications', [])
+            
+            if not certifications:
+                # If still not found, get modules by searching for related learning paths
+                return self._get_fallback_certification_modules(cert_id)
+            
+            certification = certifications[0]
+            
+            # Get learning paths for this certification
+            learning_paths = certification.get('learning_paths', [])
+            
+            # Collect all modules from all learning paths
+            all_modules = []
+            for lp_uid in learning_paths:
+                lp_modules = self.get_learning_path_modules(lp_uid)
+                all_modules.extend(lp_modules)
+            
+            # Remove duplicates based on module UID
+            unique_modules = []
+            seen_uids = set()
+            for module in all_modules:
+                module_uid = module.get('uid', module.get('id', ''))
+                if module_uid not in seen_uids:
+                    unique_modules.append(module)
+                    seen_uids.add(module_uid)
+            
+            logger.info(f"Found {len(unique_modules)} modules for certification {cert_id}")
+            
+            return {
+                'certification': {
+                    'id': cert_id,
+                    'name': certification.get('display_name', certification.get('title', 'Unknown')),
+                    'description': certification.get('summary', 'No description available')
+                },
+                'modules': unique_modules,
+                'role': certification.get('roles', ['unknown'])[0] if certification.get('roles') else 'unknown'
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch modules for certification {cert_id}: {e}")
+            return self._get_fallback_certification_modules(cert_id)
+    
+    def _get_fallback_certification_modules(self, cert_id: str) -> Dict:
+        """Get fallback module data for a certification when API is unavailable."""
+        fallback_data = {
+            'AZ-900': {
+                'certification': {
+                    'id': 'AZ-900',
+                    'name': 'Microsoft Azure Fundamentals',
+                    'description': 'Foundational knowledge of cloud services and Azure'
+                },
+                'modules': [
+                    {
+                        'uid': 'learn.azure.intro-to-azure-fundamentals',
+                        'title': 'Introduction to Azure fundamentals',
+                        'summary': 'Learn cloud computing concepts, deployment models, and understand specific Azure services',
+                        'url': 'https://learn.microsoft.com/en-us/training/modules/intro-to-azure-fundamentals/',
+                        'duration_in_minutes': 55,
+                        'level': 'Beginner',
+                        'rating': 4.5,
+                        'units': [
                             {
-                                'id': 'security-governance-risk-compliance',
-                                'title': 'Design governance Risk and Compliance strategies',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-governance-risk-compliance-strategies/',
-                                'duration': '45 min',
-                                'level': 'Advanced',
-                                'units': 8,
-                                'unit_details': [
-                                    'Introduction to governance',
-                                    'Risk assessment strategies',
-                                    'Compliance frameworks',
-                                    'Regulatory requirements',
-                                    'Risk mitigation strategies',
-                                    'Governance implementation',
-                                    'Monitoring and reporting',
-                                    'Knowledge check'
-                                ]
+                                'title': 'Introduction',
+                                'type': 'introduction'
                             },
                             {
-                                'id': 'design-security-operations-strategy',
-                                'title': 'Design security operations strategy',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-security-operations-strategy/',
-                                'duration': '50 min',
-                                'level': 'Advanced',
-                                'units': 9,
-                                'unit_details': [
-                                    'Introduction to security operations',
-                                    'Security monitoring strategies',
-                                    'Incident response planning',
-                                    'Threat detection methods',
-                                    'Security orchestration',
-                                    'Vulnerability management',
-                                    'Security metrics and KPIs',
-                                    'Continuous improvement',
-                                    'Knowledge check'
-                                ]
+                                'title': 'What is cloud computing?',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'What is Azure?',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Tour of Azure services',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Get started with Azure accounts',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Knowledge check',
+                                'type': 'knowledge-check'
+                            },
+                            {
+                                'title': 'Summary',
+                                'type': 'summary'
                             }
                         ]
                     },
-                    'SC-300': {
-                        'name': 'Microsoft Identity and Access Administrator',
-                        'description': 'Implement, configure, and manage identity and access management systems',
-                        'modules': [
+                    {
+                        'uid': 'learn.azure.azure-architecture-fundamentals',
+                        'title': 'Explore Azure compute services',
+                        'summary': 'Learn about the various compute services available in Azure',
+                        'url': 'https://learn.microsoft.com/en-us/training/modules/azure-compute-fundamentals/',
+                        'duration_in_minutes': 45,
+                        'level': 'Beginner',
+                        'rating': 4.3,
+                        'units': [
                             {
-                                'id': 'explore-zero-trust-guiding-principles',
-                                'title': 'Explore Zero Trust guiding principles',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-zero-trust-guiding-principles/',
-                                'duration': '30 min',
-                                'level': 'Intermediate',
-                                'units': 6,
-                                'unit_details': [
-                                    'Introduction to Zero Trust',
-                                    'Zero Trust guiding principles',
-                                    'Zero Trust implementation',
-                                    'Identity verification',
-                                    'Device compliance',
-                                    'Knowledge check'
-                                ]
+                                'title': 'Introduction',
+                                'type': 'introduction'
                             },
                             {
-                                'id': 'explore-authentication-capabilities',
-                                'title': 'Explore authentication capabilities',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/',
-                                'duration': '35 min',
-                                'level': 'Intermediate',
-                                'units': 7,
-                                'unit_details': [
-                                    'Introduction to authentication',
-                                    'Authentication methods',
-                                    'Multi-factor authentication',
-                                    'Passwordless authentication',
-                                    'Conditional access',
-                                    'Self-service password reset',
-                                    'Knowledge check'
-                                ]
+                                'title': 'Overview of Azure compute services',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Virtual Machines',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'App Service',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Container services',
+                                'type': 'content'
+                            },
+                            {
+                                'title': 'Knowledge check',
+                                'type': 'knowledge-check'
+                            },
+                            {
+                                'title': 'Summary',
+                                'type': 'summary'
                             }
                         ]
                     }
-                }
+                ],
+                'role': 'administrator'
+            }
+        }
+        
+        return fallback_data.get(cert_id, {
+            'certification': {
+                'id': cert_id,
+                'name': f'Certification {cert_id}',
+                'description': 'No description available'
             },
-            'azure_administrator': {
-                'name': 'Azure Administrator',
-                'description': 'Manage Azure subscriptions, secure identities, administer infrastructure',
+            'modules': [],
+            'role': 'unknown'
+        })
+    
+    def get_certification_tracks(self) -> Dict[str, Dict]:
+        """Get organized certification tracks grouped by role (legacy method for backwards compatibility)."""
+        logger.warning("get_certification_tracks is deprecated, use get_role_certifications instead")
+        
+        # For backwards compatibility, return hardcoded structure
+        return {
+            'administrator': {
+                'name': 'Administrator',
+                'description': 'Manage and maintain Azure infrastructure, security, and operations',
                 'certifications': {
-                    'AZ-104': {
-                        'name': 'Microsoft Azure Administrator',
-                        'description': 'Implement, manage, and monitor identity, governance, storage, compute, and virtual networks',
-                        'modules': [
-                            {
-                                'id': 'configure-subscriptions',
-                                'title': 'Configure Azure subscriptions',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/configure-subscriptions/',
-                                'duration': '30 min',
-                                'level': 'Intermediate'
-                            },
-                            {
-                                'id': 'configure-azure-policy',
-                                'title': 'Configure Azure Policy',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/configure-azure-policy/',
-                                'duration': '45 min',
-                                'level': 'Intermediate'
-                            }
-                        ]
-                    },
                     'AZ-900': {
                         'name': 'Microsoft Azure Fundamentals',
-                        'description': 'Demonstrate foundational knowledge of cloud services and Azure',
-                        'modules': [
-                            {
-                                'id': 'describe-cloud-computing',
-                                'title': 'Describe cloud computing',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/describe-cloud-computing/',
-                                'duration': '25 min',
-                                'level': 'Beginner'
-                            },
-                            {
-                                'id': 'azure-architecture-services',
-                                'title': 'Describe Azure architecture and services',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/describe-azure-architecture-services/',
-                                'duration': '40 min',
-                                'level': 'Beginner'
-                            }
-                        ]
-                    }
-                }
-            },
-            'azure_developer': {
-                'name': 'Azure Developer',
-                'description': 'Design, build, test, and maintain cloud applications and services',
-                'certifications': {
-                    'AZ-204': {
-                        'name': 'Developing Solutions for Microsoft Azure',
-                        'description': 'Develop Azure compute solutions, storage, security, and monitoring',
-                        'modules': [
-                            {
-                                'id': 'create-azure-app-service-web-apps',
-                                'title': 'Create Azure App Service Web Apps',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/create-azure-app-service-web-apps/',
-                                'duration': '55 min',
-                                'level': 'Intermediate'
-                            },
-                            {
-                                'id': 'develop-solutions-blob-storage',
-                                'title': 'Develop solutions that use Blob storage',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/develop-solutions-blob-storage/',
-                                'duration': '50 min',
-                                'level': 'Intermediate'
-                            }
-                        ]
-                    }
-                }
-            },
-            'azure_solutions_architect': {
-                'name': 'Azure Solutions Architect',
-                'description': 'Design and implement solutions that run on Azure',
-                'certifications': {
-                    'AZ-305': {
-                        'name': 'Designing Microsoft Azure Infrastructure Solutions',
-                        'description': 'Design identity, governance, monitoring, data storage, business continuity, and infrastructure solutions',
-                        'modules': [
-                            {
-                                'id': 'design-governance-solution',
-                                'title': 'Design a governance solution',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-governance-solution/',
-                                'duration': '45 min',
-                                'level': 'Advanced'
-                            },
-                            {
-                                'id': 'design-authentication-authorization-solution',
-                                'title': 'Design authentication and authorization solutions',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/',
-                                'duration': '55 min',
-                                'level': 'Advanced'
-                            }
-                        ]
-                    }
-                }
-            },
-            'data_engineer': {
-                'name': 'Data Engineer', 
-                'description': 'Design and implement data solutions and data processing systems',
-                'certifications': {
-                    'DP-900': {
-                        'name': 'Microsoft Azure Data Fundamentals',
-                        'description': 'Demonstrate foundational knowledge of core data concepts and services',
-                        'modules': [
-                            {
-                                'id': 'explore-core-data-concepts',
-                                'title': 'Explore core data concepts',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-core-data-concepts/',
-                                'duration': '35 min',
-                                'level': 'Beginner'
-                            },
-                            {
-                                'id': 'explore-relational-data-azure',
-                                'title': 'Explore relational data in Azure',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/explore-relational-data-azure/',
-                                'duration': '40 min',
-                                'level': 'Beginner'
-                            }
-                        ]
+                        'description': 'Foundational knowledge of cloud services and Azure',
+                        'modules': []
                     },
-                    'DP-203': {
-                        'name': 'Data Engineering on Microsoft Azure',
-                        'description': 'Implement data storage solutions, manage and develop data processing, monitor and optimize data solutions',
-                        'modules': [
-                            {
-                                'id': 'data-engineering-lakehouse-architecture',
-                                'title': 'Introduction to data engineering on Azure',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-to-data-engineering-azure/',
-                                'duration': '45 min',
-                                'level': 'Intermediate'
-                            }
-                        ]
-                    }
-                }
-            },
-            'power_platform_developer': {
-                'name': 'Power Platform Developer',
-                'description': 'Design and develop Power Platform solutions',
-                'certifications': {
-                    'PL-900': {
-                        'name': 'Microsoft Power Platform Fundamentals',
-                        'description': 'Demonstrate foundational knowledge of Power Platform components',
-                        'modules': [
-                            {
-                                'id': 'introduction-power-platform',
-                                'title': 'Introduction to Microsoft Power Platform',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-power-platform/',
-                                'duration': '30 min',
-                                'level': 'Beginner'
-                            },
-                            {
-                                'id': 'introduction-power-apps',
-                                'title': 'Introduction to Power Apps',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/introduction-power-apps/',
-                                'duration': '35 min',
-                                'level': 'Beginner'
-                            }
-                        ]
-                    },
-                    'PL-400': {
-                        'name': 'Microsoft Power Platform Developer',
-                        'description': 'Design, develop, secure, and troubleshoot Power Platform solutions',
-                        'modules': [
-                            {
-                                'id': 'power-platform-architecture',
-                                'title': 'Power Platform architecture',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/power-platform-architecture/',
-                                'duration': '50 min',
-                                'level': 'Advanced'
-                            }
-                        ]
-                    }
-                }
-            },
-            'microsoft_365_administrator': {
-                'name': 'Microsoft 365 Administrator',
-                'description': 'Plan, deploy, configure, and manage Microsoft 365 services',
-                'certifications': {
-                    'MS-900': {
-                        'name': 'Microsoft 365 Fundamentals',
-                        'description': 'Demonstrate foundational knowledge of Microsoft 365 services',
-                        'modules': [
-                            {
-                                'id': 'microsoft-365-productivity-teamwork-solutions',
-                                'title': 'Describe Microsoft 365 productivity and teamwork solutions',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/microsoft-365-productivity-teamwork-solutions/',
-                                'duration': '40 min',
-                                'level': 'Beginner'
-                            }
-                        ]
-                    },
-                    'MS-100': {
-                        'name': 'Microsoft 365 Identity and Services',
-                        'description': 'Design and implement Microsoft 365 services',
-                        'modules': [
-                            {
-                                'id': 'plan-your-premises-infrastructure-microsoft-365',
-                                'title': 'Plan your on-premises infrastructure for Microsoft 365',
-                                'url': 'https://learn.microsoft.com/en-us/training/modules/plan-your-premises-infrastructure-microsoft-365/',
-                                'duration': '45 min',
-                                'level': 'Advanced'
-                            }
-                        ]
+                    'AZ-104': {
+                        'name': 'Microsoft Azure Administrator',
+                        'description': 'Manage Azure subscriptions, secure identities, administer the infrastructure',
+                        'modules': []
                     }
                 }
             }
@@ -1180,45 +1211,69 @@ class MSLearnCatalogService:
                     if module_idx + 1 < len(parts):
                         module_id = parts[module_idx + 1]
             
-            url = f"{self.api_base}/modules/{module_id}"
+            # Try to query the module by UID from the catalog
+            logger.info(f"Fetching module details for: {module_id}")
             
-            response = self.session.get(url, timeout=30)
-            response.raise_for_status()
+            # Try different UID formats
+            possible_uids = [
+                module_id,
+                f"learn.azure.{module_id}",
+                f"learn.{module_id}",
+                module_id.replace('-', '.')
+            ]
             
-            data = response.json()
+            for uid in possible_uids:
+                try:
+                    url = f"{self.api_base}/?type=modules&uid={uid}"
+                    response = self.session.get(url, timeout=30)
+                    response.raise_for_status()
+                    
+                    data = response.json()
+                    modules = data.get('modules', [])
+                    
+                    if modules:
+                        module = modules[0]
+                        logger.info(f"Found module with UID: {uid}")
+                        
+                        # Extract unit information
+                        units = []
+                        for unit_data in module.get('units', []):
+                            unit_info = {
+                                'title': unit_data.get('title', ''),
+                                'url': unit_data.get('url', ''),
+                                'duration_minutes': unit_data.get('durationInMinutes', 0),
+                                'type': unit_data.get('type', 'content')
+                            }
+                            
+                            # Ensure URL is absolute
+                            if unit_info['url'] and not unit_info['url'].startswith('http'):
+                                unit_info['url'] = f"{self.base_url}{unit_info['url']}"
+                            
+                            units.append(unit_info)
+                        
+                        return {
+                            'uid': module.get('uid', uid),
+                            'title': module.get('title', 'Unknown Module'),
+                            'summary': module.get('summary', 'No description available'),
+                            'url': module.get('url', ''),
+                            'duration_in_minutes': module.get('durationInMinutes', 0),
+                            'level': module.get('level', 'Unknown'),
+                            'rating': module.get('rating', 0),
+                            'units': units,
+                            'unit_count': len(units)
+                        }
+                        
+                except Exception as e:
+                    logger.debug(f"UID {uid} not found: {e}")
+                    continue
             
-            # Extract unit information
-            units = []
-            for unit_data in data.get('units', []):
-                unit_info = {
-                    'title': unit_data.get('title', ''),
-                    'url': unit_data.get('url', ''),
-                    'duration_minutes': unit_data.get('durationInMinutes', 0),
-                    'type': unit_data.get('type', 'content')
-                }
-                
-                # Ensure URL is absolute
-                if unit_info['url'] and not unit_info['url'].startswith('http'):
-                    unit_info['url'] = f"{self.base_url}{unit_info['url']}"
-                
-                units.append(unit_info)
-            
-            return {
-                'id': data.get('uid', module_id),
-                'title': data.get('title', ''),
-                'summary': data.get('summary', ''),
-                'url': data.get('url', ''),
-                'duration_minutes': data.get('durationInMinutes', 0),
-                'units': units
-            }
-            
-        except requests.RequestException as e:
-            logger.warning(f"Failed to get module details from API: {e}")
+            logger.warning(f"Module not found in API: {module_id}")
             return self._get_fallback_module_details(module_id)
+            
         except Exception as e:
-            logger.error(f"Error processing module details: {e}")
+            logger.error(f"Failed to get module details: {e}")
             return self._get_fallback_module_details(module_id)
-    
+
     def _get_fallback_module_details(self, module_id: str) -> Optional[Dict]:
         """
         Provide fallback module details when API is unavailable.
@@ -1230,62 +1285,103 @@ class MSLearnCatalogService:
             Dictionary with fallback module details including constructed unit URLs
         """
         try:
-            # For fallback, construct unit URLs based on common MS Learn patterns
-            # This handles cases where the API is unavailable
+            # Check our fallback certification data for this module
+            fallback_data = self._get_fallback_certification_modules('AZ-900')
             
-            # Check if we have this module in our fallback certification tracks
-            tracks = self.get_certification_tracks()
-            module_info = None
-            
-            for role_data in tracks.values():
-                for cert_data in role_data['certifications'].values():
-                    for module in cert_data['modules']:
-                        if (module.get('id') == module_id or 
-                            module_id in module.get('url', '')):
-                            module_info = module
-                            break
-                    if module_info:
-                        break
-                if module_info:
-                    break
-            
-            if module_info and module_info.get('unit_details'):
-                base_url = module_info.get('url', '').rstrip('/')
-                units = []
+            # Look for the module in our fallback data
+            for module in fallback_data.get('modules', []):
+                module_uid = module.get('uid', '')
+                module_url = module.get('url', '')
                 
-                for i, unit_title in enumerate(module_info['unit_details'], 1):
-                    # Construct unit URL based on common patterns
-                    unit_slug = unit_title.lower().replace(' ', '-').replace('?', '').replace(':', '')
+                # Check if this matches the requested module
+                if (module_uid == module_id or 
+                    module_id in module_url or
+                    module_id == module.get('id', '')):
                     
-                    # For knowledge checks, use a specific pattern
-                    if 'knowledge check' in unit_title.lower():
-                        unit_url = f"{base_url}/{i}-knowledge-check/"
-                    else:
-                        # Use a generic pattern for other units
-                        unit_url = f"{base_url}/{i}-{unit_slug[:30]}/"  # Limit slug length
+                    # Process units and add proper URLs
+                    units = []
+                    base_url = module_url.rstrip('/')
                     
-                    units.append({
-                        'title': unit_title,
-                        'url': unit_url,
-                        'duration_minutes': 5,  # Default estimate
-                        'type': 'knowledge-check' if 'knowledge check' in unit_title.lower() else 'content'
-                    })
-                
-                return {
-                    'id': module_info.get('id', module_id),
-                    'title': module_info.get('title', ''),
-                    'summary': module_info.get('description', ''),
-                    'url': module_info.get('url', ''),
-                    'duration_minutes': module_info.get('duration', '30 min'),
-                    'units': units
-                }
+                    for i, unit in enumerate(module.get('units', []), 1):
+                        unit_title = unit.get('title', '')
+                        unit_type = unit.get('type', 'content')
+                        
+                        # Construct unit URL based on common patterns
+                        unit_slug = unit_title.lower().replace(' ', '-').replace('?', '').replace(':', '')
+                        
+                        # For knowledge checks, use a specific pattern
+                        if unit_type == 'knowledge-check':
+                            unit_url = f"{base_url}/{i}-knowledge-check/"
+                        else:
+                            # Use a generic pattern for other units
+                            unit_url = f"{base_url}/{i}-{unit_slug[:30]}/"  # Limit slug length
+                        
+                        units.append({
+                            'title': unit_title,
+                            'url': unit_url,
+                            'duration_minutes': 5,  # Default estimate
+                            'type': unit_type
+                        })
+                    
+                    return {
+                        'uid': module_uid,
+                        'title': module.get('title', 'Unknown Module'),
+                        'summary': module.get('summary', 'No description available'),
+                        'url': module_url,
+                        'duration_in_minutes': module.get('duration_in_minutes', 30),
+                        'level': module.get('level', 'Beginner'),
+                        'rating': module.get('rating', 4.0),
+                        'units': units,
+                        'unit_count': len(units)
+                    }
+            
+            # If not found in AZ-900, try other certifications
+            for cert_id in ['AZ-104', 'AZ-204', 'SC-900']:
+                try:
+                    cert_fallback = self._get_fallback_certification_modules(cert_id)
+                    for module in cert_fallback.get('modules', []):
+                        module_uid = module.get('uid', '')
+                        if module_uid == module_id:
+                            # Return the same structure as above
+                            units = []
+                            base_url = module.get('url', '').rstrip('/')
+                            
+                            for i, unit in enumerate(module.get('units', []), 1):
+                                unit_title = unit.get('title', '')
+                                unit_type = unit.get('type', 'content')
+                                unit_slug = unit_title.lower().replace(' ', '-').replace('?', '').replace(':', '')
+                                
+                                if unit_type == 'knowledge-check':
+                                    unit_url = f"{base_url}/{i}-knowledge-check/"
+                                else:
+                                    unit_url = f"{base_url}/{i}-{unit_slug[:30]}/"
+                                
+                                units.append({
+                                    'title': unit_title,
+                                    'url': unit_url,
+                                    'duration_minutes': 5,
+                                    'type': unit_type
+                                })
+                            
+                            return {
+                                'uid': module_uid,
+                                'title': module.get('title', 'Unknown Module'),
+                                'summary': module.get('summary', 'No description available'),
+                                'url': module.get('url', ''),
+                                'duration_in_minutes': module.get('duration_in_minutes', 30),
+                                'level': module.get('level', 'Beginner'),
+                                'rating': module.get('rating', 4.0),
+                                'units': units,
+                                'unit_count': len(units)
+                            }
+                except Exception:
+                    continue
             
             return None
             
         except Exception as e:
-            logger.error(f"Error creating fallback module details: {e}")
+            logger.error(f"Error in fallback module details: {e}")
             return None
-
 
 def create_catalog_service() -> MSLearnCatalogService:
     """

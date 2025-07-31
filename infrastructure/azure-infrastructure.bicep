@@ -1,22 +1,14 @@
 @description('The location for all resources')
 param location string = resourceGroup().location
 
-@description('The name prefix for all resources')
-param namePrefix string = 'edutainment'
+@description('The prefix for all resource names')
+param resourcePrefix string = 'edutainmentforge'
 
-@description('The Azure Speech Service key')
-@secure()
-param azureSpeechKey string
+@description('The container image to deploy')
+param containerImage string = 'edutainmentforge.azurecr.io/edutainmentforge:latest'
 
 @description('The Azure Speech Service region')
 param azureSpeechRegion string = location
-
-@description('The Azure OpenAI API key (optional)')
-@secure()
-param azureOpenAiKey string = ''
-
-@description('The Azure OpenAI endpoint (optional)')
-param azureOpenAiEndpoint string = ''
 
 @description('The Azure OpenAI API version')
 param azureOpenAiApiVersion string = '2024-02-15-preview'
@@ -24,68 +16,9 @@ param azureOpenAiApiVersion string = '2024-02-15-preview'
 @description('The Azure OpenAI deployment name')
 param azureOpenAiDeploymentName string = 'gpt-4o-mini'
 
-@description('Container image reference')
-param containerImage string
-
-// Container Apps Environment
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-10-01' = {
-  name: '${namePrefix}-env'
-  location: location
-  properties: {
-    appLogsConfiguration: {
-      destination: 'log-analytics'
-      logAnalyticsConfiguration: {
-        customerId: logAnalyticsWorkspace.properties.customerId
-        sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
-      }
-    }
-  }
-}
-
-// Log Analytics Workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: '${namePrefix}-logs'
-  location: location
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-    retentionInDays: 30
-  }
-}
-
-// User Assigned Managed Identity
-resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: '${namePrefix}-identity'
-  location: location
-}
-
-// Container Registry
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: '${namePrefix}acr${uniqueString(resourceGroup().id)}'
-  location: location
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: false
-  }
-}
-
-// Role assignment for managed identity to pull from ACR
-resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: containerRegistry
-  name: guid(containerRegistry.id, managedIdentity.id, 'AcrPull')
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull
-    principalId: managedIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
-// Storage Account for generated podcasts
+// Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: '${namePrefix}storage${uniqueString(resourceGroup().id)}'
+  name: '${resourcePrefix}stor${uniqueString(resourceGroup().id)}'
   location: location
   sku: {
     name: 'Standard_LRS'
@@ -99,23 +32,74 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-// Blob container for podcasts
-resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
-  name: '${storageAccount.name}/default/podcasts'
+// Container Registry
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
+  name: '${resourcePrefix}registry'
+  location: location
+  sku: {
+    name: 'Basic'
+  }
   properties: {
-    publicAccess: 'None'
+    adminUserEnabled: true
+  }
+}
+
+// Key Vault (RBAC-enabled for modern security)
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: '${resourcePrefix}-kv'
+  location: location
+  properties: {
+    tenantId: subscription().tenantId
+    sku: {
+      family: 'A'
+      name: 'standard'
+    }
+    enableRbacAuthorization: true  // Use RBAC instead of access policies
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 7
+    enablePurgeProtection: false
+    networkAcls: {
+      defaultAction: 'Deny'  // Network-restricted for enhanced security
+      bypass: 'AzureServices'
+      ipRules: []
+      virtualNetworkRules: []
+    }
+  }
+}
+
+// Log Analytics Workspace
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+  name: '${resourcePrefix}-logs'
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+  }
+}
+
+// Container Apps Environment
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01' = {
+  name: '${resourcePrefix}-env'
+  location: location
+  properties: {
+    appLogsConfiguration: {
+      destination: 'log-analytics'
+      logAnalyticsConfiguration: {
+        customerId: logAnalytics.properties.customerId
+        sharedKey: logAnalytics.listKeys().primarySharedKey
+      }
+    }
   }
 }
 
 // Container App
-resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
-  name: '${namePrefix}-app'
+resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
+  name: '${resourcePrefix}-app'
   location: location
   identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentity.id}': {}
-    }
+    type: 'SystemAssigned'  // Use system-assigned managed identity (matches current setup)
   }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
@@ -129,21 +113,63 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
       secrets: [
         {
           name: 'azure-speech-key'
-          value: azureSpeechKey
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-speech-key'
+          identity: 'system'  // Use system-assigned identity for Key Vault access
+        }
+        {
+          name: 'azure-openai-api-key'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-openai-api-key'
+          identity: 'system'
+        }
+        {
+          name: 'azure-openai-endpoint'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-openai-endpoint'
+          identity: 'system'
+        }
+        {
+          name: 'sarah-voice'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/sarah-voice'
+          identity: 'system'
+        }
+        {
+          name: 'mike-voice'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/mike-voice'
+          identity: 'system'
+        }
+        {
+          name: 'flask-secret-key'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/flask-secret-key'
+          identity: 'system'
+        }
+        {
+          name: 'azure-ad-b2c-tenant-id'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-ad-b2c-tenant-id'
+          identity: 'system'
+        }
+        {
+          name: 'azure-ad-b2c-client-id'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-ad-b2c-client-id'
+          identity: 'system'
+        }
+        {
+          name: 'azure-ad-b2c-client-secret'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-ad-b2c-client-secret'
+          identity: 'system'
+        }
+        {
+          name: 'azure-ad-b2c-policy-name'
+          keyVaultUrl: '${keyVault.properties.vaultUri}secrets/azure-ad-b2c-policy-name'
+          identity: 'system'
         }
         {
           name: 'storage-connection-string'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
         }
-        {
-          name: 'azure-openai-key'
-          value: azureOpenAiKey
-        }
       ]
       registries: [
         {
           server: containerRegistry.properties.loginServer
-          identity: managedIdentity.id
+          identity: 'system'  // Use system-assigned identity for ACR access
         }
       ]
     }
@@ -163,11 +189,11 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
             }
             {
               name: 'AZURE_OPENAI_ENDPOINT'
-              value: azureOpenAiEndpoint
+              secretRef: 'azure-openai-endpoint'
             }
             {
               name: 'AZURE_OPENAI_API_KEY'
-              secretRef: 'azure-openai-key'
+              secretRef: 'azure-openai-api-key'
             }
             {
               name: 'AZURE_OPENAI_API_VERSION'
@@ -183,11 +209,31 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
             }
             {
               name: 'SARAH_VOICE'
-              value: 'en-US-AriaNeural'
+              secretRef: 'sarah-voice'
             }
             {
               name: 'MIKE_VOICE'
-              value: 'en-US-DavisNeural'
+              secretRef: 'mike-voice'
+            }
+            {
+              name: 'FLASK_SECRET_KEY'
+              secretRef: 'flask-secret-key'
+            }
+            {
+              name: 'AZURE_AD_B2C_TENANT_ID'
+              secretRef: 'azure-ad-b2c-tenant-id'
+            }
+            {
+              name: 'AZURE_AD_B2C_CLIENT_ID'
+              secretRef: 'azure-ad-b2c-client-id'
+            }
+            {
+              name: 'AZURE_AD_B2C_CLIENT_SECRET'
+              secretRef: 'azure-ad-b2c-client-secret'
+            }
+            {
+              name: 'AZURE_AD_B2C_POLICY_NAME'
+              secretRef: 'azure-ad-b2c-policy-name'
             }
             {
               name: 'AZURE_STORAGE_CONNECTION_STRING'
@@ -195,52 +241,44 @@ resource containerApp 'Microsoft.App/containerApps@2022-10-01' = {
             }
           ]
           resources: {
-            cpu: json('1.0')
-            memory: '2.0Gi'
+            cpu: json('0.5')
+            memory: '1Gi'
           }
-          probes: [
-            {
-              type: 'Liveness'
-              httpGet: {
-                path: '/'
-                port: 5000
-              }
-              initialDelaySeconds: 30
-              periodSeconds: 10
-            }
-            {
-              type: 'Readiness'
-              httpGet: {
-                path: '/'
-                port: 5000
-              }
-              initialDelaySeconds: 5
-              periodSeconds: 5
-            }
-          ]
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
         maxReplicas: 10
-        rules: [
-          {
-            name: 'http-rule'
-            http: {
-              metadata: {
-                concurrentRequests: '5'
-              }
-            }
-          }
-        ]
       }
     }
   }
 }
 
+// Role Assignment for ACR Pull
+resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, containerApp.id, 'AcrPull')
+  scope: containerRegistry
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
+    principalId: containerApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Role Assignment for Key Vault Secrets User (read-only access to secrets)
+resource keyVaultSecretsUserRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(keyVault.id, containerApp.id, 'KeyVaultSecretsUser')
+  scope: keyVault
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+    principalId: containerApp.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Outputs
-output containerAppUrl string = 'https://${containerApp.properties.configuration.ingress.fqdn}'
-output containerRegistryName string = containerRegistry.name
-output containerRegistryLoginServer string = containerRegistry.properties.loginServer
+output containerAppUrl string = containerApp.properties.configuration.ingress.fqdn
+output keyVaultName string = keyVault.name
 output storageAccountName string = storageAccount.name
-output managedIdentityId string = managedIdentity.id
+output containerAppPrincipalId string = containerApp.identity.principalId
+output containerRegistryLoginServer string = containerRegistry.properties.loginServer

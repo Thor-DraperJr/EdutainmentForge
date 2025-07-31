@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.logger import get_logger
-from .catalog import MSLearnCatalogService
+from .clean_catalog import CleanCatalogService
 
 
 logger = get_logger(__name__)
@@ -44,7 +44,7 @@ class MSLearnFetcher:
             'User-Agent': 'EdutainmentForge/1.0 (Educational Podcast Generator)'
         })
         # Initialize catalog service for discovery features
-        self.catalog_service = MSLearnCatalogService()
+        self.catalog_service = CleanCatalogService()
     
     def fetch_content_from_catalog_item(self, catalog_item: Dict[str, str]) -> Dict[str, str]:
         """

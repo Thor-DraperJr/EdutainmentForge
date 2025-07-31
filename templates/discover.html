@@ -141,6 +141,12 @@
             display: inline-block;
         }
         
+        .cert-count.emerging-field {
+            background: #6c757d;
+            color: white;
+            font-style: italic;
+        }
+        
         /* Certification selection */
         .certification-section {
             display: none;
@@ -191,6 +197,18 @@
             font-size: 0.9rem;
             display: inline-block;
             margin-bottom: 10px;
+        }
+        
+        .ready-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 8px;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
         }
         
         .cert-card h4 {
@@ -364,6 +382,27 @@
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
+        }
+        
+        .unit-link-button {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+            display: inline-block;
+        }
+        
+        .unit-link-button:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            color: white;
+            text-decoration: none;
         }
         
         .unit-knowledge-link {
@@ -682,22 +721,40 @@
             }
         ];
         
-        // Load roles immediately on page load - no API call needed
-        document.addEventListener('DOMContentLoaded', function() {
-            displayRoles(STATIC_ROLES);
+        // Load roles from v2 API on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/v2/catalog/roles');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayRoles(data.roles);
+                } else {
+                    console.warn('Failed to load roles from API, using static fallback');
+                    displayRoles(STATIC_ROLES);
+                }
+            } catch (error) {
+                console.warn('Error loading roles from API, using static fallback:', error);
+                displayRoles(STATIC_ROLES);
+            }
         });
         
         // Display roles
         function displayRoles(roles) {
             const roleGrid = document.getElementById('roleGrid');
             
-            roleGrid.innerHTML = roles.map(role => `
-                <div class="role-card" onclick="selectRole('${role.id}', '${role.name}')">
-                    <h3>${role.name}</h3>
-                    <p>${role.description}</p>
-                    <div class="cert-count">${role.certification_count} certification${role.certification_count !== 1 ? 's' : ''}</div>
-                </div>
-            `).join('');
+            roleGrid.innerHTML = roles.map(role => {
+                const certText = role.certification_count === 1 
+                    ? '1 certification'
+                    : `${role.certification_count} certifications`;
+                
+                return `
+                    <div class="role-card" onclick="selectRole('${role.id}', '${role.name}')">
+                        <h3>${role.name}</h3>
+                        <p>${role.description}</p>
+                        <div class="cert-count">${certText}</div>
+                    </div>
+                `;
+            }).join('');
         }
         
         // Select a role and load its certifications (API call only when needed)
@@ -715,8 +772,8 @@
             // Show loading only for the certification grid
             showLoading('certGrid');
             
-            // NOW make the API call to load certifications for this role
-            fetch(`/api/catalog/roles/${roleId}/certifications`)
+            // NOW make the API call to load certifications for this role (using v2 clean service)
+            fetch(`/api/v2/catalog/roles/${roleId}/certifications`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -746,34 +803,46 @@
                 return a.name.localeCompare(b.name);
             });
             
-            certGrid.innerHTML = sortedCerts.map(cert => `
-                <div class="cert-card" onclick="selectCertification('${cert.id}', '${cert.name}')">
-                    <div class="cert-id">${cert.id}</div>
+            certGrid.innerHTML = sortedCerts.map(cert => {
+                const examCodesJson = JSON.stringify(cert.exam_codes || []).replace(/"/g, '&quot;');
+                return `
+                <div class="cert-card" onclick="selectCertification('${cert.id}', '${cert.name.replace(/'/g, "\\'")}', '${examCodesJson}')">
+                    <div class="cert-id">${cert.exam_codes && cert.exam_codes.length > 0 ? cert.exam_codes.join(', ') : cert.id}</div>
                     <h4>${cert.name}</h4>
                     <p>${cert.description}</p>
-                    <div class="module-count">${cert.module_count} module${cert.module_count !== 1 ? 's' : ''}</div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         // Select a certification and load its modules (API call only when needed)
-        function selectCertification(certId, certName) {
-            currentCertification = { id: certId, name: certName };
+        function selectCertification(certId, certName, examCodesStr) {
+            // Parse exam codes from string
+            let examCodes = [];
+            try {
+                examCodes = JSON.parse(examCodesStr.replace(/&quot;/g, '"'));
+            } catch (e) {
+                console.warn('Failed to parse exam codes:', examCodesStr);
+                examCodes = [];
+            }
+            
+            currentCertification = { id: certId, name: certName, examCodes: examCodes };
             
             // Hide certification section, show module section immediately
             document.getElementById('certificationSection').style.display = 'none';
             document.getElementById('moduleSection').style.display = 'block';
             
-            // Update breadcrumb and title immediately
+            // Update breadcrumb and title immediately - use exam codes if available
+            const breadcrumbText = examCodes && examCodes.length > 0 ? examCodes.join(', ') : certId;
             document.getElementById('moduleBreadcrumb').innerHTML = 
-                `<a href="#" onclick="showRoles()">Roles</a> > <a href="#" onclick="showCertifications()">${currentRole.name}</a> > ${certId}`;
+                `<a href="#" onclick="showRoles()">Roles</a> > <a href="#" onclick="showCertifications()">${currentRole.name}</a> > ${breadcrumbText}`;
             document.getElementById('moduleTitle').textContent = `${certName} - Learning Modules`;
             
             // Show loading only for the module list
             showLoading('moduleList');
             
-            // NOW make the API call to load modules for this certification
-            fetch(`/api/catalog/certifications/${certId}/modules`)
+            // NOW make the API call to load modules for this certification (using v2 clean service)
+            fetch(`/api/v2/catalog/certifications/${certId}/modules`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -814,19 +883,19 @@
                         <div class="module-meta">
                             <div class="module-duration">${module.duration}</div>
                             <div class="module-level ${module.level?.toLowerCase() || 'intermediate'}">${module.level || 'Intermediate'}</div>
-                            ${module.units ? `<div class="module-units">${module.units} unit${module.units !== 1 ? 's' : ''}</div>` : ''}
+                            ${module.units ? `<div class="module-units">${Array.isArray(module.units) ? module.units.length : module.units} unit${(Array.isArray(module.units) ? module.units.length : module.units) !== 1 ? 's' : ''}</div>` : ''}
                         </div>
                     </div>
                     ${module.description ? `<div class="module-description">${module.description}</div>` : ''}
-                    <button class="toggle-units" onclick="toggleUnitsWithAPI('units-${index}', '${module.url}', '${module.id || ''}', ${index})">
-                        📑 View ${module.units || 'units'}
+                    <button class="toggle-units" onclick="toggleUnitsWithAPI('units-${index}', '${module.uid || module.id || module.url}', '${module.url}', ${index})">
+                        📑 View ${Array.isArray(module.units) ? module.units.length + ' units' : (module.units || 'units')}
                     </button>
                     <div class="units-preview" id="units-${index}">
                         <!-- Units will be loaded here when expanded -->
                     </div>
-                    <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title.replace(/'/g, "\\'")}')">
+                    <!-- <button class="generate-button" onclick="generatePodcast('${module.url}', '${module.title.replace(/'/g, "\\'")}')">
                         🎙️ Generate Full Module Podcast
-                    </button>
+                    </button> -->
                 </div>
             `).join('');
             
@@ -939,7 +1008,7 @@
         }
         
         // Toggle unit details display with API-driven accurate URLs
-        async function toggleUnitsWithAPI(unitsId, moduleUrl, moduleId, moduleIndex) {
+        async function toggleUnitsWithAPI(unitsId, moduleUID, moduleURL, moduleIndex) {
             const unitsDiv = document.getElementById(unitsId);
             const button = unitsDiv.previousElementSibling;
             
@@ -962,14 +1031,14 @@
                 `;
                 
                 try {
-                    // Get accurate unit details from API with caching
-                    let moduleDetails = moduleDetailsCache.get(moduleUrl);
+                    // Get accurate unit details from API with caching (using v2 clean service)
+                    let moduleDetails = moduleDetailsCache.get(moduleUID);
                     
                     if (!moduleDetails) {
-                        const response = await fetch(`/api/catalog/modules/${encodeURIComponent(moduleUrl)}`);
+                        const response = await fetch(`/api/v2/catalog/modules/${encodeURIComponent(moduleUID)}/details`);
                         if (response.ok) {
                             moduleDetails = await response.json();
-                            moduleDetailsCache.set(moduleUrl, moduleDetails);
+                            moduleDetailsCache.set(moduleUID, moduleDetails);
                         }
                     }
                     
@@ -978,12 +1047,12 @@
                         displayUnitsFromAPI(unitsDiv, moduleDetails.units, moduleIndex, moduleDetails.title);
                     } else {
                         // Fallback to basic display
-                        displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl);
+                        displayUnitsFallback(unitsDiv, moduleIndex, moduleURL);
                     }
                     
                 } catch (error) {
                     console.warn('Failed to load unit details from API, using fallback:', error);
-                    displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl);
+                    displayUnitsFallback(unitsDiv, moduleIndex, moduleURL);
                 }
                 
                 button.textContent = '📑 Hide units';
@@ -1035,16 +1104,16 @@
         function displayUnitsFallback(unitsDiv, moduleIndex, moduleUrl) {
             unitsDiv.innerHTML = `
                 <h5>Module Units:</h5>
-                <div class="error">
-                    Unable to load detailed unit information. You can still generate a podcast for the full module.
+                <div class="info">
+                    Detailed unit information not available. View full content on Microsoft Learn.
                 </div>
                 <ul class="units-list">
                     <li class="unit-item">
-                        <span class="unit-title">Full Module Content</span>
+                        <span class="unit-title">Module content available via Microsoft Learn</span>
                         <div class="unit-controls">
-                            <button class="unit-generate-button" onclick="generatePodcast('${moduleUrl}', 'Full Module')">
-                                🎙️ Generate Full Module Podcast
-                            </button>
+                            <a href="${moduleUrl}" target="_blank" class="unit-link-button">
+                                📖 View on Microsoft Learn
+                            </a>
                         </div>
                     </li>
                 </ul>
@@ -1106,7 +1175,7 @@
         
         // Generate podcast for a specific unit
         // Generate podcast for a specific unit with progress monitoring
-        function generateUnitPodcast(moduleUrl, unitTitle, moduleTitle, moduleIndex, unitIndex) {
+        function generateUnitPodcast(unitUrl, unitTitle, moduleTitle, moduleIndex, unitIndex) {
             if (!confirm(`Generate podcast for unit "${unitTitle}" from module "${moduleTitle}"?`)) {
                 return;
             }
@@ -1139,14 +1208,14 @@
             statusSpan.textContent = 'Processing...';
             statusSpan.className = 'unit-status processing';
             
-            // Use the same proven logic as Create Podcast page - just pass the URL
+            // Use the same proven logic as Create Podcast page - just pass the unit URL
             fetch('/api/process', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ url: moduleUrl })
+                body: JSON.stringify({ url: unitUrl })
             })
             .then(response => {
                 console.log('Process response status:', response.status);

@@ -188,39 +188,35 @@ Format guidelines:
 
     def _create_enhancement_prompt(self, original_script: str, content_topic: str) -> str:
         """Create the enhancement prompt for the AI."""
-        return f"""Please transform this podcast script about "{content_topic}" into a much more interactive and engaging conversation. The current script has Sarah doing almost all the talking, which makes it boring and monotonous.
+        return f"""Transform this podcast script about "{content_topic}" into a focused conversation that IMMEDIATELY dives into the core material. Skip lengthy introductions and get straight to the technical content.
 
 CRITICAL FORMAT REQUIREMENTS:
 - Start each speaker's dialogue with "Sarah:" or "Mike:" exactly
 - Put each speaker on a separate line
 - NO asterisks (*) - replace with "star" or appropriate words
 - NO markdown formatting - plain text only
-- NO special characters that could be read as "asterisk"
 
-CURRENT PROBLEMS TO FIX:
-- Sarah dominates the conversation (90% of speaking time)
-- Very little back-and-forth interaction
-- Sounds like reading documentation, not having a conversation
-- Missing enthusiasm and natural reactions
-- No follow-up questions or clarifications
+STRUCTURE REQUIREMENTS:
+1. Mike starts with a direct, specific question about the main topic (no general introductions)
+2. Sarah provides the core answer with key details
+3. Mike follows up with deeper technical questions
+4. Keep content dense and focused - every line should teach something important
+5. Balance speaking time 50/50 between Sarah and Mike
 
-WHAT I WANT:
-- Balanced conversation where both hosts contribute equally
-- Natural interruptions and reactions ("Wait, that's interesting!" "Hold on, let me make sure I understand this...")
-- More enthusiastic and conversational tone
-- Hosts teaching each other and the audience
-- Breaking down complex concepts with examples
-- Natural transitions and better flow
+EXAMPLE OPENING (for Azure topic):
+Mike: Sarah, let's talk about Azure Active Directory authentication. What's the fundamental difference between authentication and authorization?
+Sarah: Great question Mike! Authentication is proving who you are, while authorization determines what you can access...
 
-EXAMPLE OF CORRECT FORMAT:
-Sarah: Welcome everyone to today's episode!
-Mike: Thanks Sarah! I'm excited to explore this topic with you.
-Sarah: Perfect! So let's dive right in.
+AVOID:
+- General welcomes or introductions
+- "Today we're going to explore..." style openings
+- Level-setting about what Azure is
+- Background explanations users already know
 
 ORIGINAL SCRIPT:
 {original_script}
 
-Please rewrite this as an engaging, interactive conversation between Sarah and Mike. Use the exact format shown above - each speaker on their own line with "Sarah:" or "Mike:" at the beginning. Keep the same factual content but make it much more dynamic and balanced."""
+Rewrite this as a focused, technical conversation between Sarah and Mike. Mike should immediately ask specific questions about the core concepts, and both hosts should dive straight into the material without preliminaries."""
 
     def enhance_table_discussion(self, table_content: str, context: str) -> str:
         """
