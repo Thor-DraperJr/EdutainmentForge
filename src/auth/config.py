@@ -37,12 +37,13 @@ class AuthConfig:
             'Flask session secret key'
         )
         
-        # Construct authority URL for Azure AD with support for personal accounts
-        # Using common endpoint to support both organizational and personal accounts
-        self.authority = f"https://login.microsoftonline.com/common"
+        # Use 'common' authority to support both personal and work Microsoft accounts
+        # This allows both @outlook.com/@hotmail.com AND @microsoft.com/@company.com
+        self.authority = "https://login.microsoftonline.com/common"
         
-        # Scopes for authentication - using minimal scopes for Azure AD
-        self.scopes = []  # Empty scopes will default to basic user info
+        # Request scopes - use User.Read for basic profile info
+        # Don't use 'openid', 'profile' as they are reserved in MSAL
+        self.scopes = ["User.Read"]
         
         # Redirect URIs (will be set based on environment)
         self.redirect_path = "/auth/callback"

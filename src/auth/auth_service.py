@@ -57,7 +57,7 @@ class AuthService:
     
     def handle_callback(self, base_url: str) -> Optional[Dict[str, Any]]:
         """
-        Handle the authentication callback from Azure AD B2C.
+        Handle the authentication callback from Azure AD.
         
         Args:
             base_url: Base URL of the application
@@ -66,6 +66,10 @@ class AuthService:
             User information if authentication successful, None otherwise
         """
         try:
+            # Debug logging
+            logger.info(f"Handling auth callback, base_url: {base_url}")
+            logger.info(f"Request args: {dict(request.args)}")
+            
             # Get the auth flow from session
             auth_flow = session.get('auth_flow', {})
             
@@ -73,8 +77,16 @@ class AuthService:
                 logger.error("No auth flow found in session")
                 return None
             
+            # Check for error in callback
+            if 'error' in request.args:
+                error = request.args.get('error')
+                error_description = request.args.get('error_description', '')
+                logger.error(f"OAuth error in callback: {error} - {error_description}")
+                return None
+            
             # Complete the authentication flow
             redirect_uri = self.config.get_redirect_uri(base_url)
+            logger.info(f"Using redirect_uri: {redirect_uri}")
             
             result = self._get_msal_app().acquire_token_by_auth_code_flow(
                 auth_code_flow=auth_flow,
@@ -82,19 +94,30 @@ class AuthService:
             )
             
             if 'error' in result:
-                logger.error(f"Authentication error: {result.get('error_description', result['error'])}")
+                logger.error(f"MSAL authentication error: {result.get('error_description', result['error'])}")
+                logger.error(f"Full result: {result}")
                 return None
+            
+            # Debug: Log token claims
+            id_token_claims = result.get('id_token_claims', {})
+            logger.info(f"Successful authentication for user: {id_token_claims.get('email', 'unknown')}")
+            logger.debug(f"ID token claims: {id_token_claims}")
             
             # Extract user information from the ID token
             user_info = {
-                'user_id': result.get('id_token_claims', {}).get('sub'),
-                'email': result.get('id_token_claims', {}).get('email', ''),
-                'name': result.get('id_token_claims', {}).get('name', ''),
-                'given_name': result.get('id_token_claims', {}).get('given_name', ''),
-                'family_name': result.get('id_token_claims', {}).get('family_name', ''),
+                'user_id': id_token_claims.get('sub'),
+                'email': id_token_claims.get('email', id_token_claims.get('preferred_username', '')),
+                'name': id_token_claims.get('name', ''),
+                'given_name': id_token_claims.get('given_name', ''),
+                'family_name': id_token_claims.get('family_name', ''),
+                'upn': id_token_claims.get('upn', ''),  # User Principal Name for work accounts
                 'access_token': result.get('access_token'),
                 'id_token': result.get('id_token')
             }
+            
+            # For work accounts, try to get email from upn if email is empty
+            if not user_info['email'] and user_info['upn']:
+                user_info['email'] = user_info['upn']
             
             # Store user session
             session['user'] = user_info
@@ -107,7 +130,7 @@ class AuthService:
             return user_info
             
         except Exception as e:
-            logger.error(f"Error handling authentication callback: {e}")
+            logger.error(f"Error handling authentication callback: {e}", exc_info=True)
             return None
     
     def is_authenticated(self) -> bool:
@@ -135,17 +158,16 @@ class AuthService:
         Log out the current user and return logout URL.
         
         Returns:
-            Logout URL for Azure AD B2C
+            Logout URL for Azure AD
         """
         # Clear session
         session.clear()
         
-        # Construct logout URL
-        # Azure AD B2C logout URL format
+        # Construct logout URL for regular Azure AD (not B2C)
+        # This will log the user out from Azure AD and redirect back to our app
         logout_url = (
-            f"https://{self.config.tenant_id}.b2clogin.com/"
-            f"{self.config.tenant_id}.onmicrosoft.com/"
-            f"{self.config.policy_name}/oauth2/v2.0/logout"
+            f"https://login.microsoftonline.com/common/oauth2/v2.0/logout"
+            f"?post_logout_redirect_uri={self.config.public_url}"
         )
         
         return logout_url
