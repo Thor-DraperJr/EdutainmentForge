@@ -11,6 +11,7 @@ import sys
 import re
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
+from flask_session import Session
 import threading
 import uuid
 from datetime import datetime, timedelta
@@ -69,11 +70,24 @@ try:
     auth_config.validate()
     auth_service = AuthService(auth_config)
     
-    # Configure Flask session
+    # Configure Flask session with server-side storage
     app.secret_key = auth_config.flask_secret_key
     app.permanent_session_lifetime = timedelta(hours=24)
     
-    logger.info("Authentication configured successfully")
+    # Configure Flask-Session for server-side storage to avoid cookie size limits
+    session_dir = '/tmp/flask_session'
+    os.makedirs(session_dir, exist_ok=True)
+    
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.config['SESSION_FILE_DIR'] = session_dir
+    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_USE_SIGNER'] = True
+    app.config['SESSION_KEY_PREFIX'] = 'edutainment:'
+    
+    # Initialize Flask-Session
+    Session(app)
+    
+    logger.info("Authentication configured successfully with server-side sessions")
     AUTHENTICATION_REQUIRED = True
 except Exception as e:
     logger.error(f"Authentication configuration failed: {e}")

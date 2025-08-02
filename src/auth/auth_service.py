@@ -50,7 +50,7 @@ class AuthService:
             redirect_uri=redirect_uri
         )
         
-        # Store the auth flow state in session
+        # Store the auth flow state in session (now using server-side storage)
         session['auth_flow'] = auth_result
         
         return auth_result['auth_uri']
@@ -111,15 +111,13 @@ class AuthService:
                 'given_name': id_token_claims.get('given_name', ''),
                 'family_name': id_token_claims.get('family_name', ''),
                 'upn': id_token_claims.get('upn', ''),  # User Principal Name for work accounts
-                'access_token': result.get('access_token'),
-                'id_token': result.get('id_token')
             }
             
             # For work accounts, try to get email from upn if email is empty
             if not user_info['email'] and user_info['upn']:
                 user_info['email'] = user_info['upn']
             
-            # Store user session
+            # Store user session (now using server-side storage)
             session['user'] = user_info
             session.permanent = True
             
