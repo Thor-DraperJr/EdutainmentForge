@@ -36,6 +36,8 @@ class Certification:
     level: str
     module_count: int = 0
     exam_codes: list = None  # List of exam codes like ['AZ-500', 'SC-300']
+    questionable_role_association: bool = False  # True if role association seems incorrect
+    role_association_explanation: str = ''  # Explanation of why association is questionable
     
     def __post_init__(self):
         if self.exam_codes is None:
@@ -627,6 +629,101 @@ class CleanCatalogService:
         
         return cert_exam_mapping.get(cert_uid, [])
     
+    def _is_questionable_role_association(self, cert_uid: str, role_uid: str) -> dict:
+        """
+        Check if a certification's association with a role seems questionable.
+        
+        Args:
+            cert_uid: The certification identifier
+            role_uid: The role identifier
+            
+        Returns:
+            Dict with 'is_questionable' (bool) and 'explanation' (str) if questionable
+        """
+        questionable_associations = {
+            # Windows Server certification incorrectly tagged as security-engineer
+            ('certification.windows-server-hybrid-administrator', 'security-engineer'): {
+                'is_questionable': True,
+                'explanation': "Microsoft's API incorrectly associates Windows Server Hybrid Administrator (AZ-800/AZ-801) with the Security Engineer role. While Windows Server administration does involve some security aspects, this certification is primarily focused on infrastructure management, Active Directory, and hybrid cloud operations rather than Azure security engineering. This certification would be more appropriately categorized under 'Azure Administrator' or 'Infrastructure Administrator' roles."
+            },
+            # Add more questionable associations as we discover them
+            # Example: AI certifications incorrectly tagged as developer role
+            ('certification.azure-ai-engineer', 'developer'): {
+                'is_questionable': True,
+                'explanation': "While AI Engineers do development work, this certification is specifically focused on AI/ML services and should primarily be associated with the AI Engineer role rather than general Developer role."
+            },
+            # Example: Data certifications tagged as general administrator
+            ('certification.azure-data-engineer', 'administrator'): {
+                'is_questionable': True,
+                'explanation': "Data Engineering requires specialized skills in data pipelines, analytics, and big data processing that go beyond general Azure administration."
+            }
+        }
+        
+        # Check if this specific combination is questionable
+        association_key = (cert_uid, role_uid)
+        if association_key in questionable_associations:
+            return questionable_associations[association_key]
+        
+        # Additional heuristic checks for common patterns
+        
+        # Windows Server certs should generally not be in security-engineer role
+        if 'windows-server' in cert_uid and role_uid == 'security-engineer':
+            return {
+                'is_questionable': True,
+                'explanation': f"This Windows Server certification ({cert_uid}) appears to be incorrectly categorized under Security Engineer. Windows Server certifications typically focus on infrastructure administration rather than Azure security engineering."
+            }
+        
+        # Expert/Architect level certifications in basic administrator roles
+        if ('expert' in cert_uid or 'architect' in cert_uid) and role_uid == 'administrator':
+            return {
+                'is_questionable': True,
+                'explanation': f"This expert-level certification may be too advanced for general Administrator role. Expert and Architect certifications typically require specialized knowledge beyond basic administration."
+            }
+        
+        # Security certifications in obviously inappropriate non-security roles
+        # BUT allow security certs in architect/solution-architect roles since they need security knowledge
+        if ('security' in cert_uid or 'cybersecurity' in cert_uid) and role_uid not in [
+            'security-engineer', 'security-operations-analyst', 'solution-architect', 'enterprise-architect'
+        ]:
+            # Special case: don't warn about cybersecurity-architect in solution-architect role
+            if cert_uid == 'certification.cybersecurity-architect-expert' and role_uid == 'solution-architect':
+                pass  # No warning - this is appropriate
+            else:
+                return {
+                    'is_questionable': True,
+                    'explanation': f"This security-focused certification may be more appropriate for specialized security roles rather than general {role_uid.replace('-', ' ')} role."
+                }
+        
+        # AI/ML certifications should generally not be in general developer role
+        if ('ai-' in cert_uid or 'data-scientist' in cert_uid) and role_uid == 'developer':
+            return {
+                'is_questionable': True,
+                'explanation': f"This AI/ML certification may be more appropriate for specialized AI Engineer or Data Scientist roles rather than general Developer role."
+            }
+        
+        # Data engineering certs should generally not be in general administrator role  
+        if 'data-engineer' in cert_uid and role_uid == 'administrator':
+            return {
+                'is_questionable': True,
+                'explanation': f"This Data Engineering certification requires specialized data skills beyond general Azure administration."
+            }
+        
+        # Architecture certifications should warn when in engineer/administrator roles, but not other architect roles
+        if 'architect' in cert_uid and role_uid in ['administrator', 'developer', 'security-engineer', 'devops-engineer']:
+            # Special handling for cybersecurity-architect in security-engineer role
+            if cert_uid == 'certification.cybersecurity-architect-expert' and role_uid == 'security-engineer':
+                return {
+                    'is_questionable': True,
+                    'explanation': f"This architect-level certification focuses on strategic security design and high-level architectural decisions, which may be more advanced than the hands-on implementation focus of the Security Engineer role."
+                }
+            else:
+                return {
+                    'is_questionable': True,
+                    'explanation': f"This architecture certification focuses on solution design and architectural decisions, which may be more appropriate for architect-level roles."
+                }
+        
+        return {'is_questionable': False, 'explanation': ''}
+    
     def _is_certification_ready(self, cert_uid: str) -> bool:
         """
         Check if we have curated, ready-to-use content for this certification.
@@ -706,21 +803,24 @@ class CleanCatalogService:
                     title = cert_data.get('title', '')
                     cert_uid = cert_data.get('uid', '')
                     
+                    # NOTE: Microsoft Learn API has some questionable role associations
+                    # For example, Windows Server Hybrid Administrator (AZ-800/AZ-801) 
+                    # is incorrectly tagged with 'security-engineer' role
+                    # We log this but trust the API data for now
+                    if role_uid == 'security-engineer' and 'windows-server' in cert_uid:
+                        logger.warning(f"Microsoft API associates Windows Server cert {cert_uid} with security-engineer role - this may be incorrect")
+                    
                     if not self._is_certification_retired(cert_data, title):
                         # MODULAR FILTERING: Only show certifications we have ready content for
                         if self._is_certification_ready(cert_uid):
                             # Get exam codes for this certification
                             exam_codes = self._get_exam_codes_for_certification(cert_uid)
                             
-                            # Shorten description - use only first sentence or limit to 80 chars
+                            # Check if this role association is questionable
+                            questionable_info = self._is_questionable_role_association(cert_uid, role_uid)
+                            
+                            # Get the full description without truncation
                             description = cert_data.get('subtitle', cert_data.get('summary', 'No description available'))
-                            if description and len(description) > 80:
-                                # Take first sentence or first 80 chars, whichever is shorter
-                                first_sentence = description.split('.')[0]
-                                if len(first_sentence) <= 80:
-                                    description = first_sentence + '.'
-                                else:
-                                    description = description[:77] + '...'
                             
                             cert = Certification(
                                 uid=cert_uid,
@@ -728,7 +828,9 @@ class CleanCatalogService:
                                 description=description,
                                 level=cert_data.get('certification_type', cert_data.get('level', 'Unknown')),
                                 module_count=0,  # We'll calculate this on-demand when needed
-                                exam_codes=exam_codes
+                                exam_codes=exam_codes,
+                                questionable_role_association=questionable_info.get('is_questionable', False),
+                                role_association_explanation=questionable_info.get('explanation', '')
                             )
                             if cert.uid:
                                 certifications.append(cert)
@@ -744,6 +846,127 @@ class CleanCatalogService:
         except Exception as e:
             logger.error(f"Failed to fetch certifications for role {role_uid}: {e}")
             return []
+    
+    def get_role_certifications(self, role_uid: str) -> dict:
+        """
+        Get certifications for a role, formatted for API response.
+        Returns dictionary with role_id and certifications list.
+        """
+        try:
+            certifications = self.get_certifications_for_role(role_uid)
+            
+            # Convert Certification dataclass objects to dictionaries
+            cert_dicts = []
+            for cert in certifications:
+                cert_dict = {
+                    'id': cert.uid,
+                    'name': cert.name,
+                    'description': cert.description,
+                    'level': cert.level,
+                    'exam_codes': cert.exam_codes,
+                    'module_count': cert.module_count,
+                    'questionable_role_association': cert.questionable_role_association,
+                    'role_association_explanation': cert.role_association_explanation
+                }
+                cert_dicts.append(cert_dict)
+            
+            return {
+                'role_id': role_uid,
+                'certifications': cert_dicts
+            }
+        except Exception as e:
+            logger.error(f"Failed to get role certifications for {role_uid}: {e}")
+            return {'role_id': role_uid, 'certifications': []}
+    
+    def get_certification_full_details(self, cert_uid: str) -> dict:
+        """
+        Get full details for a certification including the complete, untruncated description.
+        This method returns the stored full description from our certification cache.
+        """
+        cache_key = f"cert_details_{cert_uid}"
+        
+        def fetch_details():
+            """Fetch certification details from API or fallback."""
+            logger.info(f"Fetching full certification details for: {cert_uid}")
+            
+            # PHASE 1: Try to get the description from our live role-based API data
+            cert_name = 'Microsoft Certification'  # Default fallback
+            cert_level = 'Unknown'
+            description = "No detailed description available."
+            
+            try:
+                # Search through all roles to find this certification and get its description
+                for role in self.get_available_roles():
+                    certifications = self.get_certifications_for_role(role.uid)
+                    for cert in certifications:
+                        if cert.uid == cert_uid:
+                            cert_name = cert.name
+                            cert_level = cert.level
+                            # Use the live API description from role-based data
+                            if cert.description and cert.description.strip():
+                                description = cert.description
+                                logger.info(f"✅ Using live API description for {cert_uid}")
+                                break
+                    if description != "No detailed description available.":
+                        break
+            except Exception as e:
+                logger.warning(f"Could not get certification details from live data: {e}")
+            
+            # PHASE 2: Fallback to enhanced descriptions if live API didn't work
+            if description == "No detailed description available.":
+                fallback_descriptions = {
+                    'certification.security-compliance-and-identity-fundamentals': 
+                        "This exam is targeted to you if you're looking to familiarize yourself with the fundamentals of security, compliance, and identity across cloud-based and related Microsoft services. This certification serves as a stepping stone if you're interested in advancing to role-based certifications in security operations, identity and access management, or information protection. The exam covers security, compliance, and identity concepts; capabilities of Microsoft Azure Active Directory; capabilities of Microsoft Security solutions; and capabilities of Microsoft compliance solutions.",
+                    
+                    'certification.azure-security-engineer':
+                        "As the Azure security engineer, you implement, manage, and monitor security for resources in Azure, multi-cloud, and hybrid environments as part of an end-to-end infrastructure. You implement and manage security components and configurations by using Microsoft Defender for Cloud and other tools. You ensure that the infrastructure aligns with standards and best practices such as the Microsoft Cloud Security Benchmark (MCSB). Your responsibilities as an Azure security engineer include: Managing the security posture. Implementing threat protection. Identifying and remediating vulnerabilities. You are responsible for implementing regulatory compliance controls for Azure infrastructure including identity and access, network, compute, storage, data, applications, asset management, backup and recovery, and devops security. As an Azure security engineer, you work with architects, administrators, and developers to plan and implement solutions that meet security and compliance requirements. You may also collaborate with security operations in responding to security incidents in Azure. You should have: Practical experience in administration of Microsoft Azure and hybrid environments. Strong familiarity with Microsoft Entra ID, as well as compute, network, and storage in Azure.",
+                    
+                    'certification.cybersecurity-architect-expert':
+                        "As a Microsoft cybersecurity architect, you translate a cybersecurity strategy into capabilities that protect the assets, business, and operations of an organization. You design, guide the implementation of, and maintain security solutions that follow Zero Trust principles and best practices, including security strategies for identity, devices, data, applications, network, infrastructure, and DevOps. You continuously collaborate with leaders and practitioners in IT security, privacy, and other roles across an organization to plan and implement a cybersecurity strategy that meets the business needs of an organization.",
+                    
+                    'certification.identity-and-access-administrator':
+                        "As a Microsoft identity and access administrator, you design, implement, and operate an organization's identity and access management systems by using Azure Active Directory (Azure AD). You manage tasks such as providing secure authentication and authorization access to enterprise applications. You provide seamless experiences and self-service management capabilities for all users. You're responsible for configuring and managing authentication and authorization of identities for users, devices, Azure resources, and applications.",
+                    
+                    'certification.windows-server-hybrid-administrator':
+                        "As a candidate for this certification, you're responsible for administering core and advanced Windows Server workloads and services using on-premises, hybrid, and cloud technologies. Your responsibilities include implementing, managing, and maintaining on-premises and hybrid solutions such as identity, management, compute, networking, and storage. You use administrative tools and technologies including Windows Admin Center, PowerShell, Azure Arc, and IaaS virtual machine administration. You also integrate Windows Server environments with Azure services and manage Windows Server in on-premises networks.",
+                    
+                    'certification.azure-solutions-architect-expert':
+                        "As a Microsoft Azure solutions architect, you have subject matter expertise in designing cloud and hybrid solutions that run on Azure, including compute, network, storage, monitoring, and security. You have skills and experience operating within the following areas: Administration, Development, and DevOps. You should have expert-level skills in Azure administration and development and foundational skills in DevOps. You design solutions for the following: Compute, Network, Storage, Monitoring, and Security."
+                }
+                
+                # Use enhanced description if available
+                description = fallback_descriptions.get(cert_uid, "No detailed description available.")
+                if description != "No detailed description available.":
+                    logger.info(f"✅ Using fallback description for {cert_uid}")
+            
+            details = {
+                'id': cert_uid,
+                'name': cert_name,
+                'description': description,
+                'level': cert_level,
+                'exam_codes': self._get_exam_codes_for_certification(cert_uid),
+                'url': '',
+                'last_updated': '',
+                'icon_url': ''
+            }
+            
+            return details
+        
+        try:
+            # Use the existing caching mechanism
+            return self._get_cached_or_fetch(cache_key, fetch_details)
+        except Exception as e:
+            logger.error(f"Error fetching full certification details for {cert_uid}: {e}")
+            return {
+                'id': cert_uid,
+                'name': 'Microsoft Certification',
+                'description': 'Unable to load certification details at this time.',
+                'level': 'Unknown',
+                'exam_codes': [],
+                'url': '',
+                'last_updated': '',
+                'icon_url': ''
+            }
     
     def get_modules_for_certification(self, cert_uid: str) -> List[Module]:
         """

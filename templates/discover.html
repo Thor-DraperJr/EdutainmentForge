@@ -52,7 +52,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             max-width: 1200px;
             margin: 0 auto;
-            overflow: hidden;
+            overflow: visible; /* Changed from hidden to allow tooltips */
             color: #333;
         }
         
@@ -221,6 +221,163 @@
             color: #666;
             font-size: 0.9rem;
             line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        /* Info button for showing full descriptions */
+        .info-btn {
+            background: linear-gradient(135deg, #0085CA, #0066A0);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        .info-btn:hover {
+            background: linear-gradient(135deg, #0066A0, #004d7a);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 133, 202, 0.3);
+        }
+        
+        .warning-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        .warning-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        /* Modal for showing full descriptions */
+        .description-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .description-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .description-modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        /* Tooltip styles for full descriptions */
+        .cert-description {
+            position: relative;
+            cursor: help;
+        }
+        
+        .cert-description::after {
+            content: attr(data-full-description);
+            position: absolute;
+            bottom: 120%; /* Move tooltip higher to avoid clipping */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: normal;
+            max-width: 450px;
+            min-width: 200px;
+            width: max-content;
+            z-index: 9999; /* Higher z-index */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .cert-description:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Tooltip arrow */
+        .cert-description::before {
+            content: '';
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%) translateY(12px); /* Adjust arrow position */
+            border: 8px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        
+        .cert-description:hover::before {
+            opacity: 1;
+            visibility: visible;
         }
         
         .module-count {
@@ -303,6 +460,64 @@
             font-size: 0.9rem;
             margin: 10px 0;
             line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            cursor: help;
+        }
+        
+        /* Tooltip styles for module descriptions */
+        .module-description[data-full-description]::after {
+            content: attr(data-full-description);
+            position: absolute;
+            bottom: 120%; /* Move tooltip higher */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: normal;
+            max-width: 500px;
+            min-width: 200px;
+            width: max-content;
+            z-index: 9999; /* Higher z-index */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .module-description[data-full-description]:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Tooltip arrow for modules */
+        .module-description[data-full-description]::before {
+            content: '';
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            border: 8px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        
+        .module-description[data-full-description]:hover::before {
+            opacity: 1;
+            visibility: visible;
         }
         
         .units-preview {
@@ -805,14 +1020,33 @@
             
             certGrid.innerHTML = sortedCerts.map(cert => {
                 const examCodesJson = JSON.stringify(cert.exam_codes || []).replace(/"/g, '&quot;');
+                const hasDescription = cert.description && cert.description.length > 10;
+                const hasQuestionableAssociation = cert.questionable_role_association || false;
+                const associationExplanation = cert.role_association_explanation || '';
+                
                 return `
-                <div class="cert-card" onclick="selectCertification('${cert.id}', '${cert.name.replace(/'/g, "\\'")}', '${examCodesJson}')">
+                <div class="cert-card" onclick="selectCertificationCard(event, '${cert.id}', '${cert.name.replace(/'/g, "\\'")}', '${examCodesJson}')">
                     <div class="cert-id">${cert.exam_codes && cert.exam_codes.length > 0 ? cert.exam_codes.join(', ') : cert.id}</div>
                     <h4>${cert.name}</h4>
-                    <p>${cert.description}</p>
+                    <div style="position: relative; display: flex; gap: 8px;">
+                        ${hasDescription ? `<button class="info-btn" onclick="showFullDescription('${cert.id}', '${cert.name.replace(/'/g, "\\'")}'); return false;">ℹ️ Exam Description</button>` : ''}
+                        ${hasQuestionableAssociation ? `<button class="warning-btn" onclick="showRoleAssociationWarning('${associationExplanation.replace(/'/g, "\\'")}', '${cert.name.replace(/'/g, "\\'")}'); return false;" title="Questionable role association">⚠️ Role Question</button>` : ''}
+                    </div>
                 </div>
                 `;
             }).join('');
+        }
+        
+        // Handle certification card clicks with proper event handling for buttons
+        function selectCertificationCard(event, certId, certName, examCodesStr) {
+            // If the click target is the info button, warning button, or their children, don't proceed
+            if (event.target.classList.contains('info-btn') || event.target.closest('.info-btn') ||
+                event.target.classList.contains('warning-btn') || event.target.closest('.warning-btn')) {
+                return; // Let the button handle its own click
+            }
+            
+            // Otherwise, proceed with normal certification selection
+            selectCertification(certId, certName, examCodesStr);
         }
         
         // Select a certification and load its modules (API call only when needed)
@@ -876,7 +1110,13 @@
                 return aDuration - bDuration;
             });
             
-            moduleList.innerHTML = sortedModules.map((module, index) => `
+            moduleList.innerHTML = sortedModules.map((module, index) => {
+                const escapedDescription = module.description ? module.description.replace(/"/g, '&quot;').replace(/'/g, '&#39;') : '';
+                const truncatedDescription = module.description && module.description.length > 120 
+                    ? module.description.substring(0, 120) + '...' 
+                    : module.description;
+                
+                return `
                 <div class="module-item" data-module-url="${module.url}" data-module-id="${module.id || ''}">
                     <div class="module-header">
                         <div class="module-title">${module.title}</div>
@@ -886,7 +1126,7 @@
                             ${module.units ? `<div class="module-units">${Array.isArray(module.units) ? module.units.length : module.units} unit${(Array.isArray(module.units) ? module.units.length : module.units) !== 1 ? 's' : ''}</div>` : ''}
                         </div>
                     </div>
-                    ${module.description ? `<div class="module-description">${module.description}</div>` : ''}
+                    ${module.description ? `<div class="module-description" data-full-description="${escapedDescription}">${truncatedDescription}</div>` : ''}
                     <button class="toggle-units" onclick="toggleUnitsWithAPI('units-${index}', '${module.uid || module.id || module.url}', '${module.url}', ${index})">
                         📑 View ${Array.isArray(module.units) ? module.units.length + ' units' : (module.units || 'units')}
                     </button>
@@ -897,7 +1137,8 @@
                         🎙️ Generate Full Module Podcast
                     </button> -->
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             // Check for existing podcasts after rendering
             setTimeout(() => checkExistingPodcasts(), 500);
@@ -1462,6 +1703,210 @@
             }
             // If URL doesn't follow expected pattern, return the full URL
             return moduleUrl;
+        }
+        
+        // Simple JavaScript tooltip system for better reliability
+        let tooltipElement = null;
+        
+        function showTooltip(element, text) {
+            // Remove any existing tooltip
+            hideTooltip();
+            
+            // Create tooltip element
+            tooltipElement = document.createElement('div');
+            tooltipElement.className = 'js-tooltip';
+            tooltipElement.innerHTML = text.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+            
+            // Style the tooltip
+            tooltipElement.style.cssText = `
+                position: absolute;
+                background: rgba(0, 0, 0, 0.95);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                line-height: 1.4;
+                max-width: 400px;
+                z-index: 10000;
+                pointer-events: none;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                white-space: normal;
+                word-wrap: break-word;
+            `;
+            
+            // Add to body
+            document.body.appendChild(tooltipElement);
+            
+            // Position tooltip above the element
+            const rect = element.getBoundingClientRect();
+            const tooltipRect = tooltipElement.getBoundingClientRect();
+            
+            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.top - tooltipRect.height - 10;
+            
+            // Keep tooltip on screen
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            if (top < 10) {
+                top = rect.bottom + 10; // Show below if not enough space above
+            }
+            
+            tooltipElement.style.left = left + window.scrollX + 'px';
+            tooltipElement.style.top = top + window.scrollY + 'px';
+            
+            // Fade in
+            setTimeout(() => {
+                if (tooltipElement) {
+                    tooltipElement.style.opacity = '1';
+                }
+            }, 10);
+        }
+        
+        function hideTooltip() {
+            if (tooltipElement) {
+                tooltipElement.remove();
+                tooltipElement = null;
+            }
+        }
+        
+        // Clear tooltip if user scrolls
+        window.addEventListener('scroll', hideTooltip);
+        
+        // Function to show full description in a modal
+        async function showFullDescription(certId, certName) {
+            // Create modal with loading state
+            const modal = document.createElement('div');
+            modal.className = 'description-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h3 style="color: #0085CA; margin-bottom: 20px; padding-right: 30px;">${certName}</h3>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Loading full description...</div>
+                    </div>
+                </div>
+            `;
+            
+            // Add to body and show
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('show'), 10);
+            
+            try {
+                // Always fetch the complete certification details using the provided ID
+                let fullDescription = 'No description available.';
+                
+                if (certId) {
+                    const detailResponse = await fetch(`/api/v2/catalog/certifications/${certId}/details`);
+                    if (detailResponse.ok) {
+                        const detailData = await detailResponse.json();
+                        if (detailData.description) {
+                            fullDescription = detailData.description;
+                        }
+                    } else {
+                        throw new Error('Failed to fetch certification details');
+                    }
+                }
+                
+                // Clean up the description (remove HTML tags if present)
+                const cleanDescription = fullDescription
+                    .replace(/<[^>]*>/g, '') // Remove HTML tags
+                    .replace(/&quot;/g, '"')  // Replace HTML entities
+                    .replace(/&#39;/g, "'")
+                    .replace(/&amp;/g, '&')
+                    .trim();
+                
+                // Update modal content with the description
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.innerHTML = `
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h3 style="color: #0085CA; margin-bottom: 20px; padding-right: 30px;">${certName}</h3>
+                    <div style="color: #333; line-height: 1.6; font-size: 1rem;">
+                        ${cleanDescription}
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading full description:', error);
+                const modalContent = modal.querySelector('.modal-content');
+                modalContent.innerHTML = `
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h3 style="color: #0085CA; margin-bottom: 20px; padding-right: 30px;">${certName}</h3>
+                    <div style="color: #333; line-height: 1.6; font-size: 1rem;">
+                        <em style="color: #666;">Sorry, we couldn't load the certification details at this time. Please try again later.</em>
+                    </div>
+                `;
+            }
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+            
+            // Close on ESC key
+            function escapeHandler(e) {
+                if (e.key === 'Escape') {
+                    closeModal(modal);
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            }
+            document.addEventListener('keydown', escapeHandler);
+        }
+        
+        // Function to show role association warning in a modal
+        function showRoleAssociationWarning(explanation, certName) {
+            // Create modal with warning styling
+            const modal = document.createElement('div');
+            modal.className = 'description-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                    <h3 style="color: #e74c3c; margin-bottom: 20px; padding-right: 30px; display: flex; align-items: center; gap: 10px;">
+                        <span>⚠️</span> Role Association Question
+                    </h3>
+                    <div style="color: #333; line-height: 1.6; font-size: 1rem; background-color: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 15px;">
+                        <strong>Certification:</strong> ${certName}
+                    </div>
+                    <div style="color: #333; line-height: 1.6; font-size: 1rem;">
+                        ${explanation}
+                        <br><br>
+                        <em style="color: #666; font-size: 0.9rem;">This analysis is based on Microsoft's API data and our expertise in certification categorization. Role associations may vary depending on organizational needs and job requirements.</em>
+                    </div>
+                </div>
+            `;
+            
+            // Add to body and show
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('show'), 10);
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal);
+                }
+            });
+            
+            // Close on ESC key
+            function escapeHandler(e) {
+                if (e.key === 'Escape') {
+                    closeModal(modal);
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            }
+            document.addEventListener('keydown', escapeHandler);
+        }
+        
+        function closeModal(modalOrButton) {
+            const modal = modalOrButton.classList ? modalOrButton : modalOrButton.closest('.description-modal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.remove(), 300);
         }
     </script>
 </body>

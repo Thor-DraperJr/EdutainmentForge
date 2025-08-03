@@ -39,7 +39,6 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Global storage for processing status (with thread-safe access)
-import threading
 processing_status = {}
 status_lock = threading.Lock()
 
@@ -427,7 +426,9 @@ def get_role_certifications_v2(role_id):
                 'description': cert.description,
                 'level': cert.level,
                 'module_count': cert.module_count,
-                'exam_codes': cert.exam_codes  # Include exam codes
+                'exam_codes': cert.exam_codes,  # Include exam codes
+                'questionable_role_association': cert.questionable_role_association,  # Include warning indicator
+                'role_association_explanation': cert.role_association_explanation    # Include warning explanation
             })
         
         return jsonify({
@@ -437,6 +438,23 @@ def get_role_certifications_v2(role_id):
         
     except Exception as e:
         logger.error(f"Failed to get certifications for role {role_id} (v2): {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/v2/catalog/certifications/<cert_id>/details', methods=['GET'])
+@_require_auth
+def get_certification_details_v2(cert_id):
+    """Get full details for a specific certification including untruncated description."""
+    try:
+        # Get the full certification data from the Microsoft Learn API
+        certification_details = clean_catalog_service.get_certification_full_details(cert_id)
+        
+        if not certification_details:
+            return jsonify({'error': 'Certification not found'}), 404
+            
+        return jsonify(certification_details)
+        
+    except Exception as e:
+        logger.error(f"Failed to get certification details for {cert_id}: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/v2/catalog/certifications/<cert_id>/modules', methods=['GET'])  

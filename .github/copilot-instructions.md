@@ -32,6 +32,7 @@ voice = 'en-US-AriaNeural'  # Hardcoded!
 - Include docstrings, type hints, error handling
 - Write tests with proper cleanup (tempfile, mock Azure services)
 - Use context managers for file operations
+- If a test script is created, conduct proper cleanup (either removing the test file or moving it to /scripts if it will be used again)
 
 ### Azure Integration
 - Always use MCP server to validate resources before changes
