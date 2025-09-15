@@ -35,53 +35,30 @@ Python Flask app that converts Microsoft Learn content into AI-enhanced educatio
 # /new-session
 Counduct a fresh analysis of the project, ignoring previous context. Give me a concise summary of the project purpose, architecture, and key components. Identify any potential improvements or optimizations.
 
-## GitHub Actions / Workflow Health Quick Reference
+## Prompt Command: /workflow-check
 
-Use these `gh` CLI commands after pushing to verify builds and deployments without running anything locally beyond the CLI itself.
+Goal: Quickly confirm CI workflow health and deployed commit without noise.
 
-### Core
-```
-gh workflow list
-gh run list --limit 10
-gh run list --branch main --limit 5
-```
+Usage: Ask: "/workflow-check".
 
-### Inspect latest run
-```
-RUN_ID=$(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId')
-gh run view "$RUN_ID" --log
-```
+Assistant Response Should Include:
+1. Latest workflow run (branch main): status + conclusion + short SHA.
+2. Simple follow-up commands (exactly three):
+	 - List recent runs.
+	 - Watch latest run until completion.
+	 - View logs of latest run.
+3. Reminder how to confirm deployed commit via app (`/prompt` version command).
 
-### Watch until completion
+Expected Output Template (example):
 ```
-gh run watch $(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId')
-```
-
-### JSON status snippet
-```
-gh run list --branch main --limit 1 --json status,conclusion,headSha -q '.[0]'
-```
-
-### Re-run most recent failed run (if any)
-```
-gh run list --branch main --limit 5 --json conclusion,databaseId -q '.[] | select(.conclusion=="failure") | .databaseId' | head -n1 | xargs -r gh run rerun
+Latest Run: success (completed) commit=abc1234
+Commands:
+	gh run list --branch main --limit 3
+	gh run watch $(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId')
+	gh run view $(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId') --log
+Verify Deploy:
+	curl -s https://YOUR_HOST/healthz | jq .
+	curl -s -X POST -H 'Content-Type: application/json' -d '{"command":"version"}' https://YOUR_HOST/prompt | jq .
 ```
 
-### Download artifacts
-```
-gh run download "$RUN_ID"
-```
-
-### Confirm deployed commit via app
-```
-curl -s https://YOUR_HOST/healthz | jq .
-curl -s -X POST -H 'Content-Type: application/json' -d '{"command":"version"}' https://YOUR_HOST/prompt | jq .
-```
-
-### Helpful aliases (optional)
-```
-alias ghw='gh run list --limit 5'
-alias ghwm='gh run list --branch main --limit 5'
-```
-
-Keep this lean; expand only if workflows grow more complex.
+Keep answers terse. Offer extended diagnostics only if the user explicitly asks for details.
