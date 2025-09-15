@@ -69,12 +69,19 @@ This script will prompt you for:
 
 ### 4. Build and Deploy Container
 
-```bash
-# Build and push container image
-./scripts/build-container.sh
+Use Docker or your CI pipeline (GitHub Action already handles deploys on main pushes):
 
-# The container app will automatically deploy with the new image
+```bash
+# Build locally (optional if CI handles builds)
+docker build -t edutainmentforge:latest .
+
+# Tag & push (only if you manually push images)
+az acr login --name edutainmentforge
+docker tag edutainmentforge:latest edutainmentforge.azurecr.io/edutainmentforge:latest
+docker push edutainmentforge.azurecr.io/edutainmentforge:latest
 ```
+
+The GitHub Actions workflow (`.github/workflows/deploy.yml`) will build and deploy automatically when changes are pushed to `main`.
 
 ## Configuration Details
 
@@ -139,7 +146,7 @@ env:
 
 This deployment uses **RBAC authorization** which provides:
 - ✅ Granular, role-based permissions
-- ✅ Integration with Azure AD identity management  
+- ✅ Integration with Azure AD identity management
 - ✅ Audit trail through Azure Activity Log
 - ✅ Consistent permission model across Azure services
 - ❌ Legacy access policies are not used (deprecated approach)
@@ -170,11 +177,17 @@ az keyvault secret set --vault-name edutainmentforge-kv --name azure-speech-key 
 
 ### Deploy New Application Version
 
-```bash
-# Build new container image
-./scripts/build-container.sh
+Automatic on push to `main` via CI. To force a manual image update:
 
-# Container app will automatically deploy the new version
+```bash
+docker build -t edutainmentforge:latest .
+az acr login --name edutainmentforge
+docker tag edutainmentforge:latest edutainmentforge.azurecr.io/edutainmentforge:latest
+docker push edutainmentforge.azurecr.io/edutainmentforge:latest
+az containerapp update \
+  --name edutainmentforge-app \
+  --resource-group edutainmentforge-rg \
+  --image edutainmentforge.azurecr.io/edutainmentforge:latest
 ```
 
 ## Troubleshooting
@@ -213,17 +226,17 @@ az role assignment list --assignee $PRINCIPAL_ID --scope /subscriptions/$(az acc
 
 ### Common Issues
 
-1. **Key Vault Access Denied**: 
+1. **Key Vault Access Denied**:
    - Ensure RBAC is enabled: `"enableRbacAuthorization": true`
    - Verify container app has "Key Vault Secrets User" role
    - Check network access rules if using network restrictions
 
-2. **Container Won't Start**: 
+2. **Container Won't Start**:
    - Check that all required secrets exist in Key Vault
    - Verify secret references match exact secret names
    - Ensure system-assigned identity is enabled
 
-3. **Secret Not Found**: 
+3. **Secret Not Found**:
    - Verify secret name matches exactly (case-sensitive)
    - Check that you have sufficient permissions to create secrets
    - Ensure Key Vault name is correct in bicep template

@@ -26,10 +26,18 @@ This folder contains the Azure infrastructure templates and deployment scripts f
    ./setup-secrets.sh
    ```
 
-3. **Deploy Application**:
+3. **Deploy Application** (CI driven):
+   The GitHub Actions workflow builds and deploys automatically on pushes to `main`.
+   To manually build & push (optional):
    ```bash
-   # Build and push container
-   ../scripts/build-container.sh
+   docker build -t edutainmentforge:latest ..
+   az acr login --name edutainmentforge
+   docker tag edutainmentforge:latest edutainmentforge.azurecr.io/edutainmentforge:latest
+   docker push edutainmentforge.azurecr.io/edutainmentforge:latest
+   az containerapp update \
+     --name edutainmentforge-app \
+     --resource-group edutainmentforge-rg \
+     --image edutainmentforge.azurecr.io/edutainmentforge:latest
    ```
 
 ## Security Architecture

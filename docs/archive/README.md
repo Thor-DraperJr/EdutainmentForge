@@ -4,10 +4,7 @@ This folder contains specialized documentation that may be useful for advanced d
 
 ## Files
 
-- **[COST_OPTIMIZATION_GUIDE.md](COST_OPTIMIZATION_GUIDE.md)** - Advanced cost optimization techniques for production deployments
-- **[CONTAINER_MANAGEMENT.md](CONTAINER_MANAGEMENT.md)** - Azure Container Apps management and scaling strategies  
-- **[GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md)** - CI/CD pipeline configuration for automated deployments
-- **[SECURE_DEPLOYMENT.md](SECURE_DEPLOYMENT.md)** - Enterprise security implementation details
+> Archived detailed guides (cost optimization, container management, CI setup, secure deployment) were removed during repository simplification. Relevant active practices are now summarized in top-level docs under `infrastructure/` and `docs/`.
 
 ## Usage
 

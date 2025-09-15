@@ -1,7 +1,7 @@
 # EdutainmentForge Makefile
 # Common development and deployment tasks
 
-.PHONY: help install install-dev test test-unit test-integration lint format clean build deploy
+.PHONY: help install install-dev test test-unit test-integration lint format clean build
 
 # Default target
 help:
@@ -20,9 +20,8 @@ help:
 	@echo "  format        Format code with black and isort"
 	@echo "  pre-commit    Run pre-commit hooks"
 	@echo ""
-	@echo "Deployment:"
-	@echo "  build         Build Docker container"
-	@echo "  deploy        Deploy to Azure"
+	@echo "Build & Maintenance:"
+	@echo "  build         Build Docker container (local only; CI handles prod)"
 	@echo "  clean         Clean build artifacts"
 	@echo ""
 	@echo "Local Development:"
@@ -70,8 +69,7 @@ build:
 	echo "Building image with commit $$COMMIT_SHA version $$BUILD_VERSION"; \
 	docker build --build-arg COMMIT_SHA=$$COMMIT_SHA --build-arg BUILD_VERSION=$$BUILD_VERSION -t edutainmentforge:latest .
 
-deploy: build
-	./deploy-to-azure.sh
+# (deploy target removed — GitHub Actions workflow handles production deployment)
 
 clean:
 	find . -type f -name "*.pyc" -delete
@@ -139,6 +137,4 @@ setup-custom-voices:
 	@echo "3. Upload voice training data"
 	@echo "4. Train and deploy custom models"
 
-deploy-premium-config:
-	@echo "Deploying premium configuration..."
-	./deploy-to-azure.sh --premium-features
+# (premium deploy configuration removed; manage via CI + Key Vault updates)

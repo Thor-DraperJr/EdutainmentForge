@@ -18,12 +18,12 @@ class ConfigError(Exception):
 def _get_secret_with_fallback(secret_name: str, env_var_name: str, default: str = None) -> Optional[str]:
     """
     Get a secret from Key Vault with environment variable fallback.
-    
+
     Args:
         secret_name: Name of secret in Key Vault (with hyphens)
         env_var_name: Environment variable name (with underscores)
         default: Default value if neither source has the value
-        
+
     Returns:
         Secret value or default
     """
@@ -47,10 +47,10 @@ class ConfigError(Exception):
 def load_config() -> Dict[str, Any]:
     """
     Load configuration from environment variables and Azure Key Vault.
-    
+
     Returns:
         Dictionary containing application configuration
-        
+
     Raises:
         ConfigError: If required configuration is missing
     """
@@ -58,64 +58,73 @@ def load_config() -> Dict[str, Any]:
     env_path = Path(__file__).parent.parent.parent / ".env"
     if env_path.exists():
         load_dotenv(env_path)
-    
+
     config = {
         # MS Learn API configuration
         "ms_learn_api_key": os.getenv("MS_LEARN_API_KEY"),
         "ms_learn_base_url": os.getenv("MS_LEARN_BASE_URL", "https://docs.microsoft.com"),
-        
+
         # Text-to-Speech configuration with Key Vault fallback
         "tts_service": os.getenv("TTS_SERVICE", "azure"),
-        "tts_api_key": _get_secret_with_fallback("azure-speech-key", "TTS_API_KEY") or 
+        "tts_api_key": _get_secret_with_fallback("azure-speech-key", "TTS_API_KEY") or
                       _get_secret_with_fallback("azure-speech-key", "AZURE_SPEECH_KEY"),
-        "tts_region": _get_secret_with_fallback("azure-speech-region", "TTS_REGION") or 
+        "tts_region": _get_secret_with_fallback("azure-speech-region", "TTS_REGION") or
                      _get_secret_with_fallback("azure-speech-region", "AZURE_SPEECH_REGION", "eastus"),
         "tts_voice": os.getenv("TTS_VOICE", "en-US-AriaNeural"),
-        
+
         # Multi-voice configuration for podcast hosts (premium voices) with Key Vault fallback
         "sarah_voice": _get_secret_with_fallback("sarah-voice", "SARAH_VOICE", "en-US-EmmaNeural"),
         "mike_voice": _get_secret_with_fallback("mike-voice", "MIKE_VOICE", "en-US-DavisNeural"),
         "narrator_voice": os.getenv("NARRATOR_VOICE", "en-US-EmmaNeural"),
         "use_premium_voices": os.getenv("USE_PREMIUM_VOICES", "true").lower() == "true",
-        
+
         # Audio configuration
         "audio_format": os.getenv("AUDIO_FORMAT", "mp3"),
         "audio_quality": os.getenv("AUDIO_QUALITY", "high"),
         "output_directory": Path(os.getenv("OUTPUT_DIR", "output")),
-        
+
         # Application settings
         "debug": os.getenv("DEBUG", "false").lower() == "true",
         "log_level": os.getenv("LOG_LEVEL", "INFO"),
         "temp_directory": Path(os.getenv("TEMP_DIR", "temp")),
-        
+
         # Azure OpenAI configuration for script enhancement with Key Vault fallback
         "azure_openai_endpoint": _get_secret_with_fallback("azure-openai-endpoint", "AZURE_OPENAI_ENDPOINT"),
         "azure_openai_api_key": _get_secret_with_fallback("azure-openai-api-key", "AZURE_OPENAI_API_KEY"),
         "azure_openai_api_version": _get_secret_with_fallback("azure-openai-api-version", "AZURE_OPENAI_API_VERSION", "2024-02-01"),
         "azure_openai_deployment": _get_secret_with_fallback("azure-openai-deployment-name", "AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini"),
-        
+
         # Key Vault configuration
         "azure_key_vault_url": os.getenv("AZURE_KEY_VAULT_URL", "https://edutainmentforge-kv.vault.azure.net/"),
+
+        # Task persistence / queue (optional - fallback to memory if not configured)
+        "task_status_table": os.getenv("TASK_STATUS_TABLE", "taskstatus"),
+        "task_queue_name": os.getenv("TASK_QUEUE_NAME", "tasks"),
+
+        # Rate limiting
+        "rate_limit_window_seconds": int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60")),
+        "rate_limit_max_requests": int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "10")),
+        "rate_limit_global_processing_max": int(os.getenv("RATE_LIMIT_GLOBAL_PROCESSING_MAX", "30")),
     }
-    
+
     # Validate required configuration
     required_keys = ["tts_api_key"]
     missing_keys = [key for key in required_keys if not config[key]]
-    
+
     if missing_keys:
         raise ConfigError(f"Missing required configuration: {', '.join(missing_keys)}")
-    
+
     # Ensure directories exist
     config["output_directory"].mkdir(exist_ok=True)
     config["temp_directory"].mkdir(exist_ok=True)
-    
+
     return config
 
 
 def get_sample_config() -> str:
     """
     Get sample configuration file content.
-    
+
     Returns:
         Sample .env file content as string
     """

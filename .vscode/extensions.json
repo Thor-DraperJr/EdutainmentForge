@@ -1,0 +1,29 @@
+{
+    "recommendations": [
+        // Core Python support & testing
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        // Formatting & linting helpers (Black, isort optional via python, Flake8 surfaces issues)
+        "ms-python.black-formatter",
+        "charliermarsh.ruff", // fast linting & import sorting alternative
+        // Azure tooling (resource navigation, deployments, Key Vault secrets browsing)
+        "ms-vscode.azure-account",
+        "ms-azuretools.vscode-bicep",
+        "ms-azuretools.vscode-docker",
+        // YAML editing (infra files)
+        "redhat.vscode-yaml",
+        // Markdown authoring and preview enhancements
+        "yzhang.markdown-all-in-one",
+        // Git lens for history/context
+        "eamodio.gitlens",
+        // REST client for quick API endpoint testing
+        "humao.rest-client",
+        // Spell checking for docs (optional, safe)
+        "streetsidesoftware.code-spell-checker"
+    ],
+    "unwantedRecommendations": [
+        // Keep workspace lean—avoid heavy CPU or telemetry-prone suggestions.
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.live-server"
+    ]
+}

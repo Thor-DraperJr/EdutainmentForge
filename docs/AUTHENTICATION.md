@@ -253,9 +253,19 @@ This will show detailed authentication flow information in the console.
 
 ### Azure Container Apps
 
-1. Ensure Key Vault secrets are configured
-2. Deploy using: `./scripts/deploy-to-azure.sh`
-3. The container app will automatically use managed identity to access secrets
+Deployments are handled by the GitHub Actions workflow on pushes to `main`.
+
+If you need a manual redeploy (rare):
+```bash
+docker build -t edutainmentforge:latest .
+az acr login --name edutainmentforge
+docker tag edutainmentforge:latest edutainmentforge.azurecr.io/edutainmentforge:latest
+docker push edutainmentforge.azurecr.io/edutainmentforge:latest
+az containerapp update \
+   --name edutainmentforge-app \
+   --resource-group edutainmentforge-rg \
+   --image edutainmentforge.azurecr.io/edutainmentforge:latest
+```
 
 ### Continuous Integration
 

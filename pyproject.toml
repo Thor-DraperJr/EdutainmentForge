@@ -2,75 +2,12 @@
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "edutainmentforge"
-version = "2.0.0"
-description = "Transform Microsoft Learn content into engaging, conversational podcasts with AI-powered multi-voice narration."
-readme = "README.md"
-license = {file = "LICENSE"}
-authors = [
-    {name = "EdutainmentForge Team"},
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Education",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Topic :: Education",
-    "Topic :: Multimedia :: Sound/Audio :: Speech",
-]
-requires-python = ">=3.8"
-dependencies = [
-    "requests>=2.31.0",
-    "beautifulsoup4>=4.12.0",
-    "python-dotenv>=1.0.0",
-    "flask>=3.0.0",
-    "azure-cognitiveservices-speech>=1.34.0",
-    "openai>=1.12.0",
-    "azure-keyvault-secrets>=4.7.0",
-    "azure-identity>=1.15.0",
-    "pyttsx3>=2.90",
-    "pydub>=0.25.1",
-    "gunicorn>=21.2.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.4.0",
-    "pytest-mock>=3.11.0",
-    "pytest-cov>=4.1.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
-    "flake8>=6.0.0",
-    "mypy>=1.5.0",
-]
-test = [
-    "pytest>=7.4.0",
-    "pytest-mock>=3.11.0",
-    "pytest-cov>=4.1.0",
-]
-
-[project.scripts]
-edutainmentforge = "edutainmentforge.cli:main"
-podcast-cli = "edutainmentforge.cli:main"
-
-[project.urls]
-Homepage = "https://github.com/yourusername/edutainmentforge"
-Repository = "https://github.com/yourusername/edutainmentforge"
-Documentation = "https://github.com/yourusername/edutainmentforge/blob/main/README.md"
-"Bug Reports" = "https://github.com/yourusername/edutainmentforge/issues"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-dir]
-edutainmentforge = "src"
+##############################################
+# Simplified pyproject.toml
+# Packaging metadata removed per user request.
+# Runtime dependencies are managed solely via requirements.txt.
+# Tool configurations below remain in effect.
+##############################################
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

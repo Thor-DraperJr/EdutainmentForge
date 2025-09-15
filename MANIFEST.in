@@ -10,8 +10,7 @@ include requirements-dev.txt
 include azure-infrastructure.bicep
 include azure-container-app.yaml
 include azure.yaml
-include deploy-to-azure.sh
-include docker-helper.sh
+# Removed deprecated helper scripts and deployment helper (deploy-to-azure.sh) during pruning; CI handles deployment.
 
 # Include templates
 recursive-include templates *.html *.css *.js

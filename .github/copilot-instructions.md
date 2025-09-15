@@ -32,14 +32,12 @@ Python Flask app that converts Microsoft Learn content into AI-enhanced educatio
 
 ## Prompt Commands
 
-# /new-session
-Counduct a fresh analysis of the project, ignoring previous context. Give me a concise summary of the project purpose, architecture, and key components. Identify any potential improvements or optimizations.
+### /new-session
+Goal: Conduct a fresh analysis of the project, ignoring previous context. Give me a concise summary of the project purpose, architecture, and key components. Identify any potential improvements or optimizations.
 
-## Prompt Command: /workflow-check
+### /workflow-check
 
 Goal: Quickly confirm CI workflow health and deployed commit without noise.
-
-Usage: Ask: "/workflow-check".
 
 Assistant Response Should Include:
 1. Latest workflow run (branch main): status + conclusion + short SHA.

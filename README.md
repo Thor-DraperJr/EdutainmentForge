@@ -23,7 +23,7 @@ Born from my own struggles as an auditory learner drowning in walls of technical
 This project pushed me to solve fascinating engineering challenges:
 
 - **API Integration Mastery**: Reverse-engineered Microsoft Learn's catalog structure to build scalable content discovery
-- **Multi-Service Orchestration**: Seamlessly coordinated Azure OpenAI and Speech Services into a unified experience  
+- **Multi-Service Orchestration**: Seamlessly coordinated Azure OpenAI and Speech Services into a unified experience
 - **Content Structure Understanding**: Built intelligent parsers that recognize tables, code blocks, and technical hierarchies
 - **Enterprise Security**: Implemented zero-credential deployments with managed identity and Key Vault integration
 
@@ -38,7 +38,7 @@ This project pushed me to solve fascinating engineering challenges:
 ## 🎧 How It Works
 
 1. **Content Discovery** → Browse Microsoft's entire learning catalog or paste any Learn URL
-2. **AI Enhancement** → GPT-4o analyzes structure and creates natural dialogue between hosts  
+2. **AI Enhancement** → GPT-4o analyzes structure and creates natural dialogue between hosts
 3. **Voice Synthesis** → Premium Azure Neural voices bring the conversation to life
 4. **Smart Caching** → Never regenerate the same content twice
 
@@ -52,11 +52,10 @@ git clone https://github.com/Thor-DraperJr/EdutainmentForge.git
 cd EdutainmentForge
 pip install -r requirements.txt
 
-# Add your Azure Speech key to .env
-cp .env.template .env
-# Edit .env with your Azure credentials
+# Copy the provided sample env file (already named .env in repo template) and edit values
+# (This file is ignored by git when containing real secrets.)
 
-# Run it
+# Run the app
 python app.py
 ```
 
@@ -66,7 +65,7 @@ Visit `http://localhost:5000` and start exploring Microsoft Learn content in a w
 
 - **Azure OpenAI**: GPT-4o for intelligent dialogue generation
 - **Azure Speech**: Premium neural voices (Emma & Davis)
-- **Python/Flask**: Core application with clean architecture  
+- **Python/Flask**: Core application with clean architecture
 - **Azure Container Apps**: Production deployment platform
 - **Key Vault**: Enterprise secret management
 

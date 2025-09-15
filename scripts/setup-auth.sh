@@ -63,7 +63,7 @@ echo "============================="
 read -p "Enter your B2C tenant name (without .onmicrosoft.com): " B2C_TENANT
 read -p "Enter your B2C tenant ID (from tenant overview): " B2C_TENANT_ID
 
-# Create app registration (manual step - requires portal)  
+# Create app registration (manual step - requires portal)
 echo
 echo "🚧 Manual Step Required: Create App Registration"
 echo "==============================================="
@@ -147,7 +147,7 @@ cat > .env << EOF
 AZURE_SPEECH_KEY=your_azure_speech_key_here
 AZURE_SPEECH_REGION=eastus2
 
-# Azure OpenAI Service  
+# Azure OpenAI Service
 AZURE_OPENAI_API_KEY=your_azure_openai_key_here
 AZURE_OPENAI_ENDPOINT=https://edutainmentforge-openai.openai.azure.com/
 AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
@@ -176,7 +176,8 @@ echo
 echo "Next steps:"
 echo "1. Update your .env file with your Azure Speech and OpenAI keys"
 echo "2. Test authentication locally: python app.py"
-echo "3. Deploy to Azure: ./scripts/deploy-to-azure.sh"
+echo "3. Push changes to 'main' branch (CI will build & deploy container)"
+echo "   (Manual redeploy rarely needed; see docs/AUTHENTICATION.md for fallback CLI)"
 echo
 echo "🔗 URLs to remember:"
 echo "- B2C Tenant Portal: https://portal.azure.com/#view/Microsoft_AAD_B2CAdmin"

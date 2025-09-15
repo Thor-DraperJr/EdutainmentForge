@@ -47,7 +47,7 @@ if ! az keyvault secret list --vault-name $KEY_VAULT_NAME --query "[0].name" -o 
     echo ""
     echo "Required roles (assign one):"
     echo "  - Key Vault Secrets Officer (recommended)"
-    echo "  - Key Vault Administrator" 
+    echo "  - Key Vault Administrator"
     echo "  - Owner or Contributor on the resource group"
     echo ""
     echo "To assign the recommended role:"
@@ -62,7 +62,7 @@ set_secret_if_needed() {
     local secret_name=$1
     local prompt_message=$2
     local is_secure=${3:-true}
-    
+
     # Check if secret exists
     if az keyvault secret show --vault-name $KEY_VAULT_NAME --name $secret_name &>/dev/null; then
         echo "⚠️  Secret '$secret_name' already exists."
@@ -72,7 +72,7 @@ set_secret_if_needed() {
             return
         fi
     fi
-    
+
     if [ "$is_secure" = true ]; then
         echo ""
         read -s -p "$prompt_message: " secret_value
@@ -81,7 +81,7 @@ set_secret_if_needed() {
         echo ""
         read -p "$prompt_message: " secret_value
     fi
-    
+
     if [ -n "$secret_value" ]; then
         az keyvault secret set --vault-name $KEY_VAULT_NAME --name $secret_name --value "$secret_value" --output none
         echo "✅ Set secret: $secret_name"
@@ -163,9 +163,14 @@ echo "🎉 Secret setup complete!"
 echo ""
 echo "📝 Next steps:"
 echo "  1. Verify your Azure services are deployed and configured"
-echo "  2. Build and push your container image:"
-echo "     ./scripts/build-container.sh"
-echo "  3. Deploy the container app:"
+echo "  2. Push changes to main to trigger CI build/deploy (preferred)"
+echo "     OR manually build & push:"
+echo "        docker build -t edutainmentforge:latest . && \\
+    az acr login --name edutainmentforge && \\
+    docker tag edutainmentforge:latest edutainmentforge.azurecr.io/edutainmentforge:latest && \\
+    docker push edutainmentforge.azurecr.io/edutainmentforge:latest && \\
+    az containerapp update --name edutainmentforge-app --resource-group $RESOURCE_GROUP --image edutainmentforge.azurecr.io/edutainmentforge:latest"
+echo "  3. (Optional) Re-run Bicep only if infra changed:"
 echo "     az deployment group create --resource-group $RESOURCE_GROUP --template-file azure-infrastructure-clean.bicep"
 echo ""
 echo "🔍 To view all secrets:"
