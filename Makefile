@@ -28,6 +28,7 @@ help:
 	@echo "Local Development:"
 	@echo "  run           Run Flask app locally"
 	@echo "  run-cli       Run CLI example"
+	@echo "  smoke         Run lightweight smoke tests (requires server running)"
 
 # Installation targets
 install:
@@ -64,7 +65,10 @@ pre-commit:
 
 # Build and deployment targets
 build:
-	docker build -t edutainmentforge:latest .
+	COMMIT_SHA=$$(git rev-parse --short HEAD || echo unknown); \
+	BUILD_VERSION=$$(git describe --tags --always 2>/dev/null || git rev-parse --short HEAD); \
+	echo "Building image with commit $$COMMIT_SHA version $$BUILD_VERSION"; \
+	docker build --build-arg COMMIT_SHA=$$COMMIT_SHA --build-arg BUILD_VERSION=$$BUILD_VERSION -t edutainmentforge:latest .
 
 deploy: build
 	./deploy-to-azure.sh
@@ -82,6 +86,9 @@ run:
 
 run-cli:
 	python podcast_cli.py --help
+
+smoke:
+	DISABLE_AUTH_FOR_TESTING=true bash scripts/smoke_test.sh
 
 # Premium service setup
 setup-premium:
