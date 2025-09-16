@@ -117,14 +117,17 @@ class AIScriptEnhancer:
             # Smart model selection based on content complexity
             selected_model = self._get_best_model(original_script + " " + content_topic)
             
-            prompt = self._create_enhancement_prompt(original_script, content_topic)
+            # Get feedback insights to improve the script
+            feedback_context = self._get_feedback_context()
+            
+            prompt = self._create_enhancement_prompt(original_script, content_topic, feedback_context)
             
             response = self.client.chat.completions.create(
                 model=selected_model,
                 messages=[
                     {
                         "role": "system",
-                        "content": self._get_system_prompt()
+                        "content": self._get_system_prompt_with_feedback(feedback_context)
                     },
                     {
                         "role": "user", 
@@ -140,7 +143,7 @@ class AIScriptEnhancer:
             # Post-process the enhanced script to ensure proper formatting
             cleaned_script = self._post_process_enhanced_script(enhanced_script)
             
-            logger.info("Successfully enhanced script with AI")
+            logger.info("Successfully enhanced script with AI and feedback insights")
             return cleaned_script
             
         except Exception as e:
@@ -148,6 +151,21 @@ class AIScriptEnhancer:
             # Return original script if enhancement fails
             logger.warning("Returning original script due to enhancement failure")
             return original_script
+    
+    def _get_feedback_context(self) -> Dict:
+        """Get feedback insights to inform AI enhancement."""
+        try:
+            from utils.feedback_store import get_feedback_store
+            feedback_store = get_feedback_store()
+            insights = feedback_store.get_feedback_insights_for_ai()
+            return insights
+        except Exception as e:
+            logger.warning(f"Could not load feedback context: {e}")
+            return {
+                'overall_satisfaction': 0.7,  # Default neutral
+                'feedback_volume': 0,
+                'recommendations': ['Continue with balanced conversational approach']
+            }
     
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the AI assistant."""
@@ -185,10 +203,64 @@ Format guidelines:
 - Ensure smooth transitions between topics
 - NO asterisks, NO markdown, NO special characters
 - Use names only when necessary for clarity, not as conversational fillers"""
+    
+    def _get_system_prompt_with_feedback(self, feedback_context: Dict) -> str:
+        """Get system prompt enhanced with user feedback insights."""
+        base_prompt = self._get_system_prompt()
+        
+        # Add feedback-specific guidance
+        feedback_guidance = self._generate_feedback_guidance(feedback_context)
+        
+        return base_prompt + "\n\n" + feedback_guidance
+    
+    def _generate_feedback_guidance(self, feedback_context: Dict) -> str:
+        """Generate feedback-specific guidance for the AI."""
+        satisfaction = feedback_context.get('overall_satisfaction', 0.7)
+        volume = feedback_context.get('feedback_volume', 0)
+        recommendations = feedback_context.get('recommendations', [])
+        
+        guidance_parts = ["FEEDBACK-INFORMED GUIDANCE:"]
+        
+        if satisfaction < 0.5:
+            guidance_parts.append(
+                "⚠️ User satisfaction is low. Focus on:\n"
+                "- Clearer, more accessible explanations\n"
+                "- More engaging conversational tone\n"
+                "- Better balance between technical depth and accessibility\n"
+                "- More natural dialogue flow and interactions"
+            )
+        elif satisfaction > 0.8:
+            guidance_parts.append(
+                "✅ User satisfaction is high! Continue current approach:\n"
+                "- Maintain the engaging conversational style\n"
+                "- Keep the good balance of technical content and accessibility\n"
+                "- Users appreciate the current dialogue format"
+            )
+        else:
+            guidance_parts.append(
+                "📊 Moderate user satisfaction. Enhance by:\n"
+                "- Adding more interactive elements\n"
+                "- Ensuring both hosts contribute equally\n"
+                "- Including more practical examples and scenarios"
+            )
+        
+        if volume < 5:
+            guidance_parts.append(
+                "📝 Limited feedback data available. Use balanced approach with:\n"
+                "- Clear educational focus\n"
+                "- Engaging but not overly casual tone\n"
+                "- Well-structured content progression"
+            )
+        
+        # Add specific recommendations from feedback analysis
+        if recommendations:
+            guidance_parts.append(f"🎯 Specific recommendations: {', '.join(recommendations)}")
+        
+        return "\n".join(guidance_parts)
 
-    def _create_enhancement_prompt(self, original_script: str, content_topic: str) -> str:
+    def _create_enhancement_prompt(self, original_script: str, content_topic: str, feedback_context: Dict = None) -> str:
         """Create the enhancement prompt for the AI."""
-        return f"""Transform this podcast script about "{content_topic}" into a focused conversation that IMMEDIATELY dives into the core material. Skip lengthy introductions and get straight to the technical content.
+        base_prompt = f"""Transform this podcast script about "{content_topic}" into a focused conversation that IMMEDIATELY dives into the core material. Skip lengthy introductions and get straight to the technical content.
 
 CRITICAL FORMAT REQUIREMENTS:
 - Start each speaker's dialogue with "Sarah:" or "Mike:" exactly
@@ -216,7 +288,44 @@ AVOID:
 ORIGINAL SCRIPT:
 {original_script}
 
-Rewrite this as a focused, technical conversation between Sarah and Mike. Mike should immediately ask specific questions about the core concepts, and both hosts should dive straight into the material without preliminaries."""
+Rewrite this as a focused, technical conversation between Sarah and Mike. Mike should immediately ask specific questions about the core concepts, and both hosts should dive straight into the material without preliminaries.
+
+{self._get_feedback_enhancement_instructions(feedback_context)}"""
+    
+    def _get_feedback_enhancement_instructions(self, feedback_context: Dict = None) -> str:
+        """Get additional instructions based on user feedback."""
+        if not feedback_context:
+            return ""
+        
+        satisfaction = feedback_context.get('overall_satisfaction', 0.7)
+        top_rated = feedback_context.get('top_rated_patterns', [])
+        improvement_areas = feedback_context.get('improvement_areas', [])
+        
+        instructions = ["FEEDBACK-BASED ENHANCEMENT:"]
+        
+        if top_rated:
+            instructions.append(f"✅ Successful patterns to maintain: {', '.join(top_rated[:2])}")
+        
+        if improvement_areas:
+            instructions.append(f"⚠️ Areas needing attention: {', '.join(improvement_areas[:2])}")
+        
+        if satisfaction < 0.6:
+            instructions.extend([
+                "🔧 Priority improvements:",
+                "- Make explanations more step-by-step and digestible",
+                "- Add more 'aha moment' reactions from hosts",
+                "- Include more real-world examples and analogies",
+                "- Ensure technical jargon is always explained in simple terms"
+            ])
+        elif satisfaction > 0.8:
+            instructions.extend([
+                "🏆 Keep current successful approach:",
+                "- Maintain the engaging dialogue style",
+                "- Continue the good balance of technical depth",
+                "- Preserve the natural conversation flow"
+            ])
+        
+        return "\n".join(instructions) if len(instructions) > 1 else ""
 
     def enhance_table_discussion(self, table_content: str, context: str) -> str:
         """

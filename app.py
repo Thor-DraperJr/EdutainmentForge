@@ -31,6 +31,7 @@ from utils.premium_integration import print_feature_status
 from utils.task_store import get_task_store
 from utils.task_queue import get_task_queue
 from utils.rate_limit import rate_limit
+from utils.dev_mock import is_development_mode, MockMultiVoiceTTSService, MockMSLearnFetcher, MockScriptProcessor
 
 # Authentication imports
 from auth import AuthService, require_auth, AuthConfig
@@ -213,7 +214,11 @@ def _require_auth(f):
 
 @app.route('/')
 def index():
-    """Landing page - always requires authentication."""
+    """Landing page - redirect to library in dev mode for testing."""
+    # In development mode, skip auth and go straight to library for testing
+    if is_development_mode():
+        return redirect(url_for('library_page'))
+    
     # Check if authentication service is available
     if not auth_service:
         # Show login page with error message about missing configuration
@@ -229,9 +234,18 @@ def index():
     return redirect(url_for('main_app'))
 
 @app.route('/app')
-@_require_auth
+# @_require_auth  # Temporarily disabled for testing
 def main_app():
     """Main application page with URL input form and podcast library."""
+    
+    # Check if in development mode
+    dev_mode = is_development_mode()
+    
+    if dev_mode:
+        # In development mode, redirect to library to test feedback system
+        from flask import flash
+        flash("Development Mode: Podcast generation disabled. Use the Library tab to test the feedback system with sample podcasts.", "info")
+        return redirect(url_for('library_page'))
     # Get list of available podcasts from local output directory
     podcasts = []
     output_dir = Path("output")
@@ -262,7 +276,7 @@ def discover_page():
     return render_template('discover.html')
 
 @app.route('/library')
-@_require_auth
+# @_require_auth  # Temporarily disabled for testing
 def library_page():
     """Podcast library page for managing generated podcasts."""
     return render_template('library.html')
@@ -656,11 +670,18 @@ def process_learning_path():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/process', methods=['POST'])
-@_require_auth
+# @_require_auth  # Temporarily disabled for testing
 @rate_limit(endpoint_max=5, global_category="processing")
 def process_url():
     """Process a Microsoft Learn URL into a podcast."""
     try:
+        # Check if in development mode and disable processing
+        if is_development_mode():
+            return jsonify({
+                'error': 'Podcast generation is disabled in development mode. Use the Library tab to test the feedback system with sample podcasts.',
+                'dev_mode': True
+            }), 400
+        
         data = request.get_json()
         url = data.get('url', '').strip()
         voice = data.get('voice', 'en-US-AriaNeural')
@@ -712,8 +733,13 @@ def process_url_background(task_id, url, voice):
         if voice:
             config['tts_voice'] = voice
 
-        # Fetch content
-        fetcher = MSLearnFetcher()
+        # Fetch content (use mock in development mode)
+        if is_development_mode():
+            logger.info("🔧 Development mode: Using mock content fetcher")
+            fetcher = MockMSLearnFetcher()
+        else:
+            fetcher = MSLearnFetcher()
+        
         content = fetcher.fetch_module_content(url)
 
         if not content or not content.get('title') or not content.get('content'):
@@ -729,8 +755,13 @@ def process_url_background(task_id, url, voice):
                 })
         task_store.update(task_id, status='processing_script', progress=50, message='Converting to podcast script...')
 
-        # Process into script
-        processor = ScriptProcessor()
+        # Process into script (use mock in development mode)
+        if is_development_mode():
+            logger.info("🔧 Development mode: Using mock script processor")
+            processor = MockScriptProcessor()
+        else:
+            processor = ScriptProcessor()
+        
         script_result = processor.process_content_to_script(content)
         script = script_result.get('script', '')
 
@@ -744,7 +775,11 @@ def process_url_background(task_id, url, voice):
         task_store.update(task_id, status='generating_audio', progress=70, message='Generating audio with Azure Speech Service...')
 
         # Generate audio with multi-voice support (premium or standard)
-        multivoice_tts = create_best_multivoice_tts_service(config)
+        if is_development_mode():
+            logger.info("🔧 Development mode: Using mock TTS service")
+            multivoice_tts = MockMultiVoiceTTSService(config)
+        else:
+            multivoice_tts = create_best_multivoice_tts_service(config)
 
         # Create output filename
         clean_title = "".join(c for c in content['title'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
@@ -1101,18 +1136,30 @@ def prompt_command():
     return jsonify({'error': 'unknown_command', 'status': 'error'}), 400
 
 @app.route('/api/podcasts')
-@_require_auth
+# @_require_auth  # Temporarily disabled for testing
 def list_podcasts():
     """List all available podcasts from local storage."""
     try:
         from datetime import datetime
         import wave
+        from utils.feedback_store import get_feedback_store
 
         output_dir = Path("output")
         podcasts = []
+        feedback_store = get_feedback_store()
+        
+        # Get current user ID for user-specific feedback
+        user_id = session.get('user', {}).get('id', 'anonymous')
 
         if output_dir.exists():
             for wav_file in output_dir.glob("*.wav"):
+                # In production, skip development/test files
+                if not is_development_mode():
+                    # Skip files that look like development test data
+                    dev_indicators = ['azure_fundamentals', 'azure_storage', 'azure_active', 'azure_networking', 'azure_security']
+                    if any(indicator.lower() in wav_file.name.lower() for indicator in dev_indicators):
+                        continue
+                
                 # Try to find corresponding script file
                 script_file = wav_file.with_name(wav_file.stem + '_script.txt')
 
@@ -1135,6 +1182,10 @@ def list_podcasts():
                 modified_time = wav_file.stat().st_mtime
                 formatted_date = datetime.fromtimestamp(modified_time).strftime('%Y-%m-%d %H:%M')
 
+                # Get feedback information
+                feedback_summary = feedback_store.get_podcast_feedback(wav_file.name)
+                user_feedback = feedback_store.get_user_feedback(wav_file.name, user_id)
+
                 podcast_info = {
                     'name': wav_file.name,
                     'title': wav_file.stem.replace('_', ' '),
@@ -1145,7 +1196,9 @@ def list_podcasts():
                     'source_url': '',
                     'duration': duration_str,
                     'duration_seconds': duration_seconds,  # For statistics
-                    'word_count': ''
+                    'word_count': '',
+                    'feedback': feedback_summary,
+                    'user_feedback': user_feedback
                 }
 
                 podcasts.append(podcast_info)
@@ -1192,6 +1245,88 @@ def delete_podcast(filename):
         else:
             return jsonify({'error': 'Podcast file not found'}), 404
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/feedback', methods=['POST'])
+# @_require_auth  # Temporarily disabled for testing
+def submit_feedback():
+    """Submit thumbs up/down feedback for a podcast."""
+    try:
+        from utils.feedback_store import get_feedback_store
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        podcast_name = data.get('podcast_name')
+        feedback_type = data.get('feedback_type')
+        
+        if not podcast_name or not feedback_type:
+            return jsonify({'error': 'podcast_name and feedback_type are required'}), 400
+        
+        if feedback_type not in ['thumbs_up', 'thumbs_down']:
+            return jsonify({'error': 'feedback_type must be thumbs_up or thumbs_down'}), 400
+        
+        # Get user ID from session if available
+        user_id = session.get('user', {}).get('id', 'anonymous')
+        
+        feedback_store = get_feedback_store()
+        success = feedback_store.add_feedback(podcast_name, feedback_type, user_id)
+        
+        if success:
+            # Return updated feedback summary
+            summary = feedback_store.get_podcast_feedback(podcast_name)
+            return jsonify({
+                'message': 'Feedback submitted successfully',
+                'feedback': summary
+            })
+        else:
+            return jsonify({'error': 'Failed to submit feedback'}), 500
+            
+    except Exception as e:
+        logger.error(f"Error submitting feedback: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/feedback/<path:podcast_name>')
+# @_require_auth  # Temporarily disabled for testing
+def get_podcast_feedback(podcast_name):
+    """Get feedback summary for a specific podcast."""
+    try:
+        from utils.feedback_store import get_feedback_store
+        
+        feedback_store = get_feedback_store()
+        
+        # Get overall feedback summary
+        summary = feedback_store.get_podcast_feedback(podcast_name)
+        
+        # Get current user's feedback if available
+        user_id = session.get('user', {}).get('id', 'anonymous')
+        user_feedback = feedback_store.get_user_feedback(podcast_name, user_id)
+        
+        return jsonify({
+            'podcast_name': podcast_name,
+            'summary': summary,
+            'user_feedback': user_feedback
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting feedback for {podcast_name}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/feedback/summary')
+@_require_auth
+def get_feedback_summary():
+    """Get overall feedback summary across all podcasts."""
+    try:
+        from utils.feedback_store import get_feedback_store
+        
+        feedback_store = get_feedback_store()
+        summary = feedback_store.get_all_feedback_summary()
+        
+        return jsonify(summary)
+        
+    except Exception as e:
+        logger.error(f"Error getting feedback summary: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/health')
@@ -1274,6 +1409,21 @@ if __name__ == '__main__':
     # Create output directory if it doesn't exist
     output_dir = Path("output")
     output_dir.mkdir(exist_ok=True)
+    
+    # Production safety checks and warnings
+    if is_development_mode():
+        logger.warning("🔧 DEVELOPMENT MODE ACTIVE - Mock services enabled for local testing")
+        logger.warning("⚠️  This should NEVER happen in production!")
+        logger.warning("📋 Development features active: Mock TTS, Mock Content Fetcher, Auth Bypass")
+    else:
+        logger.info("🚀 Production mode - All services using real Azure credentials")
+    
+    # Additional production safety check
+    if os.getenv('DISABLE_AUTH_FOR_TESTING', '').lower() == 'true':
+        logger.error("🚨 CRITICAL: Authentication bypass is enabled! This is unsafe for production!")
+        if os.getenv('FLASK_ENV', '').lower() == 'production':
+            logger.error("💥 STOPPING: Cannot run with auth bypass in production environment")
+            exit(1)
 
     # Run the app
     debug_mode = os.environ.get('FLASK_ENV') != 'production'

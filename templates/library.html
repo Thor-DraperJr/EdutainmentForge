@@ -191,6 +191,67 @@
             margin-top: 15px;
         }
         
+        .feedback-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .feedback-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .feedback-btn {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .feedback-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .feedback-btn.active.thumbs-up {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .feedback-btn.active.thumbs-down {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback-btn.loading {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .feedback-stats {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .feedback-count {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+        
         .btn {
             padding: 10px 15px;
             border: none;
@@ -305,6 +366,12 @@
             <h1>📚 Podcast Library</h1>
             <p>All your generated podcasts stored locally</p>
             <div class="subtitle">Stream directly from your local machine with Sarah & Mike</div>
+            
+            <!-- Development mode notice - only shown when DEV_MODE or DISABLE_AUTH_FOR_TESTING is true -->
+            <div id="dev-notice" style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 15px; margin: 20px 0; color: #1565c0; display: none;">
+                <strong>🔧 Development Mode:</strong> Testing sample podcasts with feedback system. 
+                <br><small>Try the thumbs up/down buttons below to see your feedback system in action!</small>
+            </div>
         </div>
         
         <div class="search-bar">
@@ -351,7 +418,32 @@
         window.addEventListener('load', function() {
             loadPodcasts();
             checkForProcessingTasks();
+            checkDevelopmentMode();
         });
+        
+        // Check if we're in development mode and show notice
+        async function checkDevelopmentMode() {
+            try {
+                // Check for dev mode indicators in the podcast list response
+                const response = await fetch('/api/podcasts');
+                if (response.ok) {
+                    const data = await response.json();
+                    // If we have Azure sample podcasts, we're probably in dev mode
+                    const hasDevPodcasts = data.podcasts && data.podcasts.some(p => 
+                        p.name.toLowerCase().includes('azure_fundamentals') || 
+                        p.name.toLowerCase().includes('azure_storage') ||
+                        p.name.toLowerCase().includes('azure_security')
+                    );
+                    
+                    if (hasDevPodcasts) {
+                        document.getElementById('dev-notice').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                // Silently fail - development notice is optional
+                console.log('Could not check development mode status');
+            }
+        }
         
         // Simple progress monitoring
         function checkForProcessingTasks() {
@@ -521,6 +613,25 @@
                         </button>
                     </div>
                     
+                    <div class="feedback-section">
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn ${podcast.user_feedback === 'thumbs_up' ? 'active thumbs-up' : ''}" 
+                                    onclick="submitFeedback('${encodeURIComponent(podcast.name)}', 'thumbs_up', this)">
+                                👍 <span class="feedback-count">${podcast.feedback?.thumbs_up_count || 0}</span>
+                            </button>
+                            <button class="feedback-btn ${podcast.user_feedback === 'thumbs_down' ? 'active thumbs-down' : ''}" 
+                                    onclick="submitFeedback('${encodeURIComponent(podcast.name)}', 'thumbs_down', this)">
+                                👎 <span class="feedback-count">${podcast.feedback?.thumbs_down_count || 0}</span>
+                            </button>
+                        </div>
+                        <div class="feedback-stats">
+                            ${podcast.feedback?.total_feedback > 0 ? 
+                                `${(podcast.feedback.feedback_score * 100).toFixed(0)}% positive (${podcast.feedback.total_feedback} votes)` : 
+                                'No ratings yet'
+                            }
+                        </div>
+                    </div>
+                    
                     ${podcast.source_url ? `<div class="podcast-source">📚 Source: ${escapeHtml(podcast.source_url)}</div>` : ''}
                 </div>
             `).join('');
@@ -592,6 +703,87 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+        
+        async function submitFeedback(podcastName, feedbackType, buttonElement) {
+            const card = buttonElement.closest('.podcast-card');
+            const allFeedbackBtns = card.querySelectorAll('.feedback-btn');
+            
+            // Disable buttons during request
+            allFeedbackBtns.forEach(btn => {
+                btn.classList.add('loading');
+                btn.disabled = true;
+            });
+            
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        podcast_name: podcastName,
+                        feedback_type: feedbackType
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to submit feedback');
+                }
+                
+                const result = await response.json();
+                
+                // Update the feedback UI
+                updateFeedbackUI(card, result.feedback, feedbackType);
+                
+                // Show brief success indication
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = feedbackType === 'thumbs_up' ? '✅' : '✅';
+                setTimeout(() => {
+                    updateButtonContent(buttonElement, feedbackType, result.feedback);
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('Failed to submit feedback: ' + error.message);
+            } finally {
+                // Re-enable buttons
+                allFeedbackBtns.forEach(btn => {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                });
+            }
+        }
+        
+        function updateFeedbackUI(card, feedbackData, userFeedbackType) {
+            const thumbsUpBtn = card.querySelector('.feedback-btn:first-child');
+            const thumbsDownBtn = card.querySelector('.feedback-btn:last-child');
+            const statsDiv = card.querySelector('.feedback-stats');
+            
+            // Update button states
+            thumbsUpBtn.classList.toggle('active', userFeedbackType === 'thumbs_up');
+            thumbsUpBtn.classList.toggle('thumbs-up', userFeedbackType === 'thumbs_up');
+            thumbsDownBtn.classList.toggle('active', userFeedbackType === 'thumbs_down');
+            thumbsDownBtn.classList.toggle('thumbs-down', userFeedbackType === 'thumbs_down');
+            
+            // Update button counts
+            updateButtonContent(thumbsUpBtn, 'thumbs_up', feedbackData);
+            updateButtonContent(thumbsDownBtn, 'thumbs_down', feedbackData);
+            
+            // Update stats
+            if (feedbackData.total_feedback > 0) {
+                const percentage = (feedbackData.feedback_score * 100).toFixed(0);
+                statsDiv.textContent = `${percentage}% positive (${feedbackData.total_feedback} votes)`;
+            } else {
+                statsDiv.textContent = 'No ratings yet';
+            }
+        }
+        
+        function updateButtonContent(buttonElement, feedbackType, feedbackData) {
+            const emoji = feedbackType === 'thumbs_up' ? '👍' : '👎';
+            const count = feedbackType === 'thumbs_up' ? feedbackData.thumbs_up_count : feedbackData.thumbs_down_count;
+            buttonElement.innerHTML = `${emoji} <span class="feedback-count">${count}</span>`;
         }
     </script>
 </body>

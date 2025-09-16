@@ -1,0 +1,57 @@
+{
+  "Azure_Networking_Essentials_Guide.wav": {
+    "thumbs_up": [
+      {
+        "timestamp": "2025-09-16T12:21:07.694011",
+        "user_id": "test-user-id"
+      }
+    ],
+    "thumbs_down": [],
+    "created_at": "2025-09-16T12:21:04.658340",
+    "metadata": {}
+  },
+  "Azure_Storage_Solutions_Deep_Dive.wav": {
+    "thumbs_up": [
+      {
+        "timestamp": "2025-09-16T12:21:09.013804",
+        "user_id": "test-user-id"
+      }
+    ],
+    "thumbs_down": [],
+    "created_at": "2025-09-16T12:21:09.013791",
+    "metadata": {}
+  },
+  "Azure_Fundamentals_Introduction.wav": {
+    "thumbs_up": [
+      {
+        "timestamp": "2025-09-16T12:21:11.221932",
+        "user_id": "test-user-id"
+      }
+    ],
+    "thumbs_down": [],
+    "created_at": "2025-09-16T12:21:11.221918",
+    "metadata": {}
+  },
+  "Azure_Security_Best_Practices_Overview.wav": {
+    "thumbs_up": [
+      {
+        "timestamp": "2025-09-16T12:21:11.943250",
+        "user_id": "test-user-id"
+      }
+    ],
+    "thumbs_down": [],
+    "created_at": "2025-09-16T12:21:11.943244",
+    "metadata": {}
+  },
+  "Understanding_Azure_Active_Directory.wav": {
+    "thumbs_up": [
+      {
+        "timestamp": "2025-09-16T12:21:13.505293",
+        "user_id": "test-user-id"
+      }
+    ],
+    "thumbs_down": [],
+    "created_at": "2025-09-16T12:21:13.505286",
+    "metadata": {}
+  }
+}

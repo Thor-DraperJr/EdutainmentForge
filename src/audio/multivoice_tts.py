@@ -8,10 +8,10 @@ import os
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
-from pydub import AudioSegment
 import tempfile
 
 from .tts import AzureTTSService, TTSError
+from .audio_compat import get_audio_processor
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -93,7 +93,7 @@ class MultiVoiceTTSService:
                     logger.warning(f"Progress callback error: {e}")
 
             # Generate audio for each segment
-            audio_segments = []
+            temp_files = []
             temp_dir = Path(tempfile.mkdtemp())
             
             for i, (speaker, text) in enumerate(dialogue_segments):
@@ -132,28 +132,22 @@ class MultiVoiceTTSService:
                     logger.error(f"Failed to synthesize segment for {speaker}")
                     return False
                 
-                # Load the audio segment
+                # Store the temp file path for later combination
                 if temp_file.exists():
-                    audio_segment = AudioSegment.from_wav(str(temp_file))
-                    audio_segments.append(audio_segment)
-                    
-                    # Add a small pause between speakers (300ms)
-                    if i < len(dialogue_segments) - 1:
-                        pause = AudioSegment.silent(duration=300)
-                        audio_segments.append(pause)
+                    temp_files.append(temp_file)
                 else:
                     logger.error(f"Audio file not created for segment {i}")
                     return False
             
-            # Combine all audio segments
+            # Combine all audio segments using compatibility layer
             if progress_callback:
                 try:
                     progress_callback(92, "Assembling audio segments...")
                 except Exception as e:
                     logger.warning(f"Progress callback error: {e}")
-                
-            if audio_segments:
-                combined_audio = sum(audio_segments)
+            
+            if temp_files:
+                audio_processor = get_audio_processor()
                 
                 if progress_callback:
                     try:
@@ -161,9 +155,18 @@ class MultiVoiceTTSService:
                     except Exception as e:
                         logger.warning(f"Progress callback error: {e}")
                 
-                # Export the final audio
-                combined_audio.export(str(output_path), format="wav")
-                logger.info(f"Successfully created multi-voice podcast: {output_path}")
+                # Combine audio files with pauses between speakers
+                success = audio_processor.combine_wav_files(
+                    input_files=temp_files,
+                    output_file=output_path,
+                    pause_duration_ms=300
+                )
+                
+                if success:
+                    logger.info(f"Successfully created multi-voice podcast: {output_path}")
+                else:
+                    logger.error("Failed to combine audio segments")
+                    return False
                 
                 if progress_callback:
                     try:
