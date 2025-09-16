@@ -1,76 +1,251 @@
 {
-    "version": 1,
-    "generated_at": "2025-09-15T00:00:00Z",
-    "roles": {
-        "ai-engineer": {
-            "certifications": [
+  "version": 1,
+  "generated_at": "2025-09-16T12:52:36.654832",
+  "roles": {
+    "ai-engineer": {
+      "certifications": [
+        {
+          "id": "azure-ai-engineer-associate",
+          "title": "Azure AI Engineer Associate",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/",
+          "learning_paths": [
+            {
+              "id": "azure-ai-foundations",
+              "title": "Azure AI foundations",
+              "url": "https://learn.microsoft.com/en-us/training/paths/azure-ai-foundations/",
+              "modules": [
                 {
-                    "id": "azure-ai-engineer-associate",
-                    "title": "Azure AI Engineer Associate",
-                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/",
-                    "learning_paths": [
-                        {
-                            "id": "azure-ai-foundations",
-                            "title": "Azure AI foundations",
-                            "url": "https://learn.microsoft.com/en-us/training/paths/azure-ai-foundations/",
-                            "modules": [
-                                {
-                                    "uid": "learn.wwl.prepare-azure-ai-development",
-                                    "status": "refreshed"
-                                },
-                                {
-                                    "uid": "learn.azure-ai-fundamentals.explore-azure-openai",
-                                    "status": "refreshed"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        "security-engineer": {
-            "certifications": [
+                  "uid": "learn.wwl.prepare-azure-ai-development",
+                  "status": "refreshed",
+                  "last_error": null
+                },
                 {
-                    "id": "azure-security-engineer-associate",
-                    "title": "Azure Security Engineer Associate",
-                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/",
-                    "learning_paths": [
-                        {
-                            "id": "secure-azure-solutions-foundations",
-                            "title": "Secure Azure solutions foundations",
-                            "url": "https://learn.microsoft.com/en-us/training/paths/secure-azure-solutions-foundations/",
-                            "modules": [
-                                {
-                                    "uid": "learn.wwl.prepare-azure-ai-development",
-                                    "status": "pending"
-                                }
-                            ]
-                        }
-                    ]
+                  "uid": "learn.azure-ai-fundamentals.explore-azure-openai",
+                  "status": "refreshed",
+                  "last_error": null
                 }
-            ]
-        },
-        "solution-architect": {
-            "certifications": [
-                {
-                    "id": "azure-solutions-architect-expert",
-                    "title": "Azure Solutions Architect Expert",
-                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/",
-                    "learning_paths": [
-                        {
-                            "id": "architect-azure-infrastructure",
-                            "title": "Architect Azure infrastructure",
-                            "url": "https://learn.microsoft.com/en-us/training/paths/architect-azure-infrastructure/",
-                            "modules": [
-                                {
-                                    "uid": "learn.wwl.prepare-azure-ai-development",
-                                    "status": "pending"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+              ]
+            }
+          ]
         }
+      ]
+    },
+    "security-engineer": {
+      "certifications": [
+        {
+          "id": "azure-security-engineer-associate",
+          "title": "Azure Security Engineer Associate",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/",
+          "learning_paths": [
+            {
+              "id": "az500-updated-core",
+              "title": "AZ-500 Core (Updated 2025)",
+              "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/",
+              "modules": [
+                {
+                  "uid": "learn.azure.manage-security-controls-identity-access",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.secure-network-connectivity-azure",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.governance-security",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.microsoft-defender-cloud-security-posture",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.microsoft-defender-cloud-threat-protection",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.security-monitoring-automation-solutions",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "identity-and-access-administrator-associate",
+          "title": "Identity and Access Administrator Associate",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/identity-and-access-administrator/",
+          "learning_paths": [
+            {
+              "id": "sc300-core-identity",
+              "title": "SC-300 Core Identity",
+              "url": "https://learn.microsoft.com/en-us/training/paths/entra-identity/",
+              "modules": [
+                {
+                  "uid": "learn.azure.explore-identity-azure-active-directory",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.create-configure-manage-identities",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.implement-manage-external-identities",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.implement-manage-hybrid-identity",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "security-operations-analyst-associate",
+          "title": "Security Operations Analyst Associate",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/security-operations-analyst/",
+          "learning_paths": [
+            {
+              "id": "sc200-threat-protection",
+              "title": "SC-200 Threat Protection",
+              "url": "https://learn.microsoft.com/en-us/training/paths/defend-threats/",
+              "modules": [
+                {
+                  "uid": "learn.azure.governance-security",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.microsoft-defender-cloud-security-posture",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.microsoft-defender-cloud-threat-protection",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.security-monitoring-automation-solutions",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "security-compliance-and-identity-fundamentals",
+          "title": "Security, Compliance, and Identity Fundamentals",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/",
+          "learning_paths": [
+            {
+              "id": "sc900-fundamentals",
+              "title": "SC-900 Fundamentals",
+              "url": "https://learn.microsoft.com/en-us/training/paths/describe-concepts-of-security-compliance-identity/",
+              "modules": [
+                {
+                  "uid": "learn.azure.describe-security-concepts-methodologies",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.explore-basic-services-identity-types",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.explore-authentication-capabilities",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.explore-access-management-capabilities",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.describe-identity-protection-governance-capabilities",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cybersecurity-architect-expert",
+          "title": "Cybersecurity Architect Expert",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/cybersecurity-architect-expert/",
+          "learning_paths": [
+            {
+              "id": "sc100-architecture",
+              "title": "SC-100 Architecture",
+              "url": "https://learn.microsoft.com/en-us/training/paths/design-solutions-security/",
+              "modules": [
+                {
+                  "uid": "learn.azure.design-solutions-security-operations",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-solutions-identity-access-management",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-solutions-secure-organization-data",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-solutions-secure-applications",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "solution-architect": {
+      "certifications": [
+        {
+          "id": "azure-solutions-architect-expert",
+          "title": "Azure Solutions Architect Expert",
+          "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/",
+          "learning_paths": [
+            {
+              "id": "architect-azure-infrastructure",
+              "title": "Architect Azure infrastructure",
+              "url": "https://learn.microsoft.com/en-us/training/paths/architect-azure-infrastructure/",
+              "modules": [
+                {
+                  "uid": "learn.wwl.prepare-azure-ai-development",
+                  "status": "pending",
+                  "last_error": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
+  }
 }

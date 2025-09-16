@@ -12,3 +12,39 @@ learn.azure-ai-fundamentals.explore-azure-openai https://learn.microsoft.com/en-
 learn.azure-ai-fundamentals.explore-responsible-ai https://learn.microsoft.com/en-us/training/modules/explore-responsible-ai/ Beginner 35
 
 # TODO: Add additional modules only after manual URL verification.
+
+# --- Security Engineer (AZ-500) Modules (updated slugs) ---
+# Replaced deprecated/removed modules with current equivalents after January 2025 exam outline update.
+learn.azure.manage-security-controls-identity-access https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/ Intermediate 0
+learn.azure.secure-network-connectivity-azure https://learn.microsoft.com/en-us/training/modules/secure-network-connectivity-azure/ Intermediate 75
+learn.azure.governance-security https://learn.microsoft.com/en-us/training/modules/governance-security/ Intermediate 0
+learn.azure.microsoft-defender-cloud-threat-protection https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/ Intermediate 0
+learn.azure.microsoft-defender-cloud-security-posture https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/ Intermediate 0
+learn.azure.security-monitoring-automation-solutions https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/ Intermediate 0
+
+# --- Identity & Access Administrator (SC-300) Modules (updated slugs) ---
+learn.azure.explore-identity-azure-active-directory https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/ Intermediate 0
+learn.azure.implement-initial-configuration-of-azure-active-directory https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/ Intermediate 0
+learn.azure.create-configure-manage-identities https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/ Intermediate 105
+learn.azure.implement-manage-external-identities https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/ Intermediate 75
+learn.azure.implement-manage-hybrid-identity https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/ Advanced 85
+
+# --- Security Operations Analyst (SC-200) Modules (updated set) ---
+# Replaced legacy mitigate-threats-* modules with current Defender & Sentinel focused modules.
+learn.azure.governance-security https://learn.microsoft.com/en-us/training/modules/governance-security/ Intermediate 0
+learn.azure.microsoft-defender-cloud-security-posture https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/ Intermediate 0
+learn.azure.microsoft-defender-cloud-threat-protection https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/ Intermediate 0
+learn.azure.security-monitoring-automation-solutions https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/ Intermediate 0
+
+# --- Security, Compliance & Identity Fundamentals (SC-900) Modules (updated slugs) ---
+learn.azure.describe-security-concepts-methodologies https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/ Beginner 60
+learn.azure.explore-basic-services-identity-types https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/ Beginner 0
+learn.azure.explore-authentication-capabilities https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/ Beginner 0
+learn.azure.explore-access-management-capabilities https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/ Beginner 0
+learn.azure.describe-identity-protection-governance-capabilities https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/ Beginner 0
+
+# --- Cybersecurity Architect (SC-100) Modules (updated set) ---
+learn.azure.design-solutions-security-operations https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/ Expert 120
+learn.azure.design-solutions-identity-access-management https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/ Expert 110
+learn.azure.design-solutions-secure-organization-data https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/ Expert 0
+learn.azure.design-solutions-secure-applications https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/ Expert 0
