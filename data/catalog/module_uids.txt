@@ -48,3 +48,19 @@ learn.azure.design-solutions-security-operations https://learn.microsoft.com/en-
 learn.azure.design-solutions-identity-access-management https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/ Expert 110
 learn.azure.design-solutions-secure-organization-data https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/ Expert 0
 learn.azure.design-solutions-secure-applications https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/ Expert 0
+
+# --- Azure Solutions Architect Expert (AZ-305) Modules ---
+# Core design infrastructure solutions path (4 modules)
+learn.azure.design-compute-solution https://learn.microsoft.com/en-us/training/modules/design-compute-solution/ Advanced 0
+learn.azure.design-application-architecture https://learn.microsoft.com/en-us/training/modules/design-application-architecture/ Advanced 0
+learn.azure.design-network-solutions https://learn.microsoft.com/en-us/training/modules/design-network-solutions/ Advanced 0
+learn.azure.design-migrations https://learn.microsoft.com/en-us/training/modules/design-migrations/ Advanced 0
+
+# Identity, governance, and monitoring path (3 modules)
+learn.azure.design-governance https://learn.microsoft.com/en-us/training/modules/design-governance/ Advanced 0
+learn.azure.design-authentication-authorization-solutions https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/ Advanced 0
+learn.azure.design-solution-to-log-monitor-azure-resources https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/ Advanced 0
+
+# Business continuity path (2 modules)
+learn.azure.describe-high-availability-disaster-recovery-strategies https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/ Advanced 0
+learn.azure.design-solution-for-backup-disaster-recovery https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/ Advanced 0

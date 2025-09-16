@@ -1,2637 +1,933 @@
 {
   "version": 1,
-  "generated_at": "2025-09-16T12:52:36.648786",
+  "generated_at": "2025-09-16T13:59:51.020988",
   "modules": {
-    "learn.azure.manage-security-controls-identity-access": {
-      "uid": "learn.azure.manage-security-controls-identity-access",
-      "title": "Manage security controls for identity and access",
-      "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.262960",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.identity-management-privileged-access",
-          "title": "Identity Management Privileged Access",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/identity-management-privileged-access/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263001",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-id-overview",
-          "title": "Microsoft Entra Id Overview",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-id-overview/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263008",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.secure-microsoft-entra-users",
-          "title": "Secure Microsoft Entra Users",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/secure-microsoft-entra-users/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263012",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.create-new-user",
-          "title": "Create New User",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/create-new-user/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263016",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.secure-microsoft-entra-groups",
-          "title": "Secure Microsoft Entra Groups",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/secure-microsoft-entra-groups/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263022",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.recommend-when-use-external-identities",
-          "title": "Recommend When Use External Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/recommend-when-use-external-identities/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263026",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.secure-external-microsoft-entra-identities",
-          "title": "Secure External Microsoft Entra Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/secure-external-microsoft-entra-identities/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263030",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-identity-protection",
-          "title": "Microsoft Entra Identity Protection",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-identity-protection/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263037",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-connect",
-          "title": "Microsoft Entra Connect",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-connect/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263042",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-cloud-sync",
-          "title": "Microsoft Entra Cloud Sync",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-cloud-sync/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263046",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.authentication-options",
-          "title": "Authentication Options",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/authentication-options/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263050",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.password-hash-synchronization-with-microsoft-entra-id",
-          "title": "Password Hash Synchronization With Microsoft Entra Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/password-hash-synchronization-with-microsoft-entra-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263055",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-pass-through-authentication",
-          "title": "Microsoft Entra Pass Through Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-pass-through-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263060",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.federation-with-microsoft-entra-id",
-          "title": "Federation With Microsoft Entra Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/federation-with-microsoft-entra-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263064",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.what-microsoft-entra-authentication",
-          "title": "What Microsoft Entra Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/what-microsoft-entra-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263068",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-microsoft-entra-multifactor-authentication-settings",
-          "title": "Configure Microsoft Entra Multifactor Authentication Settings",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-microsoft-entra-multifactor-authentication-settings/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263097",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.kerberos-authentication",
-          "title": "Kerberos Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/kerberos-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263101",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.new-technology-local-area-network-manager",
-          "title": "New Technology Local Area Network Manager",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/new-technology-local-area-network-manager/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263106",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.passwordless-authentication-options",
-          "title": "Passwordless Authentication Options",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/passwordless-authentication-options/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263109",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.passwordless-authentication",
-          "title": "Passwordless Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/passwordless-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263113",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.enforce-premises-microsoft-entra-password-protection",
-          "title": "Enforce Premises Microsoft Entra Password Protection",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/enforce-premises-microsoft-entra-password-protection/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263118",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-id-single-sign-on",
-          "title": "Microsoft Entra Id Single Sign On",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-id-single-sign-on/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263122",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-microsoft-entra-single-sign-on",
-          "title": "Configure Microsoft Entra Single Sign On",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-microsoft-entra-single-sign-on/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263126",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.integrate-applications-with-microsoft-entra-id",
-          "title": "Integrate Applications With Microsoft Entra Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/integrate-applications-with-microsoft-entra-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263131",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-verified-id",
-          "title": "Microsoft Entra Verified Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-verified-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263135",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-microsoft-entra-verified-id",
-          "title": "Configure Microsoft Entra Verified Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-microsoft-entra-verified-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263139",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-id-authentication-verification-methods",
-          "title": "Microsoft Entra Id Authentication Verification Methods",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-id-authentication-verification-methods/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263144",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.azure-management-groups",
-          "title": "Azure Management Groups",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/azure-management-groups/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263148",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-azure-role-permissions",
-          "title": "Configure Azure Role Permissions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-azure-role-permissions/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263154",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.azure-role-based-access-control",
-          "title": "Azure Role Based Access Control",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/azure-role-based-access-control/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263159",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.azure-built-in-roles",
-          "title": "Azure Built In Roles",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/azure-built-in-roles/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263166",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.assign-azure-role-permissions",
-          "title": "Assign Azure Role Permissions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/assign-azure-role-permissions/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263172",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-built-in-roles",
-          "title": "Microsoft Entra Built In Roles",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-built-in-roles/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263177",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.built-roles-microsoft-entra-id",
-          "title": "Built Roles Microsoft Entra Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/built-roles-microsoft-entra-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263181",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-role-based-access-control",
-          "title": "Microsoft Entra Role Based Access Control",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-role-based-access-control/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263185",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.create-new-custom-roles-microsoft-entra-id",
-          "title": "Create New Custom Roles Microsoft Entra Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/create-new-custom-roles-microsoft-entra-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263189",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.zero-trust-security",
-          "title": "Zero Trust Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/zero-trust-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263195",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-privileged-identity-management",
-          "title": "Microsoft Entra Privileged Identity Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-privileged-identity-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263200",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-privileged-identity-management",
-          "title": "Configure Privileged Identity Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-privileged-identity-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263204",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.microsoft-entra-id-governance",
-          "title": "Microsoft Entra Id Governance",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/microsoft-entra-id-governance/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263208",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.identity-lifecycle-management",
-          "title": "Identity Lifecycle Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/identity-lifecycle-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263212",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.lifecycle-workflows",
-          "title": "Lifecycle Workflows",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/lifecycle-workflows/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263216",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.entitlement-management",
-          "title": "Entitlement Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/entitlement-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263221",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.delegation-roles-entitlement-management",
-          "title": "Delegation Roles Entitlement Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/delegation-roles-entitlement-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263226",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.access-reviews",
-          "title": "Access Reviews",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/access-reviews/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263230",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.configure-role-management-access-reviews-microsoft-entra-id-governance",
-          "title": "Configure Role Management Access Reviews Microsoft Entra Id Governance",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/configure-role-management-access-reviews-microsoft-entra-id-governance/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263235",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.conditional-access",
-          "title": "Conditional Access",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/conditional-access/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263243",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.understand-azure-lighthouse",
-          "title": "Understand Azure Lighthouse",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/understand-azure-lighthouse/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:09.263248",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:09.263252",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.manage-security-controls-identity-access.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/manage-security-controls-identity-access/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:09.263256",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:13.954902",
-      "last_refreshed": "2025-09-16T12:52:13.954879"
-    },
-    "learn.azure.secure-network-connectivity-azure": {
-      "uid": "learn.azure.secure-network-connectivity-azure",
-      "title": "Introduction to Microsoft Azure: Describe Azure architecture and services",
-      "url": "https://learn.microsoft.com/en-us/training/modules/secure-network-connectivity-azure/",
-      "level": "Intermediate",
-      "duration_minutes": 75,
-      "units": [],
-      "generated_at": "2025-09-16T12:52:14.106801",
-      "last_refreshed": "2025-09-16T12:52:14.106782"
-    },
-    "learn.azure.governance-security": {
-      "uid": "learn.azure.governance-security",
-      "title": "Implement and manage enforcement of cloud governance policies",
-      "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.governance-security.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274807",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.access-data-identity-network-endpoint",
-          "title": "Access Data Identity Network Endpoint",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/access-data-identity-network-endpoint/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274828",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-governance",
-          "title": "Azure Governance",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-governance/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274833",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.create-custom-azure-security-initiatives-policies",
-          "title": "Create Custom Azure Security Initiatives Policies",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/create-custom-azure-security-initiatives-policies/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274839",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.deploy-secure-infrastructures",
-          "title": "Deploy Secure Infrastructures",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/deploy-secure-infrastructures/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274844",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-key-vault",
-          "title": "Azure Key Vault",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-key-vault/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274848",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-key-vault-security",
-          "title": "Azure Key Vault Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-key-vault-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274853",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-key-vault-authentication",
-          "title": "Azure Key Vault Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-key-vault-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274858",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.create-key-vault-use-azure-portal",
-          "title": "Create Key Vault Use Azure Portal",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/create-key-vault-use-azure-portal/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274863",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-dedicated-hardware-security-module",
-          "title": "Azure Dedicated Hardware Security Module",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-dedicated-hardware-security-module/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274868",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.configure-access-key-vault-azure-role-based-access-control",
-          "title": "Configure Access Key Vault Azure Role Based Access Control",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/configure-access-key-vault-azure-role-based-access-control/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274873",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-key-vault-keys-secrets-certificates",
-          "title": "Azure Key Vault Keys Secrets Certificates",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-key-vault-keys-secrets-certificates/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274877",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.configure-cryptographic-key-auto-rotation-azure-key-vault",
-          "title": "Configure Cryptographic Key Auto Rotation Azure Key Vault",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/configure-cryptographic-key-auto-rotation-azure-key-vault/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274882",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.azure-key-vault-backup-restore",
-          "title": "Azure Key Vault Backup Restore",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/azure-key-vault-backup-restore/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274886",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.implement-security-controls-protect-backups",
-          "title": "Implement Security Controls Protect Backups",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/implement-security-controls-protect-backups/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274890",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.implement-security-controls-asset-management",
-          "title": "Implement Security Controls Asset Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/implement-security-controls-asset-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:27.274895",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:27.274899",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.governance-security.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/governance-security/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:27.274904",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:28.001169",
-      "last_refreshed": "2025-09-16T12:52:28.001141"
-    },
-    "learn.azure.microsoft-defender-cloud-security-posture": {
-      "uid": "learn.azure.microsoft-defender-cloud-security-posture",
-      "title": "Manage security posture by using Microsoft Defender for Cloud",
-      "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113609",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.implement-microsoft-defender-for-cloud",
-          "title": "Implement Microsoft Defender For Cloud",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/implement-microsoft-defender-for-cloud/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113631",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.secure-score",
-          "title": "Secure Score",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/secure-score/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113636",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.regulatory-compliance-dashboard",
-          "title": "Regulatory Compliance Dashboard",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/regulatory-compliance-dashboard/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113642",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.microsoft-cloud-security-benchmark",
-          "title": "Microsoft Cloud Security Benchmark",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/microsoft-cloud-security-benchmark/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113646",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.microsoft-defender-for-cloud-secure-score",
-          "title": "Microsoft Defender For Cloud Secure Score",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/microsoft-defender-for-cloud-secure-score/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113652",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.connect-hybrid-cloud-multi-cloud-environments",
-          "title": "Connect Hybrid Cloud Multi Cloud Environments",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/connect-hybrid-cloud-multi-cloud-environments/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113658",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.microsoft-defender-external-attack-surface-management",
-          "title": "Microsoft Defender External Attack Surface Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/microsoft-defender-external-attack-surface-management/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.113663",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:28.113668",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-security-posture.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-security-posture/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:28.113672",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:28.463970",
-      "last_refreshed": "2025-09-16T12:52:28.463946"
-    },
-    "learn.azure.microsoft-defender-cloud-threat-protection": {
-      "uid": "learn.azure.microsoft-defender-cloud-threat-protection",
-      "title": "Configure and manage threat protection by using Microsoft Defender for Cloud",
-      "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575645",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.workload-protections",
-          "title": "Workload Protections",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/workload-protections/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575674",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.defender-servers",
-          "title": "Defender Servers",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/defender-servers/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575683",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.defender-for-storage",
-          "title": "Defender For Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/defender-for-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575690",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.malware-scanning-in-defender-for-storage",
-          "title": "Malware Scanning In Defender For Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/malware-scanning-in-defender-for-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575698",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.detect-threats-to-sensitive-data",
-          "title": "Detect Threats To Sensitive Data",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/detect-threats-to-sensitive-data/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575707",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.deploy-microsoft-defender-for-storage",
-          "title": "Deploy Microsoft Defender For Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/deploy-microsoft-defender-for-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575714",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.configure-azure-built-in-policy",
-          "title": "Configure Azure Built In Policy",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/configure-azure-built-in-policy/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575722",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.configure-defender-servers-storage",
-          "title": "Configure Defender Servers Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/configure-defender-servers-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575729",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.vulnerability-assessments",
-          "title": "Vulnerability Assessments",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/vulnerability-assessments/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575736",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.log-analytics-workspace",
-          "title": "Log Analytics Workspace",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/log-analytics-workspace/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575744",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.manage-data-retention-log-analytics-workspace",
-          "title": "Manage Data Retention Log Analytics Workspace",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/manage-data-retention-log-analytics-workspace/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575752",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.deploy-azure-monitor-agent",
-          "title": "Deploy Azure Monitor Agent",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/deploy-azure-monitor-agent/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575760",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.collect-data-with-azure-monitor-agent",
-          "title": "Collect Data With Azure Monitor Agent",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/collect-data-with-azure-monitor-agent/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575767",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.data-collection-rules-azure-monitor",
-          "title": "Data Collection Rules Azure Monitor",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/data-collection-rules-azure-monitor/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575774",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.transformations-data-collection-rules-dcrs",
-          "title": "Transformations Data Collection Rules Dcrs",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/transformations-data-collection-rules-dcrs/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575782",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.monitor-network-security-events-performance-data",
-          "title": "Monitor Network Security Events Performance Data",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/monitor-network-security-events-performance-data/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575790",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.connect-your-azure-subscriptions",
-          "title": "Connect Your Azure Subscriptions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/connect-your-azure-subscriptions/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575798",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.just-in-time-machine-access",
-          "title": "Just In Time Machine Access",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/just-in-time-machine-access/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575805",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.enable-just-in-time-access",
-          "title": "Enable Just In Time Access",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/enable-just-in-time-access/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575811",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.container-security-microsoft-defender-containers",
-          "title": "Container Security Microsoft Defender Containers",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/container-security-microsoft-defender-containers/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575818",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.managed-kubernetes",
-          "title": "Managed Kubernetes",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/managed-kubernetes/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575825",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.defender-containers-architecture",
-          "title": "Defender Containers Architecture",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/defender-containers-architecture/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575832",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.configure-microsoft-defender-containers-components",
-          "title": "Configure Microsoft Defender Containers Components",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/configure-microsoft-defender-containers-components/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575839",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.microsoft-defender-cloud-devops-security",
-          "title": "Microsoft Defender Cloud Devops Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/microsoft-defender-cloud-devops-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575847",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.devops-security-support-prerequisites",
-          "title": "Devops Security Support Prerequisites",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/devops-security-support-prerequisites/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575854",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.devops-environment-security-posture",
-          "title": "Devops Environment Security Posture",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/devops-environment-security-posture/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575862",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.connect-your-git-hub-lab-environment-microsoft-defender-cloud",
-          "title": "Connect Your Git Hub Lab Environment Microsoft Defender Cloud",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/connect-your-git-hub-lab-environment-microsoft-defender-cloud/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575871",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.configure-microsoft-security-devops-github-action",
-          "title": "Configure Microsoft Security Devops Github Action",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/configure-microsoft-security-devops-github-action/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575879",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.ai-threat-protection",
-          "title": "Ai Threat Protection",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/ai-threat-protection/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575886",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.enable-threat-protection-for-ai-workloads",
-          "title": "Enable Threat Protection For Ai Workloads",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/enable-threat-protection-for-ai-workloads/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575893",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.gain-application-and-end-user-context-for-ai-alerts",
-          "title": "Gain Application And End User Context For Ai Alerts",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/gain-application-and-end-user-context-for-ai-alerts/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575903",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.32a-configure-defender-for-cloud-enhanced-security-features",
-          "title": "32A Configure Defender For Cloud Enhanced Security Features",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/32a-configure-defender-for-cloud-enhanced-security-features/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:28.575947",
-          "status": "ok"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:28.575956",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.microsoft-defender-cloud-threat-protection.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/microsoft-defender-cloud-threat-protection/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:28.575964",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:29.604006",
-      "last_refreshed": "2025-09-16T12:52:29.603990"
-    },
-    "learn.azure.security-monitoring-automation-solutions": {
-      "uid": "learn.azure.security-monitoring-automation-solutions",
-      "title": "Configure and manage security monitoring and automation solutions",
-      "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680866",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.security-alerts-incidents",
-          "title": "Security Alerts Incidents",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/security-alerts-incidents/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680895",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.automate-responses-microsoft-defender-cloud-triggers",
-          "title": "Automate Responses Microsoft Defender Cloud Triggers",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/automate-responses-microsoft-defender-cloud-triggers/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680903",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.log-retention-plans-in-microsoft-sentinel",
-          "title": "Log Retention Plans In Microsoft Sentinel",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/log-retention-plans-in-microsoft-sentinel/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680909",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.alerts-incidents-microsoft-sentinel",
-          "title": "Alerts Incidents Microsoft Sentinel",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/alerts-incidents-microsoft-sentinel/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680914",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.microsoft-sentinel-data-connectors",
-          "title": "Microsoft Sentinel Data Connectors",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/microsoft-sentinel-data-connectors/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680919",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.enable-analytics-rules-microsoft-sentinel",
-          "title": "Enable Analytics Rules Microsoft Sentinel",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/enable-analytics-rules-microsoft-sentinel/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680923",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.respond-threats-by-using-playbooks-with-automation-rules-microsoft-sentinel",
-          "title": "Respond Threats By Using Playbooks With Automation Rules Microsoft Sentinel",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/respond-threats-by-using-playbooks-with-automation-rules-microsoft-sentinel/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680929",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.automating-threat-response-with-microsoft-sentinel",
-          "title": "Automating Threat Response With Microsoft Sentinel",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/automating-threat-response-with-microsoft-sentinel/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:29.680934",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:29.680939",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.security-monitoring-automation-solutions.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/security-monitoring-automation-solutions/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:29.680943",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:30.019947",
-      "last_refreshed": "2025-09-16T12:52:30.019929"
-    },
-    "learn.azure.explore-identity-azure-active-directory": {
-      "uid": "learn.azure.explore-identity-azure-active-directory",
-      "title": "Explore identity in Microsoft Entra ID",
-      "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254447",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explain-identity-landscape",
-          "title": "Explain Identity Landscape",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explain-identity-landscape/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254481",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explore-zero-trust-identity",
-          "title": "Explore Zero Trust Identity",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explore-zero-trust-identity/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254493",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.discuss-identity-as-control-plane",
-          "title": "Discuss Identity As Control Plane",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/discuss-identity-as-control-plane/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254503",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explore-why-we-have-identity",
-          "title": "Explore Why We Have Identity",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explore-why-we-have-identity/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254513",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.define-identity-administration",
-          "title": "Define Identity Administration",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/define-identity-administration/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254546",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.contrast-decentralized-identity-central-identity-systems",
-          "title": "Contrast Decentralized Identity Central Identity Systems",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/contrast-decentralized-identity-central-identity-systems/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254558",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.discuss-identity-management-solutions",
-          "title": "Discuss Identity Management Solutions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/discuss-identity-management-solutions/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254568",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explain-business-to-business",
-          "title": "Explain Business To Business",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explain-business-to-business/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254577",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.compare-microsoft-identity-providers",
-          "title": "Compare Microsoft Identity Providers",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/compare-microsoft-identity-providers/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254590",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.define-identity-licensing",
-          "title": "Define Identity Licensing",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/define-identity-licensing/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254600",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explore-authentication",
-          "title": "Explore Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explore-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254608",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.discuss-authorization",
-          "title": "Discuss Authorization",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/discuss-authorization/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254683",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.explain-auditing-identity",
-          "title": "Explain Auditing Identity",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/explain-auditing-identity/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:22.254734",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:22.254745",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.explore-identity-azure-active-directory.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-identity-azure-active-directory/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:22.254754",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:24.283672",
-      "last_refreshed": "2025-09-16T12:52:24.283646"
-    },
-    "learn.azure.implement-initial-configuration-of-azure-active-directory": {
-      "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory",
-      "title": "Implement initial configuration of Microsoft Entra ID",
-      "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/",
-      "level": "Intermediate",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399821",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.configure-company-brand",
-          "title": "Configure Company Brand",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/configure-company-brand/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399845",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.configure-manage-roles",
-          "title": "Configure Manage Roles",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/configure-manage-roles/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399852",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.exercise-manage-users-roles",
-          "title": "Exercise Manage Users Roles",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/exercise-manage-users-roles/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:24.399858",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.configure-delegation-by-using-administrative-units",
-          "title": "Configure Delegation By Using Administrative Units",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/configure-delegation-by-using-administrative-units/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399864",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.analyze-azure-ad-role-permissions",
-          "title": "Analyze Azure Ad Role Permissions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/analyze-azure-ad-role-permissions/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399880",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.configure-manage-custom-domains",
-          "title": "Configure Manage Custom Domains",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/configure-manage-custom-domains/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399885",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.configure-tenant-wide-setting",
-          "title": "Configure Tenant Wide Setting",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/configure-tenant-wide-setting/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:24.399892",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.exercise-setting-tenant-wide-properties",
-          "title": "Exercise Setting Tenant Wide Properties",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/exercise-setting-tenant-wide-properties/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:24.399897",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:24.399903",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-initial-configuration-of-azure-active-directory.summary-resources",
-          "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-initial-configuration-of-azure-active-directory/summary-resources/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:24.399908",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:25.405995",
-      "last_refreshed": "2025-09-16T12:52:25.405980"
-    },
-    "learn.azure.create-configure-manage-identities": {
-      "uid": "learn.azure.create-configure-manage-identities",
-      "title": "Create, configure, and manage identities",
-      "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/",
-      "level": "Intermediate",
-      "duration_minutes": 105,
-      "units": [
-        {
-          "uid": "learn.azure.create-configure-manage-identities.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478620",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.users",
-          "title": "Users",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/users/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478655",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.exercise-assign-licenses-users",
-          "title": "Exercise Assign Licenses Users",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/exercise-assign-licenses-users/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:25.478670",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.exercise-restore-remove-deleted-users",
-          "title": "Exercise Restore Remove Deleted Users",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/exercise-restore-remove-deleted-users/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:25.478679",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.groups",
-          "title": "Groups",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/groups/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478686",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.exercise-add-groups-azure-active-directory",
-          "title": "Exercise Add Groups Azure Active Directory",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/exercise-add-groups-azure-active-directory/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:25.478692",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.configure-manage-device-registration",
-          "title": "Configure Manage Device Registration",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/configure-manage-device-registration/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478699",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.manage-licenses",
-          "title": "Manage Licenses",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/manage-licenses/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478706",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.exercise-change-group-license-assignments",
-          "title": "Exercise Change Group License Assignments",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/exercise-change-group-license-assignments/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:25.478712",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.exercise-change-user-license-assignments",
-          "title": "Exercise Change User License Assignments",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/exercise-change-user-license-assignments/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:25.478719",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.create-custom-security-attributes",
-          "title": "Create Custom Security Attributes",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/create-custom-security-attributes/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478725",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.explore-automatic-user-creation",
-          "title": "Explore Automatic User Creation",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/explore-automatic-user-creation/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:25.478731",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:25.478736",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.create-configure-manage-identities.summary-resources",
-          "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/create-configure-manage-identities/summary-resources/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:25.478743",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:26.029441",
-      "last_refreshed": "2025-09-16T12:52:26.029425"
-    },
-    "learn.azure.implement-manage-external-identities": {
-      "uid": "learn.azure.implement-manage-external-identities",
-      "title": "Implement and manage external identities",
-      "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/",
-      "level": "Intermediate",
-      "duration_minutes": 75,
-      "units": [
-        {
-          "uid": "learn.azure.implement-manage-external-identities.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103589",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.describe-guess-access-business-to-business-accounts",
-          "title": "Describe Guess Access Business To Business Accounts",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/describe-guess-access-business-to-business-accounts/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103610",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.collaboration",
-          "title": "Collaboration",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/collaboration/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103615",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.exercise-configure-external-collaboration",
-          "title": "Exercise Configure External Collaboration",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/exercise-configure-external-collaboration/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:26.103623",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.invite-external-users-individually-bulk",
-          "title": "Invite External Users Individually Bulk",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/invite-external-users-individually-bulk/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103629",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.exercise-add-guest-users-to-directory",
-          "title": "Exercise Add Guest Users To Directory",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/exercise-add-guest-users-to-directory/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:26.103634",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.exercise-invite-guest-users-bulk",
-          "title": "Exercise Invite Guest Users Bulk",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/exercise-invite-guest-users-bulk/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:26.103638",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.demo-invite-guest-users-to-app",
-          "title": "Demo Invite Guest Users To App",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/demo-invite-guest-users-to-app/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103643",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.user-accounts-azure-active-directory",
-          "title": "User Accounts Azure Active Directory",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/user-accounts-azure-active-directory/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103647",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.manage-extern-users-microsoft-365-workload",
-          "title": "Manage Extern Users Microsoft 365 Workload",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/manage-extern-users-microsoft-365-workload/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103652",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.exercise-explore-dynamic-groups",
-          "title": "Exercise Explore Dynamic Groups",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/exercise-explore-dynamic-groups/",
-          "duration_minutes": 0,
-          "type": "exercise",
-          "last_verified": "2025-09-16T12:52:26.103656",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.implement-manager-entra-verified-id",
-          "title": "Implement Manager Entra Verified Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/implement-manager-entra-verified-id/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103660",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.configure-identity-providers",
-          "title": "Configure Identity Providers",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/configure-identity-providers/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103665",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.implement-cross-tenant-access-controls",
-          "title": "Implement Cross Tenant Access Controls",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/implement-cross-tenant-access-controls/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.103669",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:26.103673",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-external-identities.summary-resources",
-          "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-external-identities/summary-resources/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:26.103678",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:26.633601",
-      "last_refreshed": "2025-09-16T12:52:26.633575"
-    },
-    "learn.azure.implement-manage-hybrid-identity": {
-      "uid": "learn.azure.implement-manage-hybrid-identity",
-      "title": "Implement and manage hybrid identity",
-      "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/",
+    "learn.azure.design-compute-solution": {
+      "uid": "learn.azure.design-compute-solution",
+      "title": "Design an Azure compute solution",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/",
       "level": "Advanced",
-      "duration_minutes": 85,
-      "units": [
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731198",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.plan-design-implement-azure-active-directory-connect",
-          "title": "Plan Design Implement Azure Active Directory Connect",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/plan-design-implement-azure-active-directory-connect/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731224",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.password-hash-synchronization",
-          "title": "Password Hash Synchronization",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/password-hash-synchronization/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731253",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.pass-through-authentication",
-          "title": "Pass Through Authentication",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/pass-through-authentication/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731259",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.demo-manage-pass-through-authentication-seamless-single-sign",
-          "title": "Demo Manage Pass Through Authentication Seamless Single Sign",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/demo-manage-pass-through-authentication-seamless-single-sign/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731267",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.federation",
-          "title": "Federation",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/federation/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731275",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.trouble-shoot-synchronization-errors",
-          "title": "Trouble Shoot Synchronization Errors",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/trouble-shoot-synchronization-errors/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731281",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.implement-azure-active-directory-connect-health",
-          "title": "Implement Azure Active Directory Connect Health",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/implement-azure-active-directory-connect-health/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731289",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.manage-azure-active-directory-connect-health",
-          "title": "Manage Azure Active Directory Connect Health",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/manage-azure-active-directory-connect-health/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:26.731296",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:26.731303",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.implement-manage-hybrid-identity.summary-resources",
-          "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/implement-manage-hybrid-identity/summary-resources/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:26.731308",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:27.127105",
-      "last_refreshed": "2025-09-16T12:52:27.127082"
-    },
-    "learn.azure.describe-security-concepts-methodologies": {
-      "uid": "learn.azure.describe-security-concepts-methodologies",
-      "title": "Describe security and compliance concepts",
-      "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/",
-      "level": "Beginner",
-      "duration_minutes": 60,
-      "units": [
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.introduction",
-          "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/introduction/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090178",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.describe-shared-responsibility-model",
-          "title": "Describe Shared Responsibility Model",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/describe-shared-responsibility-model/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090199",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.describe-defense-depth",
-          "title": "Describe Defense Depth",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/describe-defense-depth/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090205",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.describe-zero-trust-methodology",
-          "title": "Describe Zero Trust Methodology",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/describe-zero-trust-methodology/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090210",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.describe-ways-encryption,-hashing,-signing-can-secure-your-data",
-          "title": "Describe Ways Encryption, Hashing, Signing Can Secure Your Data",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/describe-ways-encryption,-hashing,-signing-can-secure-your-data/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090216",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.describe-compliance-concepts",
-          "title": "Describe Compliance Concepts",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/describe-compliance-concepts/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:30.090220",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:30.090224",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.describe-security-concepts-methodologies.summary-resources",
-          "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-security-concepts-methodologies/summary-resources/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:30.090249",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:30.318345",
-      "last_refreshed": "2025-09-16T12:52:30.318328"
-    },
-    "learn.azure.explore-basic-services-identity-types": {
-      "uid": "learn.azure.explore-basic-services-identity-types",
-      "title": "Describe the function and identity types of Microsoft Entra ID",
-      "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/",
-      "level": "Beginner",
       "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.introduction",
+          "uid": "learn.azure.design-compute-solution.introduction",
           "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/introduction/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:30.463954",
+          "last_verified": "2025-09-16T13:59:40.356987",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.describe-what-is",
-          "title": "Describe What Is",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/describe-what-is/",
+          "uid": "learn.azure.design-compute-solution.choose-compute-service",
+          "title": "Choose Compute Service",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/choose-compute-service/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:30.463974",
+          "last_verified": "2025-09-16T13:59:40.357035",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.describe-identity-types",
-          "title": "Describe Identity Types",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/describe-identity-types/",
+          "uid": "learn.azure.design-compute-solution.design-for-azure-virtual-machine-solutions",
+          "title": "Design For Azure Virtual Machine Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-virtual-machine-solutions/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:30.463980",
+          "last_verified": "2025-09-16T13:59:40.357097",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.describe-concept-of-hybrid-identities",
-          "title": "Describe Concept Of Hybrid Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/describe-concept-of-hybrid-identities/",
+          "uid": "learn.azure.design-compute-solution.design-for-azure-batch-solutions",
+          "title": "Design For Azure Batch Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-batch-solutions/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:30.463986",
+          "last_verified": "2025-09-16T13:59:40.357124",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.describe-external-identities",
-          "title": "Describe External Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/describe-external-identities/",
+          "uid": "learn.azure.design-compute-solution.design-for-azure-app-services-solutions",
+          "title": "Design For Azure App Services Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-app-services-solutions/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:30.463991",
+          "last_verified": "2025-09-16T13:59:40.357141",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.knowledge-check",
+          "uid": "learn.azure.design-compute-solution.design-for-azure-container-instances-solutions",
+          "title": "Design For Azure Container Instances Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-container-instances-solutions/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:40.357158",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-compute-solution.design-for-azure-kubernetes-solutions",
+          "title": "Design For Azure Kubernetes Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-kubernetes-solutions/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:40.357171",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-compute-solution.design-for-azure-functions-solutions",
+          "title": "Design For Azure Functions Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-azure-functions-solutions/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:40.357183",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-compute-solution.design-for-logic-app-solutions",
+          "title": "Design For Logic App Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/design-for-logic-app-solutions/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:40.357198",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-compute-solution.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:30.463996",
+          "last_verified": "2025-09-16T13:59:40.357211",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-basic-services-identity-types.summary-resources",
+          "uid": "learn.azure.design-compute-solution.summary-resources",
           "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-basic-services-identity-types/summary-resources/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-compute-solution/summary-resources/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:30.464001",
+          "last_verified": "2025-09-16T13:59:40.357223",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:31.033257",
-      "last_refreshed": "2025-09-16T12:52:31.033231"
+      "generated_at": "2025-09-16T13:59:41.237115",
+      "last_refreshed": "2025-09-16T13:59:41.237075"
     },
-    "learn.azure.explore-authentication-capabilities": {
-      "uid": "learn.azure.explore-authentication-capabilities",
-      "title": "Describe the authentication capabilities of Microsoft Entra ID",
-      "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/",
-      "level": "Beginner",
+    "learn.azure.design-application-architecture": {
+      "uid": "learn.azure.design-application-architecture",
+      "title": "Design an application architecture",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/",
+      "level": "Advanced",
       "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.explore-authentication-capabilities.introduction",
+          "uid": "learn.azure.design-application-architecture.introduction",
           "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/introduction/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:31.179582",
+          "last_verified": "2025-09-16T13:59:41.521463",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.describe-different-authentication-methods",
-          "title": "Describe Different Authentication Methods",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/describe-different-authentication-methods/",
+          "uid": "learn.azure.design-application-architecture.describe-message-event-scenarios",
+          "title": "Describe Message Event Scenarios",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/describe-message-event-scenarios/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:31.179611",
+          "last_verified": "2025-09-16T13:59:41.521534",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.describe-multi-factor-authentication-mfa",
-          "title": "Describe Multi Factor Authentication Mfa",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/describe-multi-factor-authentication-mfa/",
+          "uid": "learn.azure.design-application-architecture.design-messaging-solution",
+          "title": "Design Messaging Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-messaging-solution/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:31.179623",
+          "last_verified": "2025-09-16T13:59:41.521561",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.describe-self-service-password-reset",
-          "title": "Describe Self Service Password Reset",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/describe-self-service-password-reset/",
+          "uid": "learn.azure.design-application-architecture.design-event-hub-messaging-solution",
+          "title": "Design Event Hub Messaging Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-event-hub-messaging-solution/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:31.179631",
+          "last_verified": "2025-09-16T13:59:41.521578",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.describe-password-protection-&amp;amp;-management",
-          "title": "Describe Password Protection &Amp;Amp; Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/describe-password-protection-&amp;amp;-management/",
+          "uid": "learn.azure.design-application-architecture.design-event-driven-solution",
+          "title": "Design Event Driven Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-event-driven-solution/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:31.179639",
+          "last_verified": "2025-09-16T13:59:41.521593",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.knowledge-check",
+          "uid": "learn.azure.design-application-architecture.design-caching-solution",
+          "title": "Design Caching Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-caching-solution/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:41.521608",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-application-architecture.design-api-integration",
+          "title": "Design Api Integration",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-api-integration/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:41.521633",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-application-architecture.design-automated-app-deployment-solution",
+          "title": "Design Automated App Deployment Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/design-automated-app-deployment-solution/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:41.521648",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-application-architecture.configuration-management-solution",
+          "title": "Configuration Management Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/configuration-management-solution/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:41.521662",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-application-architecture.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:31.179650",
+          "last_verified": "2025-09-16T13:59:41.521945",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-authentication-capabilities.summary-resources",
+          "uid": "learn.azure.design-application-architecture.summary-resources",
           "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-authentication-capabilities/summary-resources/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-application-architecture/summary-resources/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:31.179660",
+          "last_verified": "2025-09-16T13:59:41.522012",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:31.832299",
-      "last_refreshed": "2025-09-16T12:52:31.832263"
+      "generated_at": "2025-09-16T13:59:42.445672",
+      "last_refreshed": "2025-09-16T13:59:42.445652"
     },
-    "learn.azure.explore-access-management-capabilities": {
-      "uid": "learn.azure.explore-access-management-capabilities",
-      "title": "Describe access management capabilities of Microsoft Entra",
-      "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/",
-      "level": "Beginner",
+    "learn.azure.design-network-solutions": {
+      "uid": "learn.azure.design-network-solutions",
+      "title": "Design network solutions",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/",
+      "level": "Advanced",
       "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.explore-access-management-capabilities.introduction",
+          "uid": "learn.azure.design-network-solutions.introduction",
           "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/introduction/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.067287",
+          "last_verified": "2025-09-16T13:59:42.624391",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-access-management-capabilities.describe-conditional-access-its-benefits",
-          "title": "Describe Conditional Access Its Benefits",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/describe-conditional-access-its-benefits/",
+          "uid": "learn.azure.design-network-solutions.recommend-network-architecture-solution-based-workload-requirements",
+          "title": "Recommend Network Architecture Solution Based Workload Requirements",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/recommend-network-architecture-solution-based-workload-requirements/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.067315",
+          "last_verified": "2025-09-16T13:59:42.624928",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-access-management-capabilities.describe-global-secure-access",
-          "title": "Describe Global Secure Access",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/describe-global-secure-access/",
+          "uid": "learn.azure.design-network-solutions.design-patterns-for-azure-network-connectivity-services",
+          "title": "Design Patterns For Azure Network Connectivity Services",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/design-patterns-for-azure-network-connectivity-services/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.067321",
+          "last_verified": "2025-09-16T13:59:42.624983",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-access-management-capabilities.describe-azure-role-based-access-control-rbac",
-          "title": "Describe Azure Role Based Access Control Rbac",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/describe-azure-role-based-access-control-rbac/",
+          "uid": "learn.azure.design-network-solutions.design-outbound-connectivity-routing",
+          "title": "Design Outbound Connectivity Routing",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/design-outbound-connectivity-routing/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.067327",
+          "last_verified": "2025-09-16T13:59:42.624999",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-access-management-capabilities.knowledge-check",
+          "uid": "learn.azure.design-network-solutions.design-for-premises-connectivity-to-azure-virtual-networks",
+          "title": "Design For Premises Connectivity To Azure Virtual Networks",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/design-for-premises-connectivity-to-azure-virtual-networks/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:42.625011",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-network-solutions.choose-application-delivery-service",
+          "title": "Choose Application Delivery Service",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/choose-application-delivery-service/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:42.625023",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-network-solutions.design-for-application-delivery-services",
+          "title": "Design For Application Delivery Services",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/design-for-application-delivery-services/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:42.625034",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-network-solutions.design-for-application-protection-services",
+          "title": "Design For Application Protection Services",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/design-for-application-protection-services/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:42.625044",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-network-solutions.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:32.067332",
+          "last_verified": "2025-09-16T13:59:42.625054",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.explore-access-management-capabilities.summary-resources",
+          "uid": "learn.azure.design-network-solutions.summary-resources",
           "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/explore-access-management-capabilities/summary-resources/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-network-solutions/summary-resources/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:32.067337",
+          "last_verified": "2025-09-16T13:59:42.625064",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:32.569170",
-      "last_refreshed": "2025-09-16T12:52:32.569124"
+      "generated_at": "2025-09-16T13:59:43.721131",
+      "last_refreshed": "2025-09-16T13:59:43.721107"
     },
-    "learn.azure.describe-identity-protection-governance-capabilities": {
-      "uid": "learn.azure.describe-identity-protection-governance-capabilities",
-      "title": "Describe the identity protection and governance capabilities of Microsoft Entra",
-      "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/",
-      "level": "Beginner",
+    "learn.azure.design-migrations": {
+      "uid": "learn.azure.design-migrations",
+      "title": "Design migrations",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/",
+      "level": "Advanced",
       "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.introduction",
+          "uid": "learn.azure.design-migrations.introduction",
           "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/introduction/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686694",
+          "last_verified": "2025-09-16T13:59:43.970840",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-identity-governance",
-          "title": "Describe Identity Governance",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-identity-governance/",
+          "uid": "learn.azure.design-migrations.evaluate-migration-cloud-adoption-framework",
+          "title": "Evaluate Migration Cloud Adoption Framework",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/evaluate-migration-cloud-adoption-framework/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686722",
+          "last_verified": "2025-09-16T13:59:43.970878",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-what-is-entitlement-management-access-reviews",
-          "title": "Describe What Is Entitlement Management Access Reviews",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-what-is-entitlement-management-access-reviews/",
+          "uid": "learn.azure.design-migrations.describe-azure-migration-framework",
+          "title": "Describe Azure Migration Framework",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/describe-azure-migration-framework/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686733",
+          "last_verified": "2025-09-16T13:59:43.970893",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-entitlement-management-terms-use",
-          "title": "Describe Entitlement Management Terms Use",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-entitlement-management-terms-use/",
+          "uid": "learn.azure.design-migrations.assess-your-premises-workloads",
+          "title": "Assess Your Premises Workloads",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/assess-your-premises-workloads/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686740",
+          "last_verified": "2025-09-16T13:59:43.970905",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-privileged-identity-management",
-          "title": "Describe Privileged Identity Management",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-privileged-identity-management/",
+          "uid": "learn.azure.design-migrations.select-migration-tool",
+          "title": "Select Migration Tool",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/select-migration-tool/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686748",
+          "last_verified": "2025-09-16T13:59:43.970916",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-azure",
-          "title": "Describe Azure",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-azure/",
+          "uid": "learn.azure.design-migrations.migrate-your-databases",
+          "title": "Migrate Your Databases",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/migrate-your-databases/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686755",
+          "last_verified": "2025-09-16T13:59:43.970928",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-entra-verified-id",
-          "title": "Describe Entra Verified Id",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-entra-verified-id/",
+          "uid": "learn.azure.design-migrations.select-online-storage-migration-tool",
+          "title": "Select Online Storage Migration Tool",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/select-online-storage-migration-tool/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686762",
+          "last_verified": "2025-09-16T13:59:43.970939",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.describe-entra-integration-in-copilot",
-          "title": "Describe Entra Integration In Copilot",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/describe-entra-integration-in-copilot/",
+          "uid": "learn.azure.design-migrations.migrate-offline-data",
+          "title": "Migrate Offline Data",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/migrate-offline-data/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:32.686769",
+          "last_verified": "2025-09-16T13:59:43.970951",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.knowledge-check",
+          "uid": "learn.azure.design-migrations.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:32.686775",
+          "last_verified": "2025-09-16T13:59:43.970963",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.describe-identity-protection-governance-capabilities.summary-resources",
+          "uid": "learn.azure.design-migrations.summary-resources",
           "title": "Summary Resources",
-          "url": "https://learn.microsoft.com/en-us/training/modules/describe-identity-protection-governance-capabilities/summary-resources/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-migrations/summary-resources/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:32.686782",
+          "last_verified": "2025-09-16T13:59:43.970975",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:33.916194",
-      "last_refreshed": "2025-09-16T12:52:33.916167"
+      "generated_at": "2025-09-16T13:59:44.852225",
+      "last_refreshed": "2025-09-16T13:59:44.852015"
     },
-    "learn.azure.design-solutions-security-operations": {
-      "uid": "learn.azure.design-solutions-security-operations",
-      "title": "Design solutions for security operations",
-      "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/",
-      "level": "Expert",
-      "duration_minutes": 120,
+    "learn.azure.design-governance": {
+      "uid": "learn.azure.design-governance",
+      "title": "Design governance",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/",
+      "level": "Advanced",
+      "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.design-solutions-security-operations.introduction-security-operations-secops",
-          "title": "Introduction Security Operations Secops",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/introduction-security-operations-secops/",
+          "uid": "learn.azure.design-governance.introduction",
+          "title": "Introduction",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989753",
+          "last_verified": "2025-09-16T13:59:45.102588",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-security-operations-capabilities-hybrid-multicloud-environments",
-          "title": "Design Security Operations Capabilities Hybrid Multicloud Environments",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-security-operations-capabilities-hybrid-multicloud-environments/",
+          "uid": "learn.azure.design-governance.design-for-governance",
+          "title": "Design For Governance",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-governance/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989776",
+          "last_verified": "2025-09-16T13:59:45.102639",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-centralized-logging-auditing",
-          "title": "Design Centralized Logging Auditing",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-centralized-logging-auditing/",
+          "uid": "learn.azure.design-governance.design-for-management-groups",
+          "title": "Design For Management Groups",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-management-groups/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989782",
+          "last_verified": "2025-09-16T13:59:45.102655",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-security-information-event-management-solutions",
-          "title": "Design Security Information Event Management Solutions",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-security-information-event-management-solutions/",
+          "uid": "learn.azure.design-governance.design-for-subscriptions",
+          "title": "Design For Subscriptions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-subscriptions/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989788",
+          "last_verified": "2025-09-16T13:59:45.102667",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-solutions-detection-response",
-          "title": "Design Solutions Detection Response",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-solutions-detection-response/",
+          "uid": "learn.azure.design-governance.design-for-resource-groups",
+          "title": "Design For Resource Groups",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-resource-groups/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989792",
+          "last_verified": "2025-09-16T13:59:45.102681",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-solution-security-orchestration-automation-response",
-          "title": "Design Solution Security Orchestration Automation Response",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-solution-security-orchestration-automation-response/",
+          "uid": "learn.azure.design-governance.design-for-resource-tags",
+          "title": "Design For Resource Tags",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-resource-tags/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989798",
+          "last_verified": "2025-09-16T13:59:45.102691",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-security-workflows",
-          "title": "Design Security Workflows",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-security-workflows/",
+          "uid": "learn.azure.design-governance.design-for-azure-policy",
+          "title": "Design For Azure Policy",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-azure-policy/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989803",
+          "last_verified": "2025-09-16T13:59:45.102698",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.design-threat-detection-coverage",
-          "title": "Design Threat Detection Coverage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/design-threat-detection-coverage/",
+          "uid": "learn.azure.design-governance.design-for-role-based-access-control",
+          "title": "Design For Role Based Access Control",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-role-based-access-control/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:33.989808",
+          "last_verified": "2025-09-16T13:59:45.102708",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.knowledge-check",
+          "uid": "learn.azure.design-governance.design-for-azure-landing-zones",
+          "title": "Design For Azure Landing Zones",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/design-for-azure-landing-zones/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:45.102716",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-governance.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:33.989815",
+          "last_verified": "2025-09-16T13:59:45.102723",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-security-operations.summary",
+          "uid": "learn.azure.design-governance.summary-resources",
+          "title": "Summary Resources",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-governance/summary-resources/",
+          "duration_minutes": 0,
+          "type": "summary",
+          "last_verified": "2025-09-16T13:59:45.102732",
+          "status": "missing"
+        }
+      ],
+      "generated_at": "2025-09-16T13:59:46.068453",
+      "last_refreshed": "2025-09-16T13:59:46.068416"
+    },
+    "learn.azure.design-authentication-authorization-solutions": {
+      "uid": "learn.azure.design-authentication-authorization-solutions",
+      "title": "Design authentication and authorization solutions",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/",
+      "level": "Advanced",
+      "duration_minutes": 0,
+      "units": [
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.introduction",
+          "title": "Introduction",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/introduction/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370352",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-identity-access-management",
+          "title": "Design For Identity Access Management",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-identity-access-management/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370401",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-azure-active-directory",
+          "title": "Design For Azure Active Directory",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-azure-active-directory/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370418",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-azure-ad-b2b",
+          "title": "Design For Azure Ad B2B",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-azure-ad-b2b/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370434",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-azure-ad-b2c",
+          "title": "Design For Azure Ad B2C",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-azure-ad-b2c/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370448",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-conditional-access",
+          "title": "Design For Conditional Access",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-conditional-access/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370465",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-identity-protection",
+          "title": "Design For Identity Protection",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-identity-protection/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370479",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-for-access-reviews",
+          "title": "Design For Access Reviews",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-for-access-reviews/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370491",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-service-principles",
+          "title": "Design Service Principles",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-service-principles/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370516",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-managed-identities",
+          "title": "Design Managed Identities",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-managed-identities/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370602",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.design-key-secret-management-azure-key-vault",
+          "title": "Design Key Secret Management Azure Key Vault",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/design-key-secret-management-azure-key-vault/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:46.370625",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.knowledge-check",
+          "title": "Knowledge Check",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/knowledge-check/",
+          "duration_minutes": 0,
+          "type": "knowledge-check",
+          "last_verified": "2025-09-16T13:59:46.370643",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-authentication-authorization-solutions.summary-resources",
+          "title": "Summary Resources",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-authentication-authorization-solutions/summary-resources/",
+          "duration_minutes": 0,
+          "type": "summary",
+          "last_verified": "2025-09-16T13:59:46.370667",
+          "status": "missing"
+        }
+      ],
+      "generated_at": "2025-09-16T13:59:47.486218",
+      "last_refreshed": "2025-09-16T13:59:47.486181"
+    },
+    "learn.azure.design-solution-to-log-monitor-azure-resources": {
+      "uid": "learn.azure.design-solution-to-log-monitor-azure-resources",
+      "title": "Design a solution to log and monitor Azure resources",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/",
+      "level": "Advanced",
+      "duration_minutes": 0,
+      "units": [
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.introduction",
+          "title": "Introduction",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/introduction/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.742853",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.design-for-azure-monitor-data-sources",
+          "title": "Design For Azure Monitor Data Sources",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/design-for-azure-monitor-data-sources/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.742970",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.design-for-log-analytics",
+          "title": "Design For Log Analytics",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/design-for-log-analytics/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.742990",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.design-for-azure-workbooks-insights",
+          "title": "Design For Azure Workbooks Insights",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/design-for-azure-workbooks-insights/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.743004",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.design-for-azure-data-explorer",
+          "title": "Design For Azure Data Explorer",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/design-for-azure-data-explorer/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.743018",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.knowledge-check",
+          "title": "Knowledge Check",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/knowledge-check/",
+          "duration_minutes": 0,
+          "type": "knowledge-check",
+          "last_verified": "2025-09-16T13:59:47.743049",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-to-log-monitor-azure-resources.summand-resources",
+          "title": "Summand Resources",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-to-log-monitor-azure-resources/summand-resources/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:47.743065",
+          "status": "missing"
+        }
+      ],
+      "generated_at": "2025-09-16T13:59:48.409396",
+      "last_refreshed": "2025-09-16T13:59:48.409358"
+    },
+    "learn.azure.describe-high-availability-disaster-recovery-strategies": {
+      "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies",
+      "title": "Describe high availability and disaster recovery strategies",
+      "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/",
+      "level": "Advanced",
+      "duration_minutes": 0,
+      "units": [
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.introduction",
+          "title": "Introduction",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/introduction/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733029",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.describe-recovery-time-objective-recovery-point-objective",
+          "title": "Describe Recovery Time Objective Recovery Point Objective",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/describe-recovery-time-objective-recovery-point-objective/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733080",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.explore-ha-dr-options",
+          "title": "Explore Ha Dr Options",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/explore-ha-dr-options/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733189",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.describe-azure-ha-dr-features-for-azure-virtual-machines",
+          "title": "Describe Azure Ha Dr Features For Azure Virtual Machines",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/describe-azure-ha-dr-features-for-azure-virtual-machines/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733469",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.describe-ha-dr-options-for-paas-deployments",
+          "title": "Describe Ha Dr Options For Paas Deployments",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/describe-ha-dr-options-for-paas-deployments/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733488",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.explore-iaas-ha-dr-solution",
+          "title": "Explore Iaas Ha Dr Solution",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/explore-iaas-ha-dr-solution/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733502",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.describe-hybrid-solutions",
+          "title": "Describe Hybrid Solutions",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/describe-hybrid-solutions/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:48.733516",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.knowledge-check",
+          "title": "Knowledge Check",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/knowledge-check/",
+          "duration_minutes": 0,
+          "type": "knowledge-check",
+          "last_verified": "2025-09-16T13:59:48.733529",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies.summary",
           "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-security-operations/summary/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/describe-high-availability-disaster-recovery-strategies/summary/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:33.989822",
+          "last_verified": "2025-09-16T13:59:48.733624",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:34.294233",
-      "last_refreshed": "2025-09-16T12:52:34.294204"
+      "generated_at": "2025-09-16T13:59:49.678516",
+      "last_refreshed": "2025-09-16T13:59:49.678479"
     },
-    "learn.azure.design-solutions-identity-access-management": {
-      "uid": "learn.azure.design-solutions-identity-access-management",
-      "title": "Design solutions for identity and access management",
-      "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/",
-      "level": "Expert",
-      "duration_minutes": 110,
+    "learn.azure.design-solution-for-backup-disaster-recovery": {
+      "uid": "learn.azure.design-solution-for-backup-disaster-recovery",
+      "title": "Design a solution for backup and disaster recovery",
+      "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/",
+      "level": "Advanced",
+      "duration_minutes": 0,
       "units": [
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.introduction",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.introduction",
           "title": "Introduction",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/introduction/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/introduction/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435479",
+          "last_verified": "2025-09-16T13:59:50.235121",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.design-cloud-hybrid-multi-cloud-access-strategies",
-          "title": "Design Cloud Hybrid Multi Cloud Access Strategies",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/design-cloud-hybrid-multi-cloud-access-strategies/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-recovery",
+          "title": "Design Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-recovery/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435519",
+          "last_verified": "2025-09-16T13:59:50.235174",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.design-solution-external-identities",
-          "title": "Design Solution External Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/design-solution-external-identities/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-backup",
+          "title": "Design For Azure Backup",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-backup/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435536",
+          "last_verified": "2025-09-16T13:59:50.235196",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.design-modern-authentication-authorization-strategies",
-          "title": "Design Modern Authentication Authorization Strategies",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/design-modern-authentication-authorization-strategies/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-blob-backup-recovery",
+          "title": "Design For Azure Blob Backup Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-blob-backup-recovery/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435549",
+          "last_verified": "2025-09-16T13:59:50.235215",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.align-conditional-access-zero-trust",
-          "title": "Align Conditional Access Zero Trust",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/align-conditional-access-zero-trust/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-files-backup-recovery",
+          "title": "Design For Azure Files Backup Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-files-backup-recovery/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435562",
+          "last_verified": "2025-09-16T13:59:50.235233",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.specify-requirements-secure-active-directory-domain-services",
-          "title": "Specify Requirements Secure Active Directory Domain Services",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/specify-requirements-secure-active-directory-domain-services/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-virtual-machine-backup-recovery",
+          "title": "Design For Azure Virtual Machine Backup Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-virtual-machine-backup-recovery/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435577",
+          "last_verified": "2025-09-16T13:59:50.235285",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.design-solution-manage-secrets-keys-certificates",
-          "title": "Design Solution Manage Secrets Keys Certificates",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/design-solution-manage-secrets-keys-certificates/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-sql-backup-recovery",
+          "title": "Design For Azure Sql Backup Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-sql-backup-recovery/",
           "duration_minutes": 0,
           "type": "content",
-          "last_verified": "2025-09-16T12:52:34.435591",
+          "last_verified": "2025-09-16T13:59:50.235305",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.knowledge-check",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.design-for-azure-site-recovery",
+          "title": "Design For Azure Site Recovery",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/design-for-azure-site-recovery/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T13:59:50.235325",
+          "status": "missing"
+        },
+        {
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.knowledge-check",
           "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/knowledge-check/",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/knowledge-check/",
           "duration_minutes": 0,
           "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:34.435608",
+          "last_verified": "2025-09-16T13:59:50.235343",
           "status": "missing"
         },
         {
-          "uid": "learn.azure.design-solutions-identity-access-management.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-identity-access-management/summary/",
+          "uid": "learn.azure.design-solution-for-backup-disaster-recovery.summary-resources",
+          "title": "Summary Resources",
+          "url": "https://learn.microsoft.com/en-us/training/modules/design-solution-for-backup-disaster-recovery/summary-resources/",
           "duration_minutes": 0,
           "type": "summary",
-          "last_verified": "2025-09-16T12:52:34.435622",
+          "last_verified": "2025-09-16T13:59:50.235361",
           "status": "missing"
         }
       ],
-      "generated_at": "2025-09-16T12:52:34.710791",
-      "last_refreshed": "2025-09-16T12:52:34.710772"
-    },
-    "learn.azure.design-solutions-secure-organization-data": {
-      "uid": "learn.azure.design-solutions-secure-organization-data",
-      "title": "Design solutions for securing an organization's data",
-      "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/",
-      "level": "Expert",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.introduction-data-security",
-          "title": "Introduction Data Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/introduction-data-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886472",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.design-solution-data-discovery-classification-microsoft-purview",
-          "title": "Design Solution Data Discovery Classification Microsoft Purview",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/design-solution-data-discovery-classification-microsoft-purview/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886527",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.design-solution-data-protection",
-          "title": "Design Solution Data Protection",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/design-solution-data-protection/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886541",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.design-data-security-azure-workloads",
-          "title": "Design Data Security Azure Workloads",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/design-data-security-azure-workloads/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886550",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.design-security-azure-storage",
-          "title": "Design Security Azure Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/design-security-azure-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886559",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.design-security-defender-sql-storage",
-          "title": "Design Security Defender Sql Storage",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/design-security-defender-sql-storage/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:34.886568",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:34.886578",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-organization-data.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-organization-data/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:34.886586",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:35.616999",
-      "last_refreshed": "2025-09-16T12:52:35.616981"
-    },
-    "learn.azure.design-solutions-secure-applications": {
-      "uid": "learn.azure.design-solutions-secure-applications",
-      "title": "Design solutions for securing applications",
-      "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/",
-      "level": "Expert",
-      "duration_minutes": 0,
-      "units": [
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.introduction-application-security",
-          "title": "Introduction Application Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/introduction-application-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753340",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.design-implement-standards-secure-application-development",
-          "title": "Design Implement Standards Secure Application Development",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/design-implement-standards-secure-application-development/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753373",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.evaluate-security-posture-existing-application-portfolios",
-          "title": "Evaluate Security Posture Existing Application Portfolios",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/evaluate-security-posture-existing-application-portfolios/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753384",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.evaluate-application-threats-threat-modeling",
-          "title": "Evaluate Application Threats Threat Modeling",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/evaluate-application-threats-threat-modeling/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753477",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.design-security-lifecycle-strategy-applications",
-          "title": "Design Security Lifecycle Strategy Applications",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/design-security-lifecycle-strategy-applications/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753500",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.secure-access-workload-identities",
-          "title": "Secure Access Workload Identities",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/secure-access-workload-identities/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753515",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.design-solution-api-management-security",
-          "title": "Design Solution Api Management Security",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/design-solution-api-management-security/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753526",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.design-solution-secure-access-applications",
-          "title": "Design Solution Secure Access Applications",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/design-solution-secure-access-applications/",
-          "duration_minutes": 0,
-          "type": "content",
-          "last_verified": "2025-09-16T12:52:35.753536",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.knowledge-check",
-          "title": "Knowledge Check",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/knowledge-check/",
-          "duration_minutes": 0,
-          "type": "knowledge-check",
-          "last_verified": "2025-09-16T12:52:35.753546",
-          "status": "missing"
-        },
-        {
-          "uid": "learn.azure.design-solutions-secure-applications.summary",
-          "title": "Summary",
-          "url": "https://learn.microsoft.com/en-us/training/modules/design-solutions-secure-applications/summary/",
-          "duration_minutes": 0,
-          "type": "summary",
-          "last_verified": "2025-09-16T12:52:35.753554",
-          "status": "missing"
-        }
-      ],
-      "generated_at": "2025-09-16T12:52:36.648707",
-      "last_refreshed": "2025-09-16T12:52:36.648666"
+      "generated_at": "2025-09-16T13:59:51.020852",
+      "last_refreshed": "2025-09-16T13:59:51.020816"
     }
   }
 }

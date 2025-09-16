@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2025-09-16T12:52:36.654832",
+  "generated_at": "2025-09-16T13:59:51.030070",
   "roles": {
     "ai-engineer": {
       "certifications": [
@@ -232,13 +232,67 @@
           "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/",
           "learning_paths": [
             {
-              "id": "architect-azure-infrastructure",
-              "title": "Architect Azure infrastructure",
-              "url": "https://learn.microsoft.com/en-us/training/paths/architect-azure-infrastructure/",
+              "id": "design-infrastructure-solutions",
+              "title": "AZ-305: Design infrastructure solutions",
+              "url": "https://learn.microsoft.com/en-us/training/paths/design-infranstructure-solutions/",
               "modules": [
                 {
-                  "uid": "learn.wwl.prepare-azure-ai-development",
-                  "status": "pending",
+                  "uid": "learn.azure.design-compute-solution",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-application-architecture",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-network-solutions",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-migrations",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            },
+            {
+              "id": "design-identity-governance-monitor-solutions",
+              "title": "AZ-305: Design identity, governance, and monitor solutions",
+              "url": "https://learn.microsoft.com/en-us/training/paths/design-identity-governance-monitor-solutions/",
+              "modules": [
+                {
+                  "uid": "learn.azure.design-governance",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-authentication-authorization-solutions",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-solution-to-log-monitor-azure-resources",
+                  "status": "refreshed",
+                  "last_error": null
+                }
+              ]
+            },
+            {
+              "id": "design-business-continuity-solutions",
+              "title": "AZ-305: Design business continuity solutions",
+              "url": "https://learn.microsoft.com/en-us/training/paths/design-business-continuity-solutions/",
+              "modules": [
+                {
+                  "uid": "learn.azure.describe-high-availability-disaster-recovery-strategies",
+                  "status": "refreshed",
+                  "last_error": null
+                },
+                {
+                  "uid": "learn.azure.design-solution-for-backup-disaster-recovery",
+                  "status": "refreshed",
                   "last_error": null
                 }
               ]
