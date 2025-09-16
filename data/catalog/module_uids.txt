@@ -1,0 +1,14 @@
+# Seed list of validated Microsoft Learn module UIDs with explicit URLs
+# Format: <module_uid> <module_url> [<level>] [<duration_minutes>]
+# Only include modules that have been manually verified to exist (avoid slug guessing).
+
+# 1. Prepare to develop AI solutions on Azure
+learn.wwl.prepare-azure-ai-development https://learn.microsoft.com/en-us/training/modules/prepare-azure-ai-development/ Intermediate 75
+
+# 2. Explore Azure OpenAI (validated)
+learn.azure-ai-fundamentals.explore-azure-openai https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/ Beginner 45
+
+# 3. Responsible AI (validated fundamentals module)
+learn.azure-ai-fundamentals.explore-responsible-ai https://learn.microsoft.com/en-us/training/modules/explore-responsible-ai/ Beginner 35
+
+# TODO: Add additional modules only after manual URL verification.

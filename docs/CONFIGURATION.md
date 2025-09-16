@@ -124,3 +124,57 @@ CACHE_DIR=./cache              # Cache directory
 CACHE_MAX_AGE=604800           # Cache lifetime in seconds (7 days)
 CACHE_CLEANUP_INTERVAL=86400   # Cleanup interval in seconds (1 day)
 ```
+
+## URL Manifest (Microsoft Learn Metadata) Persistence
+
+The application maintains a manifest of Microsoft Learn module + unit URLs and metadata. By default this is stored locally at `data/catalog/url_manifest.json`.
+
+For cloud durability and sharing across replicas you can enable Azure Blob Storage backing.
+
+Environment variables:
+
+```env
+# Enable blob-backed manifest mode
+LEARN_MANIFEST_USE_BLOB=true
+
+# Required when blob mode enabled
+LEARN_MANIFEST_STORAGE_ACCOUNT=edutainment52052
+
+# Optional overrides (defaults shown)
+LEARN_MANIFEST_CONTAINER=learn-metadata
+LEARN_MANIFEST_BLOB=url_manifest.json
+
+# Optional: override local file path (still used as on-disk cache layer)
+URL_MANIFEST_PATH=data/catalog/url_manifest.json
+
+# Optional: refresh interval (days) before a module page is re-fetched
+URL_MANIFEST_REFRESH_DAYS=30
+```
+
+Behavior:
+1. On first access the cache attempts to download the blob (if it exists) into memory; local file contents (if present) are merged afterwards (local can augment or override for development).
+2. Every save (module refresh) uploads the full JSON manifest to the configured blob (best-effort; failures are swallowed and logged at lower layers to avoid request impact).
+3. If blob initialization fails (missing libraries, auth error, role not assigned) the system transparently falls back to the local file cache.
+
+Azure Requirements:
+- The workload identity (managed identity or service principal) must have at least the role: Storage Blob Data Contributor (or equivalent) scoped to the storage account or container.
+- Container (`learn-metadata`) is auto-created on first use if permissions allow.
+
+CLI Sync Utility:
+Use `scripts/sync_manifest_storage.py` for explicit push/pull/diff operations when doing offline curation.
+
+Examples:
+```bash
+# Show diff between local and remote
+python scripts/sync_manifest_storage.py --diff
+
+# Pull remote to local
+python scripts/sync_manifest_storage.py --pull
+
+# Push local to remote
+python scripts/sync_manifest_storage.py --push
+```
+
+Troubleshooting:
+- 403 AuthorizationFailure when listing or uploading: ensure the identity has the required role assignment; confirm correct storage account name and no typos.
+- Blob not created: verify `LEARN_MANIFEST_USE_BLOB=true` and that dependencies `azure-identity`, `azure-storage-blob` are installed (they are in `requirements.txt`).

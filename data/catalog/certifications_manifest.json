@@ -1,0 +1,76 @@
+{
+    "version": 1,
+    "generated_at": "2025-09-15T00:00:00Z",
+    "roles": {
+        "ai-engineer": {
+            "certifications": [
+                {
+                    "id": "azure-ai-engineer-associate",
+                    "title": "Azure AI Engineer Associate",
+                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-ai-engineer/",
+                    "learning_paths": [
+                        {
+                            "id": "azure-ai-foundations",
+                            "title": "Azure AI foundations",
+                            "url": "https://learn.microsoft.com/en-us/training/paths/azure-ai-foundations/",
+                            "modules": [
+                                {
+                                    "uid": "learn.wwl.prepare-azure-ai-development",
+                                    "status": "refreshed"
+                                },
+                                {
+                                    "uid": "learn.azure-ai-fundamentals.explore-azure-openai",
+                                    "status": "refreshed"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "security-engineer": {
+            "certifications": [
+                {
+                    "id": "azure-security-engineer-associate",
+                    "title": "Azure Security Engineer Associate",
+                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-security-engineer/",
+                    "learning_paths": [
+                        {
+                            "id": "secure-azure-solutions-foundations",
+                            "title": "Secure Azure solutions foundations",
+                            "url": "https://learn.microsoft.com/en-us/training/paths/secure-azure-solutions-foundations/",
+                            "modules": [
+                                {
+                                    "uid": "learn.wwl.prepare-azure-ai-development",
+                                    "status": "pending"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "solution-architect": {
+            "certifications": [
+                {
+                    "id": "azure-solutions-architect-expert",
+                    "title": "Azure Solutions Architect Expert",
+                    "url": "https://learn.microsoft.com/en-us/credentials/certifications/azure-solutions-architect/",
+                    "learning_paths": [
+                        {
+                            "id": "architect-azure-infrastructure",
+                            "title": "Architect Azure infrastructure",
+                            "url": "https://learn.microsoft.com/en-us/training/paths/architect-azure-infrastructure/",
+                            "modules": [
+                                {
+                                    "uid": "learn.wwl.prepare-azure-ai-development",
+                                    "status": "pending"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

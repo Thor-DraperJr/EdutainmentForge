@@ -1,0 +1,8 @@
+# Ensure src package path is added so 'content' and other modules resolve in tests
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+SRC = ROOT / 'src'
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))

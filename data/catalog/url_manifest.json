@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "generated_at": "2025-09-16T03:04:32.522024",
+  "modules": {
+    "learn.azure-ai-fundamentals.explore-azure-openai": {
+      "uid": "learn.azure-ai-fundamentals.explore-azure-openai",
+      "title": "Plan and prepare to develop AI solutions on Azure",
+      "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/",
+      "level": "Unknown",
+      "duration_minutes": 0,
+      "units": [
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.introduction",
+          "title": "Introduction",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/introduction/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503200",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.what-is-ai",
+          "title": "What Is Ai",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/what-is-ai/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503230",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.azure-ai-services",
+          "title": "Azure Ai Services",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/azure-ai-services/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503237",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.azure-ai-foundry",
+          "title": "Azure Ai Foundry",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/azure-ai-foundry/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503242",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.tools-and-sdks",
+          "title": "Tools And Sdks",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/tools-and-sdks/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503247",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.responsible-ai",
+          "title": "Responsible Ai",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/responsible-ai/",
+          "duration_minutes": 0,
+          "type": "content",
+          "last_verified": "2025-09-16T03:04:32.503252",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.exercise-explore-ai-foundry",
+          "title": "Exercise Explore Ai Foundry",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/exercise-explore-ai-foundry/",
+          "duration_minutes": 0,
+          "type": "exercise",
+          "last_verified": "2025-09-16T03:04:32.503257",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.knowledge-check",
+          "title": "Knowledge Check",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/knowledge-check/",
+          "duration_minutes": 0,
+          "type": "knowledge-check",
+          "last_verified": "2025-09-16T03:04:32.503262",
+          "status": "ok"
+        },
+        {
+          "uid": "learn.azure-ai-fundamentals.explore-azure-openai.summary",
+          "title": "Summary",
+          "url": "https://learn.microsoft.com/en-us/training/modules/explore-azure-openai/summary/",
+          "duration_minutes": 0,
+          "type": "summary",
+          "last_verified": "2025-09-16T03:04:32.503267",
+          "status": "ok"
+        }
+      ],
+      "generated_at": "2025-09-16T03:04:32.521772",
+      "last_refreshed": "2025-09-16T03:04:32.521734"
+    }
+  }
+}

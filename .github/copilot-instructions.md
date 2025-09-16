@@ -1,8 +1,11 @@
 #  Project Overview
-Python Flask app that converts Microsoft Learn content into AI-enhanced educational podcasts using Azure OpenAI (gpt-4o-mini) and Azure Speech Services. This is for the Hackathon 2025 challenge, so we don't need to use robust production practices, but we should follow best practices for security, code quality, and Azure integration.
+Python Flask app that converts Microsoft Learn content into AI-enhanced educational podcasts using Azure OpenAI and Azure Speech Services. This is for the Hackathon 2025 challenge, so we don't need to use robust production practices, but we should follow best practices for security, code quality, and Azure integration. We don't need to worry about scaling or high availability, but we should be cost conscious.
+
+There is no local development environment. The app itself is in a lab environment in Azure, and all changes should be made to the azure environment directly.
 
 ## Copilot Instructions
 - Attempt to make environment changes with the Azure MCP server first.
+- When asking for the name of an Azure resource, use the Azure MCP server.
 - When troubleshooting, check the Microsoft Docs MCP server for best practices.
 - Ensure all secrets are stored in Azure Key Vault and accessed via environment variables.
 
@@ -10,7 +13,9 @@ Python Flask app that converts Microsoft Learn content into AI-enhanced educatio
 
 ### Security
 - Never hardcode secrets - use environment variables or Key Vault
-- Load config: Local `.env` → Production Key Vault secrets
+- Load config: Local `.env` → Prod
+
++uction Key Vault secrets
 
 ### Code Standards
 - Follow PEP 8, snake_case functions, PascalCase classes
@@ -33,7 +38,7 @@ Python Flask app that converts Microsoft Learn content into AI-enhanced educatio
 ## Prompt Commands
 
 ### /new-session
-Goal: Conduct a fresh analysis of the project, ignoring previous context. Give me a concise summary of the project purpose, architecture, and key components. Identify any potential improvements or optimizations.
+Goal: Conduct a fresh analysis of the project, ignoring previous context. Give me a concise summary of the project purpose, architecture, and key components. Also, print out the tree file structure in the terminal.
 
 ### /workflow-check
 
@@ -45,18 +50,3 @@ Assistant Response Should Include:
 	 - List recent runs.
 	 - Watch latest run until completion.
 	 - View logs of latest run.
-3. Reminder how to confirm deployed commit via app (`/prompt` version command).
-
-Expected Output Template (example):
-```
-Latest Run: success (completed) commit=abc1234
-Commands:
-	gh run list --branch main --limit 3
-	gh run watch $(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId')
-	gh run view $(gh run list --branch main --limit 1 --json databaseId -q '.[0].databaseId') --log
-Verify Deploy:
-	curl -s https://YOUR_HOST/healthz | jq .
-	curl -s -X POST -H 'Content-Type: application/json' -d '{"command":"version"}' https://YOUR_HOST/prompt | jq .
-```
-
-Keep answers terse. Offer extended diagnostics only if the user explicitly asks for details.
