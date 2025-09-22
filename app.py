@@ -9,6 +9,7 @@ Requires user authentication via Microsoft Entra ID (Azure AD B2C).
 import os
 import sys
 import re
+import json
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
 from flask_session import Session
@@ -1111,6 +1112,19 @@ def list_podcasts():
         output_dir = Path("output")
         podcasts = []
         
+        # Load feedback data
+        feedback_data = {}
+        feedback_file = Path("data/feedback/podcast_feedback.json")
+        if feedback_file.exists():
+            try:
+                with open(feedback_file, 'r') as f:
+                    feedback_data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not read feedback file: {e}")
+        
+        # Get current user's ID for personalized feedback display
+        user_id = session.get('user', {}).get('id', 'anonymous')
+        
         if output_dir.exists():
             for wav_file in output_dir.glob("*.wav"):
                 # Try to find corresponding script file
@@ -1135,6 +1149,12 @@ def list_podcasts():
                 modified_time = wav_file.stat().st_mtime
                 formatted_date = datetime.fromtimestamp(modified_time).strftime('%Y-%m-%d %H:%M')
                 
+                # Get feedback data for this podcast
+                podcast_feedback = feedback_data.get(wav_file.name, {})
+                thumbs_up_count = podcast_feedback.get('thumbs_up', 0)
+                thumbs_down_count = podcast_feedback.get('thumbs_down', 0)
+                user_feedback = podcast_feedback.get('user_feedback', {}).get(user_id)
+                
                 podcast_info = {
                     'name': wav_file.name,
                     'title': wav_file.stem.replace('_', ' '),
@@ -1145,7 +1165,12 @@ def list_podcasts():
                     'source_url': '',
                     'duration': duration_str,
                     'duration_seconds': duration_seconds,  # For statistics
-                    'word_count': ''
+                    'word_count': '',
+                    'feedback': {
+                        'thumbs_up_count': thumbs_up_count,
+                        'thumbs_down_count': thumbs_down_count,
+                        'user_feedback': user_feedback  # User's current feedback
+                    }
                 }
                 
                 podcasts.append(podcast_info)
@@ -1192,6 +1217,112 @@ def delete_podcast(filename):
         else:
             return jsonify({'error': 'Podcast file not found'}), 404
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/podcast-feedback', methods=['POST'])
+@_require_auth
+def submit_podcast_feedback():
+    """Submit feedback for a podcast (thumbs up/down)."""
+    try:
+        data = request.get_json()
+        podcast_name = data.get('podcast_name', '').strip()
+        feedback_type = data.get('feedback_type', '').strip()
+        user_id = session.get('user', {}).get('id', 'anonymous')
+        
+        if not podcast_name:
+            return jsonify({'error': 'Podcast name is required'}), 400
+        
+        if feedback_type not in ['thumbs_up', 'thumbs_down']:
+            return jsonify({'error': 'Invalid feedback type. Must be thumbs_up or thumbs_down'}), 400
+        
+        # Verify podcast exists
+        output_dir = Path("output")
+        podcast_file = output_dir / podcast_name
+        if not podcast_file.exists() or not podcast_file.suffix == '.wav':
+            return jsonify({'error': 'Podcast not found'}), 404
+        
+        # Store feedback in a simple JSON file structure
+        # In a production system, this would be stored in a database
+        feedback_dir = Path("data/feedback")
+        feedback_dir.mkdir(parents=True, exist_ok=True)
+        
+        feedback_file = feedback_dir / "podcast_feedback.json"
+        
+        # Load existing feedback data
+        feedback_data = {}
+        if feedback_file.exists():
+            try:
+                with open(feedback_file, 'r') as f:
+                    feedback_data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not read existing feedback file: {e}")
+                feedback_data = {}
+        
+        # Initialize podcast entry if it doesn't exist
+        if podcast_name not in feedback_data:
+            feedback_data[podcast_name] = {
+                'thumbs_up': 0,
+                'thumbs_down': 0,
+                'user_feedback': {}
+            }
+        
+        # Update user's feedback (overwrite if exists)
+        old_feedback = feedback_data[podcast_name]['user_feedback'].get(user_id)
+        if old_feedback and old_feedback != feedback_type:
+            # User changed their feedback, decrement old count
+            feedback_data[podcast_name][old_feedback] = max(0, feedback_data[podcast_name][old_feedback] - 1)
+        elif old_feedback == feedback_type:
+            # User clicked same feedback twice - remove their feedback
+            feedback_data[podcast_name][feedback_type] = max(0, feedback_data[podcast_name][feedback_type] - 1)
+            del feedback_data[podcast_name]['user_feedback'][user_id]
+            
+            # Save updated feedback data
+            try:
+                with open(feedback_file, 'w') as f:
+                    json.dump(feedback_data, f, indent=2)
+            except Exception as e:
+                logger.error(f"Could not save feedback data: {e}")
+                return jsonify({'error': 'Failed to save feedback'}), 500
+            
+            return jsonify({
+                'message': 'Feedback removed',
+                'feedback_type': None,
+                'thumbs_up_count': feedback_data[podcast_name]['thumbs_up'],
+                'thumbs_down_count': feedback_data[podcast_name]['thumbs_down']
+            })
+        
+        # Add/update user's new feedback
+        if not old_feedback:
+            # New feedback
+            feedback_data[podcast_name][feedback_type] += 1
+        # If old_feedback existed and was different, we already decremented it above
+        elif old_feedback != feedback_type:
+            feedback_data[podcast_name][feedback_type] += 1
+        
+        feedback_data[podcast_name]['user_feedback'][user_id] = feedback_type
+        
+        # Add timestamp for analytics
+        feedback_data[podcast_name]['last_updated'] = datetime.now().isoformat()
+        
+        # Save updated feedback data
+        try:
+            with open(feedback_file, 'w') as f:
+                json.dump(feedback_data, f, indent=2)
+        except Exception as e:
+            logger.error(f"Could not save feedback data: {e}")
+            return jsonify({'error': 'Failed to save feedback'}), 500
+        
+        logger.info(f"User {user_id} gave {feedback_type} feedback for podcast {podcast_name}")
+        
+        return jsonify({
+            'message': 'Feedback submitted successfully',
+            'feedback_type': feedback_type,
+            'thumbs_up_count': feedback_data[podcast_name]['thumbs_up'],
+            'thumbs_down_count': feedback_data[podcast_name]['thumbs_down']
+        })
+        
+    except Exception as e:
+        logger.error(f"Error submitting podcast feedback: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/health')

@@ -231,6 +231,89 @@
             background: #e53935;
         }
         
+        .feedback-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feedback-label {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .feedback-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-feedback {
+            padding: 8px 12px;
+            border: 2px solid #e1e5e9;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+        }
+        
+        .btn-feedback:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-feedback.thumbs-up {
+            color: #4caf50;
+            border-color: #4caf50;
+        }
+        
+        .btn-feedback.thumbs-up:hover {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .btn-feedback.thumbs-up.active {
+            background: #4caf50;
+            color: white;
+            border-color: #388e3c;
+        }
+        
+        .btn-feedback.thumbs-down {
+            color: #f44336;
+            border-color: #f44336;
+        }
+        
+        .btn-feedback.thumbs-down:hover {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-feedback.thumbs-down.active {
+            background: #f44336;
+            color: white;
+            border-color: #d32f2f;
+        }
+        
+        .btn-feedback:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .feedback-status {
+            font-size: 0.8em;
+            color: #666;
+            margin-left: 10px;
+        }
+        
         .loading {
             text-align: center;
             padding: 50px;
@@ -498,7 +581,24 @@
                 return;
             }
             
-            gridDiv.innerHTML = podcasts.map(podcast => `
+            gridDiv.innerHTML = podcasts.map(podcast => {
+                const feedback = podcast.feedback || {};
+                const thumbsUpCount = feedback.thumbs_up_count || 0;
+                const thumbsDownCount = feedback.thumbs_down_count || 0;
+                const userFeedback = feedback.user_feedback;
+                const totalFeedback = thumbsUpCount + thumbsDownCount;
+                
+                // Determine which button should be active
+                const thumbsUpActive = userFeedback === 'thumbs_up' ? ' active' : '';
+                const thumbsDownActive = userFeedback === 'thumbs_down' ? ' active' : '';
+                
+                // Create feedback status text
+                let feedbackStatusText = '';
+                if (totalFeedback > 0) {
+                    feedbackStatusText = `👍 ${thumbsUpCount} · 👎 ${thumbsDownCount}`;
+                }
+                
+                return `
                 <div class="podcast-card">
                     <div class="podcast-title">${escapeHtml(podcast.title)}</div>
                     
@@ -521,9 +621,27 @@
                         </button>
                     </div>
                     
+                    <div class="feedback-section">
+                        <div class="feedback-label">Rate this podcast:</div>
+                        <div class="feedback-buttons">
+                            <button class="btn-feedback thumbs-up${thumbsUpActive}" 
+                                    onclick="submitFeedback('${encodeURIComponent(podcast.name)}', 'thumbs_up', this)"
+                                    title="Thumbs up - Good podcast">
+                                👍
+                            </button>
+                            <button class="btn-feedback thumbs-down${thumbsDownActive}" 
+                                    onclick="submitFeedback('${encodeURIComponent(podcast.name)}', 'thumbs_down', this)"
+                                    title="Thumbs down - Poor podcast">
+                                👎
+                            </button>
+                        </div>
+                        <div class="feedback-status" id="feedback-status-${encodeURIComponent(podcast.name)}">${feedbackStatusText}</div>
+                    </div>
+                    
                     ${podcast.source_url ? `<div class="podcast-source">📚 Source: ${escapeHtml(podcast.source_url)}</div>` : ''}
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function filterPodcasts(searchTerm) {
@@ -592,6 +710,95 @@
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
+        }
+        
+        async function submitFeedback(podcastName, feedbackType, buttonElement) {
+            try {
+                // Disable both feedback buttons to prevent double-clicks
+                const feedbackButtons = buttonElement.parentNode.querySelectorAll('.btn-feedback');
+                feedbackButtons.forEach(btn => btn.disabled = true);
+                
+                // Get status element
+                const statusElement = document.getElementById(`feedback-status-${podcastName}`);
+                if (statusElement) {
+                    statusElement.textContent = 'Submitting...';
+                }
+                
+                // Submit feedback
+                const response = await fetch('/api/podcast-feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        podcast_name: decodeURIComponent(podcastName),
+                        feedback_type: feedbackType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Update button states
+                    feedbackButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.disabled = false;
+                    });
+                    
+                    // Mark the selected button as active (unless feedback was removed)
+                    if (result.feedback_type) {
+                        const activeButton = buttonElement.parentNode.querySelector(`.${result.feedback_type.replace('_', '-')}`);
+                        if (activeButton) {
+                            activeButton.classList.add('active');
+                        }
+                    }
+                    
+                    // Update status message
+                    if (statusElement) {
+                        if (result.feedback_type) {
+                            const emoji = result.feedback_type === 'thumbs_up' ? '👍' : '👎';
+                            statusElement.textContent = `${emoji} Thank you for your feedback!`;
+                        } else {
+                            statusElement.textContent = 'Feedback removed';
+                        }
+                        
+                        // Show feedback counts if available
+                        const totalFeedback = result.thumbs_up_count + result.thumbs_down_count;
+                        if (totalFeedback > 0) {
+                            setTimeout(() => {
+                                statusElement.textContent = `👍 ${result.thumbs_up_count} · 👎 ${result.thumbs_down_count}`;
+                            }, 2000);
+                        } else {
+                            setTimeout(() => {
+                                statusElement.textContent = '';
+                            }, 2000);
+                        }
+                    }
+                    
+                } else {
+                    throw new Error(result.error || 'Failed to submit feedback');
+                }
+                
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                
+                // Re-enable buttons
+                const feedbackButtons = buttonElement.parentNode.querySelectorAll('.btn-feedback');
+                feedbackButtons.forEach(btn => btn.disabled = false);
+                
+                // Show error message
+                const statusElement = document.getElementById(`feedback-status-${podcastName}`);
+                if (statusElement) {
+                    statusElement.textContent = `Error: ${error.message}`;
+                    statusElement.style.color = '#f44336';
+                    
+                    // Clear error message after 3 seconds
+                    setTimeout(() => {
+                        statusElement.textContent = '';
+                        statusElement.style.color = '#666';
+                    }, 3000);
+                }
+            }
         }
     </script>
 </body>
